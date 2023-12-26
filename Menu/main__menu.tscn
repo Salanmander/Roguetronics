@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b6msrxop4pc88"]
 
-[ext_resource type="Script" path="res://GoButton.gd" id="1_ahs6q"]
+[ext_resource type="Script" path="res://Menu/GoButton.gd" id="1_2mo5q"]
 
 [node name="Main  Menu" type="Control"]
 layout_mode = 3
@@ -22,4 +22,4 @@ offset_top = 23.08
 offset_right = -15.152
 offset_bottom = -13.216
 text = "Hello"
-script = ExtResource("1_ahs6q")
+script = ExtResource("1_2mo5q")

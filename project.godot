@@ -11,6 +11,11 @@ config_version=5
 [application]
 
 config/name="Roguetronics"
-run/main_scene="res://main__menu.tscn"
+run/main_scene="res://Menu/main__menu.tscn"
 config/features=PackedStringArray("4.1", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+SceneManager="*res://Singletons/scene_manager.gd"
+Consts="*res://Singletons/consts.gd"

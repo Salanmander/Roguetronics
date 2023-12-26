@@ -15,4 +15,4 @@ func _process(delta):
 
 
 func _go():
-	get_tree().change_scene_to_packed(fact)
+	SceneManager.switch_scene(Consts.FACTORY)

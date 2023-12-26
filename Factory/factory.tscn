@@ -1,9 +1,45 @@
-[gd_scene load_steps=2 format=3 uid="uid://dksdy6hagfrlo"]
+[gd_scene load_steps=6 format=3 uid="uid://dksdy6hagfrlo"]
 
-[ext_resource type="Texture2D" uid="uid://dpvqigf2ldir8" path="res://icon.svg" id="1_7mn4i"]
+[ext_resource type="Texture2D" uid="uid://c75ii64xae637" path="res://Factory/icon.png" id="1_uqvcs"]
+[ext_resource type="Texture2D" uid="uid://bqeda0oqc7siu" path="res://Factory/box.png" id="2_5b2d0"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_icehi"]
+texture = ExtResource("1_uqvcs")
+texture_region_size = Vector2i(133, 133)
+0:0/next_alternative_id = 4
+0:0/0 = 0
+0:0/1 = 1
+0:0/1/flip_v = true
+0:0/2 = 2
+0:0/2/transpose = true
+0:0/3 = 3
+0:0/3/flip_h = true
+0:0/3/transpose = true
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ganq4"]
+texture = ExtResource("2_5b2d0")
+texture_region_size = Vector2i(133, 133)
+
+[sub_resource type="TileSet" id="TileSet_a558r"]
+tile_size = Vector2i(133, 133)
+sources/4 = SubResource("TileSetAtlasSource_icehi")
+sources/5 = SubResource("TileSetAtlasSource_ganq4")
 
 [node name="Factory" type="Node2D"]
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(202, 151)
-texture = ExtResource("1_7mn4i")
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="UI" type="Panel" parent="UILayer"]
+anchors_preset = -1
+anchor_top = 1.0
+anchor_right = 1.001
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = -216.0
+offset_right = -0.1521
+
+[node name="FactoryLayer" type="CanvasLayer" parent="."]
+
+[node name="TileMap" type="TileMap" parent="FactoryLayer"]
+tile_set = SubResource("TileSet_a558r")
+format = 2
