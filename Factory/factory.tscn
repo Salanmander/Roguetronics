@@ -1,7 +1,18 @@
-[gd_scene load_steps=6 format=3 uid="uid://dksdy6hagfrlo"]
+[gd_scene load_steps=9 format=3 uid="uid://dksdy6hagfrlo"]
 
 [ext_resource type="Texture2D" uid="uid://c75ii64xae637" path="res://Factory/icon.png" id="1_uqvcs"]
 [ext_resource type="Texture2D" uid="uid://bqeda0oqc7siu" path="res://Factory/box.png" id="2_5b2d0"]
+[ext_resource type="Script" path="res://Factory/factory_floor.gd" id="3_ulfng"]
+[ext_resource type="Texture2D" uid="uid://dpvqigf2ldir8" path="res://icon.svg" id="4_fq6om"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hjol2"]
+bg_color = Color(0.341176, 0.341176, 0.341176, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.129412, 0.129412, 0.129412, 1)
+border_blend = true
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_icehi"]
 texture = ExtResource("1_uqvcs")
@@ -19,6 +30,7 @@ texture_region_size = Vector2i(133, 133)
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ganq4"]
 texture = ExtResource("2_5b2d0")
 texture_region_size = Vector2i(133, 133)
+0:0/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_a558r"]
 tile_size = Vector2i(133, 133)
@@ -29,6 +41,11 @@ sources/5 = SubResource("TileSetAtlasSource_ganq4")
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 
+[node name="DummyPlaceholder" type="Sprite2D" parent="UILayer"]
+position = Vector2(456, 282)
+scale = Vector2(1e-05, 1e-05)
+texture = ExtResource("4_fq6om")
+
 [node name="UI" type="Panel" parent="UILayer"]
 anchors_preset = -1
 anchor_top = 1.0
@@ -36,10 +53,82 @@ anchor_right = 1.001
 anchor_bottom = 1.0
 offset_left = 1.0
 offset_top = -216.0
-offset_right = -0.1521
+offset_right = 1.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hjol2")
+
+[node name="UpConveyorSelect" type="Button" parent="UILayer/UI"]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 44.0
+offset_right = 130.0
+offset_bottom = 110.0
+icon = ExtResource("1_uqvcs")
+expand_icon = true
+
+[node name="DownConveyorSelect" type="Button" parent="UILayer/UI"]
+layout_mode = 0
+offset_left = 160.0
+offset_top = 44.0
+offset_right = 226.0
+offset_bottom = 110.0
+expand_icon = true
+
+[node name="DownArrowIcon" type="Sprite2D" parent="UILayer/UI/DownConveyorSelect"]
+position = Vector2(33, 33)
+rotation = 3.14159
+scale = Vector2(0.45, 0.45)
+texture = ExtResource("1_uqvcs")
+
+[node name="LeftConveyorSelect" type="Button" parent="UILayer/UI"]
+layout_mode = 0
+offset_left = 261.0
+offset_top = 44.0
+offset_right = 327.0
+offset_bottom = 110.0
+expand_icon = true
+
+[node name="LeftArrowIcon" type="Sprite2D" parent="UILayer/UI/LeftConveyorSelect"]
+position = Vector2(33, 33)
+rotation = -1.5708
+scale = Vector2(0.45, 0.45)
+texture = ExtResource("1_uqvcs")
+
+[node name="RightConveyorSelect" type="Button" parent="UILayer/UI"]
+layout_mode = 0
+offset_left = 360.0
+offset_top = 44.0
+offset_right = 426.0
+offset_bottom = 110.0
+expand_icon = true
+
+[node name="RightArrowIcon" type="Sprite2D" parent="UILayer/UI/RightConveyorSelect"]
+position = Vector2(33, 33)
+rotation = 1.5708
+scale = Vector2(0.45, 0.45)
+texture = ExtResource("1_uqvcs")
+
+[node name="PlaceObject" type="Button" parent="UILayer/UI"]
+offset_left = 704.0
+offset_top = 49.0
+offset_right = 770.0
+offset_bottom = 115.0
+text = "Place"
+expand_icon = true
 
 [node name="FactoryLayer" type="CanvasLayer" parent="."]
+layer = 0
+scale = Vector2(0.4, 0.4)
+transform = Transform2D(0.4, 0, 0, 0.4, 0, 0)
 
-[node name="TileMap" type="TileMap" parent="FactoryLayer"]
+[node name="FactoryFloor" type="TileMap" parent="FactoryLayer"]
 tile_set = SubResource("TileSet_a558r")
 format = 2
+script = ExtResource("3_ulfng")
+
+[node name="Polygon2D" type="Polygon2D" parent="FactoryLayer"]
+
+[connection signal="pressed" from="UILayer/UI/UpConveyorSelect" to="FactoryLayer/FactoryFloor" method="_on_up_conveyor_select_pressed"]
+[connection signal="pressed" from="UILayer/UI/DownConveyorSelect" to="FactoryLayer/FactoryFloor" method="_on_down_conveyor_select_pressed"]
+[connection signal="pressed" from="UILayer/UI/LeftConveyorSelect" to="FactoryLayer/FactoryFloor" method="_on_left_conveyor_select_pressed"]
+[connection signal="pressed" from="UILayer/UI/RightConveyorSelect" to="FactoryLayer/FactoryFloor" method="_on_right_conveyor_select_pressed"]
+[connection signal="pressed" from="UILayer/UI/PlaceObject" to="FactoryLayer/FactoryFloor" method="_on_place_object_pressed"]

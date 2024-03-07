@@ -3,3 +3,8 @@
 
 # Personal files for making images
 .imageSources/
+
+# Executable version
+Roguetronics.console.exe
+Roguetronics.exe
+Roguetronics.pck
