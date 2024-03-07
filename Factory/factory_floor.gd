@@ -47,7 +47,7 @@ func _process(_delta):
 	pass
 
 	
-func _input(event: InputEvent):
+func _unhandled_input(event: InputEvent):
 	if event is InputEventMouseButton and event.is_pressed():
 		event = make_input_local(event)
 		var grid_loc:Vector2i = local_to_map(event.position)
