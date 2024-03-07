@@ -116,6 +116,22 @@ offset_bottom = 115.0
 text = "Place"
 expand_icon = true
 
+[node name="MoveObject" type="Button" parent="UILayer/UI"]
+offset_left = 788.0
+offset_top = 48.0
+offset_right = 854.0
+offset_bottom = 114.0
+text = "Move"
+expand_icon = true
+
+[node name="StopObject" type="Button" parent="UILayer/UI"]
+offset_left = 867.0
+offset_top = 48.0
+offset_right = 933.0
+offset_bottom = 114.0
+text = "Stop"
+expand_icon = true
+
 [node name="FactoryLayer" type="CanvasLayer" parent="."]
 layer = 0
 scale = Vector2(0.4, 0.4)
@@ -131,3 +147,5 @@ script = ExtResource("3_ulfng")
 [connection signal="pressed" from="UILayer/UI/LeftConveyorSelect" to="FactoryLayer/FactoryFloor" method="_on_left_conveyor_select_pressed"]
 [connection signal="pressed" from="UILayer/UI/RightConveyorSelect" to="FactoryLayer/FactoryFloor" method="_on_right_conveyor_select_pressed"]
 [connection signal="pressed" from="UILayer/UI/PlaceObject" to="FactoryLayer/FactoryFloor" method="_on_place_object_pressed"]
+[connection signal="pressed" from="UILayer/UI/MoveObject" to="FactoryLayer/FactoryFloor" method="_on_move_object_pressed"]
+[connection signal="pressed" from="UILayer/UI/StopObject" to="FactoryLayer/FactoryFloor" method="_on_stop_object_pressed"]

@@ -26,7 +26,9 @@ var selected_variant:int = CONVEYOR_UP_VARIANT
 
 var click_mode:int = NONE
 
-var thing_to_move:Polygon2D
+var widget_packed:PackedScene = load("res://Factory/Widget/widget.tscn")
+var thing_to_move:Node2D
+var run:bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -35,9 +37,7 @@ func _ready():
 			#pass
 			set_cell(FLOOR_LAYER, Vector2i(x, y), FLOOR_TILE, Vector2i(0,0))
 	
-	thing_to_move = Polygon2D.new()
-	var vertices:Array[Vector2] = [Vector2(-35, 0), Vector2(0, 50), Vector2(35, 0), Vector2(0, -50)]
-	thing_to_move.polygon = PackedVector2Array(vertices)
+	thing_to_move = widget_packed.instantiate()
 	
 	pass # Replace with function body.
 
@@ -56,6 +56,7 @@ func _unhandled_input(event: InputEvent):
 		elif(click_mode == PLACE_THING):
 			var thing_position:Vector2i = grid_loc * tile_set.tile_size
 			thing_position = thing_position + (tile_set.tile_size/2)
+			
 			thing_to_move.position = thing_position
 			if (not thing_to_move.get_tree()):
 				add_child(thing_to_move)
@@ -87,3 +88,11 @@ func _on_right_conveyor_select_pressed():
 
 func _on_place_object_pressed():
 	click_mode = PLACE_THING
+
+
+func _on_move_object_pressed():
+	run = true
+
+
+func _on_stop_object_pressed():
+	run = false
