@@ -108,6 +108,7 @@ scale = Vector2(0.45, 0.45)
 texture = ExtResource("1_uqvcs")
 
 [node name="PlaceObject" type="Button" parent="UILayer/UI"]
+layout_mode = 0
 offset_left = 704.0
 offset_top = 49.0
 offset_right = 770.0
@@ -124,8 +125,6 @@ transform = Transform2D(0.4, 0, 0, 0.4, 0, 0)
 tile_set = SubResource("TileSet_a558r")
 format = 2
 script = ExtResource("3_ulfng")
-
-[node name="Polygon2D" type="Polygon2D" parent="FactoryLayer"]
 
 [connection signal="pressed" from="UILayer/UI/UpConveyorSelect" to="FactoryLayer/FactoryFloor" method="_on_up_conveyor_select_pressed"]
 [connection signal="pressed" from="UILayer/UI/DownConveyorSelect" to="FactoryLayer/FactoryFloor" method="_on_down_conveyor_select_pressed"]
