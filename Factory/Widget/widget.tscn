@@ -6,3 +6,4 @@
 script = ExtResource("1_rtf7s")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 2

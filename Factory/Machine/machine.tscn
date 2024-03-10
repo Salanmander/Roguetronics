@@ -6,3 +6,4 @@
 script = ExtResource("1_ccb8i")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 1
