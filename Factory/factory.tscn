@@ -1,7 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://dksdy6hagfrlo"]
+[gd_scene load_steps=11 format=3 uid="uid://dksdy6hagfrlo"]
 
 [ext_resource type="Texture2D" uid="uid://c75ii64xae637" path="res://Factory/icon.png" id="1_uqvcs"]
 [ext_resource type="Texture2D" uid="uid://ntfyndnf1obk" path="res://Factory/box.png" id="2_5b2d0"]
+[ext_resource type="Texture2D" uid="uid://bqsb5r8n4oaa" path="res://Factory/floor.png" id="3_dkgit"]
 [ext_resource type="Script" path="res://Factory/factory_floor.gd" id="3_ulfng"]
 [ext_resource type="Texture2D" uid="uid://dpvqigf2ldir8" path="res://icon.svg" id="4_fq6om"]
 
@@ -13,6 +14,11 @@ border_width_right = 10
 border_width_bottom = 10
 border_color = Color(0.129412, 0.129412, 0.129412, 1)
 border_blend = true
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fyd2g"]
+texture = ExtResource("3_dkgit")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_icehi"]
 texture = ExtResource("1_uqvcs")
@@ -33,9 +39,10 @@ texture_region_size = Vector2i(133, 133)
 0:0/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_a558r"]
-tile_size = Vector2i(133, 133)
+tile_size = Vector2i(128, 128)
 sources/4 = SubResource("TileSetAtlasSource_icehi")
 sources/5 = SubResource("TileSetAtlasSource_ganq4")
+sources/0 = SubResource("TileSetAtlasSource_fyd2g")
 
 [node name="Factory" type="Node2D"]
 

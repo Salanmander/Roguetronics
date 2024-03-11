@@ -1,5 +1,6 @@
 extends TileMap
-
+# Might be worth refactoring this at some point so that the tilemap
+# isn't the thing holding all the behavior.
 
 const FLOOR_LAYER = 0
 
@@ -9,7 +10,7 @@ const CONVEYOR_DOWN_VARIANT = 1
 const CONVEYOR_LEFT_VARIANT = 2
 const CONVEYOR_RIGHT_VARIANT = 3
 
-const FLOOR_TILE = 5
+const FLOOR_TILE = 0
 
 const NONE = 0
 const MODIFY_FLOOR = 1
@@ -20,8 +21,8 @@ var selected_variant:int = CONVEYOR_UP_VARIANT
 
 var click_mode:int = NONE
 
-var widget_packed:PackedScene = load("res://Factory/Widget/widget.tscn")
-var thing_to_move:Widget
+var assembly_packed:PackedScene = load("res://Factory/Assembly/assembly.tscn")
+var thing_to_move:Assembly
 
 
 var machine_packed:PackedScene = load("res://Factory/Machine/machine.tscn")
@@ -39,7 +40,7 @@ func _ready():
 			#pass
 			set_cell(FLOOR_LAYER, Vector2i(x, y), FLOOR_TILE, Vector2i(0,0))
 	
-	thing_to_move = widget_packed.instantiate()
+	thing_to_move = assembly_packed.instantiate()
 	machines = []
 	
 	
@@ -52,6 +53,7 @@ func _process(delta):
 		cycle += delta / cycle_time
 		for machine:Machine in machines:
 			machine.run_to(cycle)
+		thing_to_move.run(cycle)
 	pass
 
 	

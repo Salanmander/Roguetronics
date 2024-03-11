@@ -1,9 +1,6 @@
 extends Area2D
 class_name Machine
 
-var held_widget:Widget
-var direction:float
-var arm_offset:Vector2
 
 # Could be refactored at some point so that it doesn't need to load these
 # textures multiple times. (Does that already get optimized out?)
@@ -12,7 +9,12 @@ var right_texture = load("res://Factory/Machine/Right.png")
 var up_texture = load("res://Factory/Machine/Up.png")
 var down_texture = load("res://Factory/Machine/Down.png")
 
+var held_widget:Widget
+var direction:float
+var arm_offset:Vector2
+
 var last_cycle:float
+var last_arm_offset:Vector2
 
 var nearby_widgets:Array[Widget]
 
@@ -25,6 +27,7 @@ func set_parameters(position: Vector2, direction: float):
 	self.direction = direction
 	nearby_widgets = []
 	arm_offset = Vector2(0,0)
+	last_arm_offset = Vector2(0,0)
 	pass
 
 
@@ -61,22 +64,21 @@ func run_to(cycle:float):
 	
 	# When this is the first move of a cycle
 	if cycle - last_cycle >= cycle_fraction:
-		
-		print(int(cycle))
-		print(str("diff: " , (cycle-last_cycle) , " fraction: " , cycle_fraction))
 		drop()
 		grab()
+		last_arm_offset = Vector2(0,0)
 		
 	arm_offset = Vector2(0,-1).rotated(direction) * Consts.GRID_SIZE * cycle_fraction
 	
 	# If we're holding something
 	if held_widget:
-		held_widget.move_to(position + arm_offset)
+		held_widget.nudge(arm_offset - last_arm_offset)
 		
 	if DEBUG_GRABBER:
 		grabber_display.position = arm_offset
 		
 	last_cycle = cycle
+	last_arm_offset = arm_offset
 		
 	
 	pass

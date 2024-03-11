@@ -4,6 +4,8 @@ class_name Widget
 var speed:Vector2 = Vector2(0,0)
 var tex:Texture = load("res://Factory/Widget/widget.png")
 
+signal nudged(delta: Vector2)
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$Sprite2D.texture = tex
@@ -15,6 +17,6 @@ func _process(delta):
 	pass
 	
 	
-func move_to(new_position: Vector2):
-	position = new_position
+func nudge(delta: Vector2):
+	nudged.emit(delta)
 	
