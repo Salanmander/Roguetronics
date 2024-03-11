@@ -35,6 +35,8 @@ var machines:Array[Machine]
 var conveyor_direction:float
 
 var run:bool = false
+var cycle_time:float = 1 # Number of seconds for one cycle
+var cycle:float = 0 # Current cycle count
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -51,7 +53,11 @@ func _ready():
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):
+func _process(delta):
+	if run:
+		cycle += delta / cycle_time
+		for machine:Machine in machines:
+			machine.run_to(cycle)
 	pass
 
 	
@@ -67,11 +73,11 @@ func _unhandled_input(event: InputEvent):
 			new_machine.set_parameters(thing_position, conveyor_direction)
 			machines.append(new_machine)
 			add_child(new_machine)
-			# set_cell(FLOOR_LAYER, grid_loc, selected, Vector2i(0,0), selected_variant)
+			
 		elif(click_mode == PLACE_THING):
 			
 			thing_to_move.position = thing_position
-			if (not thing_to_move.get_tree()):
+			if (!thing_to_move.is_inside_tree()):
 				add_child(thing_to_move)
 	pass
 	
@@ -110,9 +116,7 @@ func _on_place_object_pressed():
 
 func _on_move_object_pressed():
 	run = true
-	thing_to_move.run()
 
 
 func _on_stop_object_pressed():
 	run = false
-	thing_to_move.stop()

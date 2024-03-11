@@ -1,9 +1,14 @@
-[gd_scene load_steps=2 format=3 uid="uid://cjkud5enux5mw"]
+[gd_scene load_steps=3 format=3 uid="uid://cjkud5enux5mw"]
 
 [ext_resource type="Script" path="res://Factory/Machine/machine.gd" id="1_ccb8i"]
 
-[node name="Machine" type="Node2D"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_idtvp"]
+
+[node name="Machine" type="Area2D"]
 script = ExtResource("1_ccb8i")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 z_index = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_idtvp")

@@ -1,8 +1,9 @@
-extends Node2D
+extends Area2D
 class_name Machine
 
-var held:Widget
+var held_widget:Widget
 var direction:float
+var arm_offset:Vector2
 
 # Could be refactored at some point so that it doesn't need to load these
 # textures multiple times. (Does that already get optimized out?)
@@ -11,10 +12,19 @@ var right_texture = load("res://Factory/Machine/Right.png")
 var up_texture = load("res://Factory/Machine/Up.png")
 var down_texture = load("res://Factory/Machine/Down.png")
 
+var last_cycle:float
+
+var nearby_widgets:Array[Widget]
+
+var DEBUG_GRABBER:bool = false
+var grabber_display:Sprite2D
+
 
 func set_parameters(position: Vector2, direction: float):
 	self.position = position
 	self.direction = direction
+	nearby_widgets = []
+	arm_offset = Vector2(0,0)
 	pass
 
 
@@ -29,8 +39,64 @@ func _ready():
 		child.texture = down_texture
 	else:
 		child.texture = left_texture
+	
+	#child.scale = Vector2(0,0)
+	
+	if DEBUG_GRABBER:
+		grabber_display = Sprite2D.new()
+		grabber_display.texture = up_texture
+		grabber_display.scale = Vector2(0.2, 0.2)
+		add_child(grabber_display)
+		
+		
+	# Connecting signals
+	area_entered.connect(_on_area_entered)
+	area_exited.connect(_on_area_exited)
+	
 	pass # Replace with function body.
 
+
+func run_to(cycle:float):
+	var cycle_fraction = fmod(cycle, 1)
+	
+	# When this is the first move of a cycle
+	if cycle - last_cycle >= cycle_fraction:
+		
+		print(int(cycle))
+		print(str("diff: " , (cycle-last_cycle) , " fraction: " , cycle_fraction))
+		drop()
+		grab()
+		
+	arm_offset = Vector2(0,-1).rotated(direction) * Consts.GRID_SIZE * cycle_fraction
+	
+	# If we're holding something
+	if held_widget:
+		held_widget.move_to(position + arm_offset)
+		
+	if DEBUG_GRABBER:
+		grabber_display.position = arm_offset
+		
+	last_cycle = cycle
+		
+	
+	pass
+	
+func drop():
+	held_widget = null
+	
+func grab():
+	if held_widget == null && nearby_widgets.size() > 0:
+		held_widget = nearby_widgets[0]
+	pass
+	
+func _on_area_entered(entering:Area2D):
+	if entering is Widget:
+		nearby_widgets.append(entering)
+	pass
+	
+func _on_area_exited(exiting:Area2D):
+	nearby_widgets.erase(exiting)
+	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

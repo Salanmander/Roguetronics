@@ -1,4 +1,4 @@
-extends Node2D
+extends Area2D
 class_name Widget
 
 var speed:Vector2 = Vector2(0,0)
@@ -12,11 +12,9 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	position = position + speed
 	pass
 	
-func run():
-	speed = Vector2(1,0)
 	
-func stop():
-	speed = Vector2(0,0)
+func move_to(new_position: Vector2):
+	position = new_position
+	
