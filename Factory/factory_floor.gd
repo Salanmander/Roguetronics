@@ -1,11 +1,5 @@
 extends TileMap
 
-# This is a dumb place for notes, but, TODO:
-#  make icon for thing to move
-#  bring it in, and make button to place, move stop
-#  grid align placement
-#  have move button move it one square and then stop
-#  Have move be conditional based on conveyor
 
 const FLOOR_LAYER = 0
 
