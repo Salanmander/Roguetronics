@@ -1,10 +1,12 @@
-[gd_scene load_steps=11 format=3 uid="uid://dksdy6hagfrlo"]
+[gd_scene load_steps=13 format=3 uid="uid://dksdy6hagfrlo"]
 
 [ext_resource type="Texture2D" uid="uid://c75ii64xae637" path="res://Factory/icon.png" id="1_uqvcs"]
 [ext_resource type="Texture2D" uid="uid://ntfyndnf1obk" path="res://Factory/box.png" id="2_5b2d0"]
 [ext_resource type="Texture2D" uid="uid://bqsb5r8n4oaa" path="res://Factory/floor.png" id="3_dkgit"]
+[ext_resource type="Texture2D" uid="uid://boj4b0l32qimb" path="res://Factory/Widget/widget.png" id="3_kb4iw"]
 [ext_resource type="Script" path="res://Factory/factory_floor.gd" id="3_ulfng"]
 [ext_resource type="Texture2D" uid="uid://dpvqigf2ldir8" path="res://icon.svg" id="4_fq6om"]
+[ext_resource type="Texture2D" uid="uid://0nev7mkxipas" path="res://Factory/combiner.png" id="4_wlc1q"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hjol2"]
 bg_color = Color(0.341176, 0.341176, 0.341176, 1)
@@ -114,31 +116,39 @@ rotation = 1.5708
 scale = Vector2(0.45, 0.45)
 texture = ExtResource("1_uqvcs")
 
-[node name="PlaceObject" type="Button" parent="UILayer/UI"]
+[node name="PlaceWidget" type="Button" parent="UILayer/UI"]
 layout_mode = 0
 offset_left = 704.0
 offset_top = 49.0
 offset_right = 770.0
 offset_bottom = 115.0
-text = "Place"
+icon = ExtResource("3_kb4iw")
 expand_icon = true
 
-[node name="MoveObject" type="Button" parent="UILayer/UI"]
+[node name="Run" type="Button" parent="UILayer/UI"]
 layout_mode = 0
 offset_left = 788.0
 offset_top = 48.0
 offset_right = 854.0
 offset_bottom = 114.0
-text = "Move"
+text = "Run"
 expand_icon = true
 
-[node name="StopObject" type="Button" parent="UILayer/UI"]
+[node name="Pause" type="Button" parent="UILayer/UI"]
 layout_mode = 0
 offset_left = 867.0
 offset_top = 48.0
 offset_right = 933.0
 offset_bottom = 114.0
 text = "Stop"
+expand_icon = true
+
+[node name="PlaceCombiner" type="Button" parent="UILayer/UI"]
+offset_left = 704.0
+offset_top = 124.0
+offset_right = 770.0
+offset_bottom = 190.0
+icon = ExtResource("4_wlc1q")
 expand_icon = true
 
 [node name="FactoryLayer" type="CanvasLayer" parent="."]
@@ -155,6 +165,7 @@ script = ExtResource("3_ulfng")
 [connection signal="pressed" from="UILayer/UI/DownConveyorSelect" to="FactoryLayer/FactoryFloor" method="_on_down_conveyor_select_pressed"]
 [connection signal="pressed" from="UILayer/UI/LeftConveyorSelect" to="FactoryLayer/FactoryFloor" method="_on_left_conveyor_select_pressed"]
 [connection signal="pressed" from="UILayer/UI/RightConveyorSelect" to="FactoryLayer/FactoryFloor" method="_on_right_conveyor_select_pressed"]
-[connection signal="pressed" from="UILayer/UI/PlaceObject" to="FactoryLayer/FactoryFloor" method="_on_place_object_pressed"]
-[connection signal="pressed" from="UILayer/UI/MoveObject" to="FactoryLayer/FactoryFloor" method="_on_move_object_pressed"]
-[connection signal="pressed" from="UILayer/UI/StopObject" to="FactoryLayer/FactoryFloor" method="_on_stop_object_pressed"]
+[connection signal="pressed" from="UILayer/UI/PlaceWidget" to="FactoryLayer/FactoryFloor" method="_on_place_object_pressed"]
+[connection signal="pressed" from="UILayer/UI/Run" to="FactoryLayer/FactoryFloor" method="_on_move_object_pressed"]
+[connection signal="pressed" from="UILayer/UI/Pause" to="FactoryLayer/FactoryFloor" method="_on_stop_object_pressed"]
+[connection signal="pressed" from="UILayer/UI/PlaceCombiner" to="FactoryLayer/FactoryFloor" method="_on_place_combiner_pressed"]

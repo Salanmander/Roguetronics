@@ -20,7 +20,7 @@ func _ready():
 	add_widget(wid2)
 	pass # Replace with function body.
 	
-func run(new_cycle):
+func run_to(new_cycle:float):
 	var dLeft:float = 0
 	var dRight:float = 0
 	var dDown:float = 0
@@ -52,6 +52,6 @@ func add_widget(new_widget:Widget):
 	new_widget.nudged.connect(_on_widget_nudged)
 	pass
 	
-func _on_widget_nudged(delta):
+func _on_widget_nudged(delta:Vector2):
 	nudges.append(delta)
 	pass

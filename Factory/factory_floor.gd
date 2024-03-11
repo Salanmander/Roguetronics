@@ -15,6 +15,7 @@ const FLOOR_TILE = 0
 const NONE = 0
 const MODIFY_FLOOR = 1
 const PLACE_THING = 2
+const PLACE_COMBINER = 3
 
 var selected:int = FLOOR_TILE
 var selected_variant:int = CONVEYOR_UP_VARIANT
@@ -22,7 +23,7 @@ var selected_variant:int = CONVEYOR_UP_VARIANT
 var click_mode:int = NONE
 
 var assembly_packed:PackedScene = load("res://Factory/Assembly/assembly.tscn")
-var thing_to_move:Assembly
+var assemblies:Array[Assembly]
 
 
 var machine_packed:PackedScene = load("res://Factory/Machine/machine.tscn")
@@ -40,7 +41,7 @@ func _ready():
 			#pass
 			set_cell(FLOOR_LAYER, Vector2i(x, y), FLOOR_TILE, Vector2i(0,0))
 	
-	thing_to_move = assembly_packed.instantiate()
+	assemblies = []
 	machines = []
 	
 	
@@ -53,7 +54,9 @@ func _process(delta):
 		cycle += delta / cycle_time
 		for machine:Machine in machines:
 			machine.run_to(cycle)
-		thing_to_move.run(cycle)
+			
+		for assembly:Assembly in assemblies:
+			assembly.run_to(cycle)
 	pass
 
 	
@@ -71,10 +74,39 @@ func _unhandled_input(event: InputEvent):
 			add_child(new_machine)
 			
 		elif(click_mode == PLACE_THING):
+			var new_assembly = assembly_packed.instantiate()
+			new_assembly.position = thing_position
+			add_child(new_assembly)
+			assemblies.append(new_assembly)
+				
+		elif(click_mode == PLACE_COMBINER):
+			var TOP = Vector2(0, -1)
+			var RIGHT = Vector2(1, 0)
+			var BOTTOM = Vector2(0, 1)
+			var LEFT = Vector2(-1, 0)
 			
-			thing_to_move.position = thing_position
-			if (!thing_to_move.is_inside_tree()):
-				add_child(thing_to_move)
+			var directions:Array[Vector2] = [TOP, RIGHT, BOTTOM, LEFT]
+			var min_dist:float = Consts.GRID_SIZE
+			var wall_at_min_dist:Vector2
+			
+			for dir in directions:
+				var edge_spot:Vector2 = dir*Consts.GRID_SIZE/2.0
+				var click_spot:Vector2 = event.position - thing_position*1.0
+				click_spot = click_spot.project(dir)
+				
+				var dist:float = click_spot.distance_to(edge_spot)
+				if dist < min_dist:
+					min_dist = dist
+					wall_at_min_dist = edge_spot
+				
+			if min_dist < Consts.GRID_SIZE/4:
+				var new_assembly = assembly_packed.instantiate()
+				new_assembly.position = thing_position + Vector2i(wall_at_min_dist)
+				add_child(new_assembly)
+				assemblies.append(new_assembly)
+				
+			pass
+		pass
 	pass
 	
 func remove_machines(grid_loc: Vector2i):
@@ -109,6 +141,9 @@ func _on_right_conveyor_select_pressed():
 func _on_place_object_pressed():
 	click_mode = PLACE_THING
 
+func _on_place_combiner_pressed():
+	click_mode = PLACE_COMBINER
+
 
 func _on_move_object_pressed():
 	run = true
@@ -116,3 +151,4 @@ func _on_move_object_pressed():
 
 func _on_stop_object_pressed():
 	run = false
+
