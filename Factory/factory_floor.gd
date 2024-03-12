@@ -26,7 +26,7 @@ var assembly_packed:PackedScene = load("res://Factory/Assembly/assembly.tscn")
 var assemblies:Array[Assembly]
 
 
-var machine_packed:PackedScene = load("res://Factory/Machine/machine.tscn")
+var belt_packed:PackedScene = load("res://Factory/Machine/Belt/belt.tscn")
 var machines:Array[Machine]
 var conveyor_direction:float
 
@@ -68,7 +68,7 @@ func _unhandled_input(event: InputEvent):
 		thing_position = thing_position + (tile_set.tile_size/2)
 		if(click_mode == MODIFY_FLOOR):
 			remove_machines(grid_loc)
-			var new_machine:Machine = machine_packed.instantiate()
+			var new_machine:Belt = belt_packed.instantiate()
 			new_machine.set_parameters(thing_position, conveyor_direction)
 			machines.append(new_machine)
 			add_child(new_machine)
