@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://cqdd3afnc3gv5"]
+
+[ext_resource type="Script" path="res://Factory/Machine/Combiner/combiner.gd" id="1_l7fhv"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_idtvp"]
+
+[node name="Combiner" type="Area2D"]
+script = ExtResource("1_l7fhv")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 1
+
+[node name="LeftCollisionShape" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_idtvp")
+
+[node name="RightCollisionShape" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_idtvp")

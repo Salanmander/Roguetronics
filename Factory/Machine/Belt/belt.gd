@@ -24,9 +24,9 @@ var DEBUG_GRABBER:bool = false
 var grabber_display:Sprite2D
 
 
-func set_parameters(position: Vector2, direction: float):
-	set_machine_parameters(position)
-	self.direction = direction
+func set_parameters(init_position: Vector2, init_direction: float):
+	set_machine_parameters(init_position)
+	direction = init_direction
 	arm_offset = Vector2(0,0)
 	last_arm_offset = Vector2(0,0)
 	pass

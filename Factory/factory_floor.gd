@@ -27,12 +27,14 @@ var assemblies:Array[Assembly]
 
 
 var belt_packed:PackedScene = load("res://Factory/Machine/Belt/belt.tscn")
+var combiner_packed:PackedScene = load("res://Factory/Machine/Combiner/combiner.tscn")
 var machines:Array[Machine]
 var conveyor_direction:float
 
 var run:bool = false
 var cycle_time:float = 1 # Number of seconds for one cycle
 var cycle:float = 0 # Current cycle count
+var last_cycle:float = 0 # Previous frame cycle count
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -52,11 +54,19 @@ func _ready():
 func _process(delta):
 	if run:
 		cycle += delta / cycle_time
+		
+		var cycle_fraction = fmod(cycle, 1)
+		if cycle - last_cycle >= cycle_fraction:
+			for assembly:Assembly in assemblies:
+				assembly.snap_to_grid(self)
+				
 		for machine:Machine in machines:
 			machine.run_to(cycle)
 			
 		for assembly:Assembly in assemblies:
 			assembly.run_to(cycle)
+			
+		last_cycle = cycle
 	pass
 
 	
@@ -64,8 +74,7 @@ func _unhandled_input(event: InputEvent):
 	if event is InputEventMouseButton and event.is_pressed():
 		event = make_input_local(event)
 		var grid_loc:Vector2i = local_to_map(event.position)
-		var thing_position:Vector2i = grid_loc * tile_set.tile_size
-		thing_position = thing_position + (tile_set.tile_size/2)
+		var thing_position:Vector2i = map_to_local(grid_loc)
 		if(click_mode == MODIFY_FLOOR):
 			remove_machines(grid_loc)
 			var new_machine:Belt = belt_packed.instantiate()
@@ -78,6 +87,7 @@ func _unhandled_input(event: InputEvent):
 			new_assembly.position = thing_position
 			add_child(new_assembly)
 			assemblies.append(new_assembly)
+			new_assembly.deleted.connect(_on_assembly_delete)
 				
 		elif(click_mode == PLACE_COMBINER):
 			var TOP = Vector2(0, -1)
@@ -99,11 +109,15 @@ func _unhandled_input(event: InputEvent):
 					min_dist = dist
 					wall_at_min_dist = edge_spot
 				
-			if min_dist < Consts.GRID_SIZE/4:
-				var new_assembly = assembly_packed.instantiate()
-				new_assembly.position = thing_position + Vector2i(wall_at_min_dist)
-				add_child(new_assembly)
-				assemblies.append(new_assembly)
+			
+			if min_dist < Consts.GRID_SIZE/4: 
+				var new_combiner = combiner_packed.instantiate()
+				var direction = 0
+				if(wall_at_min_dist.y == 0):
+					direction = PI/2
+				new_combiner.set_parameters(thing_position + Vector2i(wall_at_min_dist), direction)
+				add_child(new_combiner)
+				machines.append(new_combiner)
 				
 			pass
 		pass
@@ -117,6 +131,9 @@ func remove_machines(grid_loc: Vector2i):
 			machines.remove_at(i)
 		i -= 1
 	pass
+
+func _on_assembly_delete(deleted: Assembly):
+	assemblies.erase(deleted)
 
 func _on_up_conveyor_select_pressed():
 	conveyor_direction = 0

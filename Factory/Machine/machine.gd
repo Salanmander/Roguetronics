@@ -11,8 +11,8 @@ var nearby_widgets:Array[Widget]
 
 
 
-func set_machine_parameters(position: Vector2):
-	self.position = position
+func set_machine_parameters(init_position: Vector2):
+	position = init_position
 	nearby_widgets = []
 	pass
 
@@ -27,7 +27,7 @@ func _ready():
 	pass # Replace with function body.
 
 
-func run_to(cycle:float):
+func run_to(_cycle:float):
 	pass
 	
 	
