@@ -10,17 +10,15 @@ var last_cycle:float
 
 var widget_packed:PackedScene = load("res://Factory/Widget/widget.tscn")
 
-signal deleted(assembly:Assembly)
+signal deleted(this_assembly:Assembly)
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
+func _init():
 	widgets = []
 	nudges = []
 	last_cycle = 0
-	
-	var wid1 = widget_packed.instantiate()
-	
-	add_widget(wid1)
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
 	pass # Replace with function body.
 	
 # Puts position at the middle of a grid square.

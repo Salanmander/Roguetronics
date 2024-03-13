@@ -21,7 +21,9 @@ var selected:int = FLOOR_TILE
 var selected_variant:int = CONVEYOR_UP_VARIANT
 
 var click_mode:int = NONE
+var widget_type:int = 0
 
+var widget_packed:PackedScene = load("res://Factory/Widget/widget.tscn")
 var assembly_packed:PackedScene = load("res://Factory/Assembly/assembly.tscn")
 var assemblies:Array[Assembly]
 
@@ -83,7 +85,10 @@ func _unhandled_input(event: InputEvent):
 			add_child(new_machine)
 			
 		elif(click_mode == PLACE_THING):
-			var new_assembly = assembly_packed.instantiate()
+			var new_assembly:Assembly = assembly_packed.instantiate()
+			var new_widget:Widget = widget_packed.instantiate()
+			new_widget.set_type(widget_type)
+			new_assembly.add_widget(new_widget)
 			new_assembly.position = thing_position
 			add_child(new_assembly)
 			assemblies.append(new_assembly)
@@ -157,6 +162,12 @@ func _on_right_conveyor_select_pressed():
 
 func _on_place_object_pressed():
 	click_mode = PLACE_THING
+	widget_type = 1
+	
+	
+func _on_place_widget2_pressed():
+	click_mode = PLACE_THING
+	widget_type = 2
 
 func _on_place_combiner_pressed():
 	click_mode = PLACE_COMBINER
@@ -168,4 +179,6 @@ func _on_move_object_pressed():
 
 func _on_stop_object_pressed():
 	run = false
+
+
 

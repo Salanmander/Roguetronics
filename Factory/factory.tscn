@@ -1,10 +1,11 @@
-[gd_scene load_steps=13 format=3 uid="uid://dksdy6hagfrlo"]
+[gd_scene load_steps=14 format=3 uid="uid://dksdy6hagfrlo"]
 
 [ext_resource type="Texture2D" uid="uid://c75ii64xae637" path="res://Factory/icon.png" id="1_uqvcs"]
 [ext_resource type="Texture2D" uid="uid://ntfyndnf1obk" path="res://Factory/box.png" id="2_5b2d0"]
 [ext_resource type="Texture2D" uid="uid://bqsb5r8n4oaa" path="res://Factory/floor.png" id="3_dkgit"]
 [ext_resource type="Texture2D" uid="uid://boj4b0l32qimb" path="res://Factory/Widget/widget.png" id="3_kb4iw"]
 [ext_resource type="Script" path="res://Factory/factory_floor.gd" id="3_ulfng"]
+[ext_resource type="Texture2D" uid="uid://bkhsm6uotntfp" path="res://Factory/Widget/widget2.png" id="4_ca5u6"]
 [ext_resource type="Texture2D" uid="uid://dpvqigf2ldir8" path="res://icon.svg" id="4_fq6om"]
 [ext_resource type="Texture2D" uid="uid://0nev7mkxipas" path="res://Factory/Machine/Combiner/combiner.png" id="4_rb14g"]
 
@@ -125,6 +126,14 @@ offset_bottom = 115.0
 icon = ExtResource("3_kb4iw")
 expand_icon = true
 
+[node name="PlaceWidget2" type="Button" parent="UILayer/UI"]
+offset_left = 626.0
+offset_top = 49.0
+offset_right = 692.0
+offset_bottom = 115.0
+icon = ExtResource("4_ca5u6")
+expand_icon = true
+
 [node name="Run" type="Button" parent="UILayer/UI"]
 layout_mode = 0
 offset_left = 788.0
@@ -167,6 +176,7 @@ script = ExtResource("3_ulfng")
 [connection signal="pressed" from="UILayer/UI/LeftConveyorSelect" to="FactoryLayer/FactoryFloor" method="_on_left_conveyor_select_pressed"]
 [connection signal="pressed" from="UILayer/UI/RightConveyorSelect" to="FactoryLayer/FactoryFloor" method="_on_right_conveyor_select_pressed"]
 [connection signal="pressed" from="UILayer/UI/PlaceWidget" to="FactoryLayer/FactoryFloor" method="_on_place_object_pressed"]
+[connection signal="pressed" from="UILayer/UI/PlaceWidget2" to="FactoryLayer/FactoryFloor" method="_on_place_widget2_pressed"]
 [connection signal="pressed" from="UILayer/UI/Run" to="FactoryLayer/FactoryFloor" method="_on_move_object_pressed"]
 [connection signal="pressed" from="UILayer/UI/Pause" to="FactoryLayer/FactoryFloor" method="_on_stop_object_pressed"]
 [connection signal="pressed" from="UILayer/UI/PlaceCombiner" to="FactoryLayer/FactoryFloor" method="_on_place_combiner_pressed"]
