@@ -140,7 +140,7 @@ offset_left = 867.0
 offset_top = 48.0
 offset_right = 933.0
 offset_bottom = 114.0
-text = "Stop"
+text = "Pause"
 expand_icon = true
 
 [node name="PlaceCombiner" type="Button" parent="UILayer/UI"]
