@@ -23,9 +23,11 @@ var last_arm_offset:Vector2
 var DEBUG_GRABBER:bool = false
 var grabber_display:Sprite2D
 
+const LAYER:int = 0
+
 
 func set_parameters(init_position: Vector2, init_direction: float):
-	set_machine_parameters(init_position)
+	set_machine_parameters(init_position, LAYER)
 	direction = init_direction
 	arm_offset = Vector2(0,0)
 	last_arm_offset = Vector2(0,0)
@@ -45,6 +47,7 @@ func _ready():
 		child.texture = down_texture
 	else:
 		child.texture = left_texture
+		
 	
 	#child.scale = Vector2(0,0)
 	

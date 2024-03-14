@@ -78,7 +78,8 @@ func _unhandled_input(event: InputEvent):
 		var grid_loc:Vector2i = local_to_map(event.position)
 		var thing_position:Vector2i = map_to_local(grid_loc)
 		if(click_mode == MODIFY_FLOOR):
-			remove_machines(grid_loc)
+			# TODO: have framework for getting layer of thing to add
+			remove_machines(thing_position, 0)
 			var new_machine:Belt = belt_packed.instantiate()
 			new_machine.set_parameters(thing_position, conveyor_direction)
 			machines.append(new_machine)
@@ -128,13 +129,19 @@ func _unhandled_input(event: InputEvent):
 		pass
 	pass
 	
-func remove_machines(grid_loc: Vector2i):
+func remove_machines(machine_position: Vector2, machine_layer: int):
 	var i:int = machines.size() - 1
 	while i >= 0:
-		if local_to_map(machines[i].position) == grid_loc:
-			remove_child(machines[i])
-			machines.remove_at(i)
-		i -= 1
+		if(machines[i].z_index == machine_layer):
+			
+			var dist_sq:float = machines[i].position.distance_squared_to(machine_position)
+			
+			# If the machine is within 1/4 grid-width
+			if  dist_sq < Consts.GRID_SIZE*Consts.GRID_SIZE/16:
+				remove_child(machines[i])
+				machines[i].queue_free()
+				machines.remove_at(i)
+			i -= 1
 	pass
 
 func _on_assembly_delete(deleted: Assembly):

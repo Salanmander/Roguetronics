@@ -7,6 +7,8 @@ var queued_combine_widget:Widget
 
 var last_cycle:float
 
+const LAYER = 1
+
 
 var widget_packed:PackedScene = load("res://Factory/Widget/widget.tscn")
 
@@ -16,6 +18,7 @@ func _init():
 	widgets = []
 	nudges = []
 	last_cycle = 0
+	z_index = LAYER
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

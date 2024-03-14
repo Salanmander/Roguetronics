@@ -11,9 +11,12 @@ var nearby_widgets:Array[Widget]
 
 
 
-func set_machine_parameters(init_position: Vector2):
+
+func set_machine_parameters(init_position: Vector2, init_layer: int):
 	position = init_position
-	nearby_widgets = []
+	nearby_widgets = [] 
+	last_cycle = 0
+	z_index = init_layer
 	pass
 
 

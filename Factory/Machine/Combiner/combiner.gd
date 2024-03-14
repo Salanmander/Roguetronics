@@ -14,12 +14,13 @@ var idString:String
 
 signal drop(combiner: Combiner)
 
+const LAYER = 2
 
 
 
 # Direction should be either 0 or PI/2
 func set_parameters(init_position: Vector2, direction: float):
-	set_machine_parameters(init_position)
+	set_machine_parameters(init_position, LAYER)
 	rotation = direction
 	idString = str(int(position.x), int(position.y))
 	pass

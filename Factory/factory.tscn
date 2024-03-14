@@ -127,6 +127,7 @@ icon = ExtResource("3_kb4iw")
 expand_icon = true
 
 [node name="PlaceWidget2" type="Button" parent="UILayer/UI"]
+layout_mode = 0
 offset_left = 626.0
 offset_top = 49.0
 offset_right = 692.0
