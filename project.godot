@@ -20,6 +20,10 @@ config/icon="res://icon.svg"
 SceneManager="*res://Singletons/scene_manager.gd"
 Consts="*res://Singletons/consts.gd"
 
+[debug]
+
+gdscript/warnings/integer_division=0
+
 [filesystem]
 
 import/blender/enabled=false
