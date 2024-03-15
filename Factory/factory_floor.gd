@@ -33,6 +33,9 @@ var combiner_packed:PackedScene = load("res://Factory/Machine/Combiner/combiner.
 var machines:Array[Machine]
 var conveyor_direction:float
 
+var goal_packed:PackedScene = load("res://Factory/Goal/goal.tscn")
+var goal:Goal
+
 var run:bool = false
 var cycle_time:float = 1 # Number of seconds for one cycle
 var cycle:float = 0 # Current cycle count
@@ -48,6 +51,14 @@ func _ready():
 	assemblies = []
 	machines = []
 	
+	goal = goal_packed.instantiate()
+	goal.set_parameters(map_to_local(Vector2i(10,2)))
+	goal.add_widget(Vector2(0,0), 2)
+	goal.add_widget(Vector2(0,-Consts.GRID_SIZE), 2)
+	goal.add_widget(Vector2(Consts.GRID_SIZE,0), 1)
+	goal.add_widget(Vector2(-Consts.GRID_SIZE,0), 1)
+	
+	add_child(goal)
 	
 	pass # Replace with function body.
 
@@ -61,6 +72,8 @@ func _process(delta):
 		if cycle - last_cycle >= cycle_fraction:
 			for assembly:Assembly in assemblies:
 				assembly.snap_to_grid(self)
+			
+			goal.check()
 				
 		for machine:Machine in machines:
 			machine.run_to(cycle)
@@ -87,10 +100,8 @@ func _unhandled_input(event: InputEvent):
 			
 		elif(click_mode == PLACE_THING):
 			var new_assembly:Assembly = assembly_packed.instantiate()
-			var new_widget:Widget = widget_packed.instantiate()
-			new_widget.set_type(widget_type)
-			new_assembly.add_widget(new_widget)
-			new_assembly.position = thing_position
+			new_assembly.set_parameters(thing_position)
+			new_assembly.add_widget(Vector2(0, 0), widget_type) 
 			add_child(new_assembly)
 			assemblies.append(new_assembly)
 			new_assembly.deleted.connect(_on_assembly_delete)
@@ -141,7 +152,8 @@ func remove_machines(machine_position: Vector2, machine_layer: int):
 				remove_child(machines[i])
 				machines[i].queue_free()
 				machines.remove_at(i)
-			i -= 1
+				
+		i -= 1
 	pass
 
 func _on_assembly_delete(deleted: Assembly):

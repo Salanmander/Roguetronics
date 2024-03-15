@@ -46,6 +46,7 @@ func run_to(cycle:float):
 		
 		# If there are two widgets, combine them
 		if nearby_widgets.size() == 2:
+			print(str("Combining ", nearby_widgets[0], " and ", nearby_widgets[1]))
 			nearby_widgets[0].combine(self)
 			nearby_widgets[1].combine(self)
 			pass

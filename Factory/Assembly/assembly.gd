@@ -13,12 +13,16 @@ const LAYER = 1
 var widget_packed:PackedScene = load("res://Factory/Widget/widget.tscn")
 
 signal deleted(this_assembly:Assembly)
+signal perfect_overlap(other_assembly: Assembly)
 
 func _init():
 	widgets = []
 	nudges = []
 	last_cycle = 0
 	z_index = LAYER
+	
+func set_parameters(init_position: Vector2):
+	position = init_position
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -64,12 +68,18 @@ func run_to(cycle:float):
 	last_cycle = cycle
 	pass
 
+func add_widget(relative_position:Vector2, widget_type: int):
+	var new_widget:Widget = widget_packed.instantiate()
+	new_widget.set_parameters(relative_position, widget_type)
+	add_widget_object(new_widget)
+	pass
 
-func add_widget(new_widget:Widget):
+func add_widget_object(new_widget:Widget):
 	add_child(new_widget)
 	widgets.append(new_widget)
 	new_widget.nudged.connect(_on_widget_nudged)
 	new_widget.combined.connect(_on_widget_combined)
+	new_widget.overlap_detected_with.connect(_on_overlap_detected)
 	pass
 	
 func add_widget_from_other(new_widget:Widget, _other:Assembly):
@@ -78,9 +88,42 @@ func add_widget_from_other(new_widget:Widget, _other:Assembly):
 	widgets.append(new_widget)
 	new_widget.nudged.connect(_on_widget_nudged)
 	new_widget.combined.connect(_on_widget_combined)
+	new_widget.overlap_detected_with.connect(_on_overlap_detected)
 	
 func get_widgets() -> Array[Widget]:
 	return widgets.duplicate()
+
+# TODO: There has *got* to be a better way to do this
+func check_for_any_perfect_overlap():
+	for widget:Widget in widgets:
+		widget.tell_overlaps_to_check_assembly(self)
+	pass
+	
+func check_perfect_overlap_with(other: Assembly):
+	if(widgets.size() != other.widgets.size()):
+		return
+	
+	for widget in widgets:
+		var loc:Vector2 = position + widget.position
+		if !other.has_widget_at_position(loc, widget.type):
+			return
+	
+	# We have the same number of widgets, and have gone through and
+	# found we have the same type in the same locations
+	found_perfect_overlap_with(other)
+	other.found_perfect_overlap_with(self)
+	pass
+	
+func found_perfect_overlap_with(other: Assembly):
+	perfect_overlap.emit(other)
+	pass
+	
+func has_widget_at_position(loc: Vector2, type: int) -> bool:
+	for widget in widgets:
+		var this_loc:Vector2 = position + widget.position
+		if(this_loc.is_equal_approx(loc) && widget.type == type):
+			return true
+	return false
 	
 func _on_widget_nudged(delta:Vector2):
 	nudges.append(delta)
@@ -122,3 +165,8 @@ func _on_combiner_drop(combiner:Combiner):
 	var group_name:String = str("combining_by_",combiner.idString)
 	remove_from_group(group_name)
 	queued_combine_widget = null
+	
+func _on_overlap_detected(other_assembly: Assembly):
+	check_perfect_overlap_with(other_assembly)
+	
+	pass
