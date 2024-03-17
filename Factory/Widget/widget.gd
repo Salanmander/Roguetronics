@@ -7,6 +7,7 @@ var type:int = -1
 
 signal nudged(delta: Vector2)
 signal combined(this_widget:Widget, combined_by:Combiner)
+signal deleted(this_widget:Widget)
 signal overlap_detected_with(other_assembly: Assembly)
 
 func set_parameters(init_position:Vector2, widget_type:int):

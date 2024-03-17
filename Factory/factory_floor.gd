@@ -16,6 +16,7 @@ const NONE = 0
 const MODIFY_FLOOR = 1
 const PLACE_THING = 2
 const PLACE_COMBINER = 3
+const PLACE_DISPENSER = 4
 
 var selected:int = FLOOR_TILE
 var selected_variant:int = CONVEYOR_UP_VARIANT
@@ -30,6 +31,7 @@ var assemblies:Array[Assembly]
 
 var belt_packed:PackedScene = load("res://Factory/Machine/Belt/belt.tscn")
 var combiner_packed:PackedScene = load("res://Factory/Machine/Combiner/combiner.tscn")
+var dispenser_packed:PackedScene = load("res://Factory/Machine/Dispenser/dispenser.tscn")
 var machines:Array[Machine]
 var conveyor_direction:float
 
@@ -99,12 +101,7 @@ func _unhandled_input(event: InputEvent):
 			add_child(new_machine)
 			
 		elif(click_mode == PLACE_THING):
-			var new_assembly:Assembly = assembly_packed.instantiate()
-			new_assembly.set_parameters(thing_position)
-			new_assembly.add_widget(Vector2(0, 0), widget_type) 
-			add_child(new_assembly)
-			assemblies.append(new_assembly)
-			new_assembly.deleted.connect(_on_assembly_delete)
+			make_widget(thing_position, widget_type)
 				
 		elif(click_mode == PLACE_COMBINER):
 			var TOP = Vector2(0, -1)
@@ -137,8 +134,25 @@ func _unhandled_input(event: InputEvent):
 				machines.append(new_combiner)
 				
 			pass
+		elif(click_mode == PLACE_DISPENSER):
+			var new_dispenser:Dispenser = dispenser_packed.instantiate()
+			new_dispenser.set_parameters(thing_position, widget_type)
+			add_child(new_dispenser)
+			machines.append(new_dispenser)
+			new_dispenser.dispense.connect(_on_dispense)
+			
+			pass
 		pass
 	pass
+	
+func make_widget(widget_position: Vector2, init_widget_type: int):
+	var new_assembly:Assembly = assembly_packed.instantiate()
+	new_assembly.set_parameters(widget_position)
+	new_assembly.add_widget(Vector2(0, 0), init_widget_type) 
+	add_child(new_assembly)
+	assemblies.append(new_assembly)
+	new_assembly.deleted.connect(_on_assembly_delete)
+	
 	
 func remove_machines(machine_position: Vector2, machine_layer: int):
 	var i:int = machines.size() - 1
@@ -158,6 +172,9 @@ func remove_machines(machine_position: Vector2, machine_layer: int):
 
 func _on_assembly_delete(deleted: Assembly):
 	assemblies.erase(deleted)
+	
+func _on_dispense(loc: Vector2, init_widget_type: int):
+	make_widget(loc, init_widget_type)
 
 func _on_up_conveyor_select_pressed():
 	conveyor_direction = 0
@@ -188,6 +205,17 @@ func _on_place_widget2_pressed():
 	click_mode = PLACE_THING
 	widget_type = 2
 
+func _on_place_dispenser_pressed():
+	click_mode = PLACE_DISPENSER
+	widget_type = 1
+	pass # Replace with function body.
+
+
+func _on_place_dispenser2_pressed():
+	click_mode = PLACE_DISPENSER
+	widget_type = 2
+	pass # Replace with function body.
+	
 func _on_place_combiner_pressed():
 	click_mode = PLACE_COMBINER
 
@@ -198,6 +226,8 @@ func _on_move_object_pressed():
 
 func _on_stop_object_pressed():
 	run = false
+
+
 
 
 

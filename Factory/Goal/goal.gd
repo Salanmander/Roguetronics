@@ -9,6 +9,7 @@ var LAYER = 0
 func set_parameters(init_position:Vector2):
 	plan = assembly_packed.instantiate()
 	plan.set_parameters(init_position)
+	plan.affected_by_machines = false
 	add_child(plan)
 	plan.perfect_overlap.connect(_on_perfect_overlap)
 
@@ -30,6 +31,7 @@ func check():
 	plan.check_for_any_perfect_overlap()
 	
 func _on_perfect_overlap(other:Assembly):
+	other.delete_widgets()
 	other.delete()
 	
 

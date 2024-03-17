@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://dksdy6hagfrlo"]
+[gd_scene load_steps=16 format=3 uid="uid://dksdy6hagfrlo"]
 
 [ext_resource type="Texture2D" uid="uid://c75ii64xae637" path="res://Factory/icon.png" id="1_uqvcs"]
 [ext_resource type="Texture2D" uid="uid://ntfyndnf1obk" path="res://Factory/box.png" id="2_5b2d0"]
@@ -8,6 +8,8 @@
 [ext_resource type="Texture2D" uid="uid://bkhsm6uotntfp" path="res://Factory/Widget/widget2.png" id="4_ca5u6"]
 [ext_resource type="Texture2D" uid="uid://dpvqigf2ldir8" path="res://icon.svg" id="4_fq6om"]
 [ext_resource type="Texture2D" uid="uid://0nev7mkxipas" path="res://Factory/Machine/Combiner/combiner.png" id="4_rb14g"]
+[ext_resource type="Texture2D" uid="uid://dgxxdjh57j27q" path="res://Factory/Machine/Dispenser/dispenser.png" id="6_11ej4"]
+[ext_resource type="Texture2D" uid="uid://cat6imr33c48u" path="res://Factory/Machine/Dispenser/dispenser2.png" id="7_wes8x"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hjol2"]
 bg_color = Color(0.341176, 0.341176, 0.341176, 1)
@@ -155,11 +157,29 @@ expand_icon = true
 
 [node name="PlaceCombiner" type="Button" parent="UILayer/UI"]
 layout_mode = 0
+offset_left = 551.0
+offset_top = 124.0
+offset_right = 617.0
+offset_bottom = 190.0
+icon = ExtResource("4_rb14g")
+expand_icon = true
+
+[node name="PlaceDispenser" type="Button" parent="UILayer/UI"]
+layout_mode = 0
 offset_left = 704.0
 offset_top = 124.0
 offset_right = 770.0
 offset_bottom = 190.0
-icon = ExtResource("4_rb14g")
+icon = ExtResource("6_11ej4")
+expand_icon = true
+
+[node name="PlaceDispenser2" type="Button" parent="UILayer/UI"]
+layout_mode = 0
+offset_left = 626.0
+offset_top = 125.0
+offset_right = 692.0
+offset_bottom = 191.0
+icon = ExtResource("7_wes8x")
 expand_icon = true
 
 [node name="FactoryLayer" type="CanvasLayer" parent="."]
@@ -181,3 +201,5 @@ script = ExtResource("3_ulfng")
 [connection signal="pressed" from="UILayer/UI/Run" to="FactoryLayer/FactoryFloor" method="_on_move_object_pressed"]
 [connection signal="pressed" from="UILayer/UI/Pause" to="FactoryLayer/FactoryFloor" method="_on_stop_object_pressed"]
 [connection signal="pressed" from="UILayer/UI/PlaceCombiner" to="FactoryLayer/FactoryFloor" method="_on_place_combiner_pressed"]
+[connection signal="pressed" from="UILayer/UI/PlaceDispenser" to="FactoryLayer/FactoryFloor" method="_on_place_dispenser_pressed"]
+[connection signal="pressed" from="UILayer/UI/PlaceDispenser2" to="FactoryLayer/FactoryFloor" method="_on_place_dispenser2_pressed"]

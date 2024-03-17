@@ -3,6 +3,7 @@ class_name Assembly
 
 var widgets:Array[Widget]
 var nudges:Array[Vector2]
+var affected_by_machines:bool
 var queued_combine_widget:Widget
 
 var last_cycle:float
@@ -20,6 +21,7 @@ func _init():
 	nudges = []
 	last_cycle = 0
 	z_index = LAYER
+	affected_by_machines = true
 	
 func set_parameters(init_position: Vector2):
 	position = init_position
@@ -59,13 +61,13 @@ func run_to(cycle:float):
 	
 	nudges = []
 	
-	var cycle_fraction = fmod(cycle, 1)
-	if cycle - last_cycle >= cycle_fraction:
-		var printStr:String = str(widgets.size(), ": locations: ")
-		for widget:Widget in widgets:
-			printStr = str(printStr, "(", widget.position.x, ", ", widget.position.y, ")")
-		print(printStr)
-	last_cycle = cycle
+	#var cycle_fraction = fmod(cycle, 1)
+	#if cycle - last_cycle >= cycle_fraction:
+		#var printStr:String = str(widgets.size(), ": locations: ")
+		#for widget:Widget in widgets:
+			#printStr = str(printStr, "(", widget.position.x, ", ", widget.position.y, ")")
+		#print(printStr)
+	#last_cycle = cycle
 	pass
 
 func add_widget(relative_position:Vector2, widget_type: int):
@@ -86,6 +88,9 @@ func add_widget_from_other(new_widget:Widget, _other:Assembly):
 	var keep_global_transform:bool = true
 	new_widget.reparent(self, keep_global_transform)
 	widgets.append(new_widget)
+	new_widget.nudged.disconnect(_other._on_widget_nudged)
+	new_widget.combined.disconnect(_other._on_widget_combined)
+	new_widget.overlap_detected_with.disconnect(_other._on_overlap_detected)
 	new_widget.nudged.connect(_on_widget_nudged)
 	new_widget.combined.connect(_on_widget_combined)
 	new_widget.overlap_detected_with.connect(_on_overlap_detected)
@@ -126,7 +131,8 @@ func has_widget_at_position(loc: Vector2, type: int) -> bool:
 	return false
 	
 func _on_widget_nudged(delta:Vector2):
-	nudges.append(delta)
+	if(affected_by_machines):
+		nudges.append(delta)
 	pass
 
 func _on_widget_combined(widget:Widget, combiner:Combiner):
@@ -159,6 +165,10 @@ func combine_with(other: Assembly, _connect_point: Widget):
 func delete():
 	deleted.emit(self)
 	queue_free()
+	
+func delete_widgets():
+	for widget:Widget in widgets:
+		widget.deleted.emit(widget)
 	
 func _on_combiner_drop(combiner:Combiner):
 	combiner.drop.disconnect(_on_combiner_drop)

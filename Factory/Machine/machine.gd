@@ -37,9 +37,15 @@ func run_to(_cycle:float):
 func _on_area_entered(entering:Area2D):
 	if entering is Widget:
 		nearby_widgets.append(entering)
+		entering.deleted.connect(_on_nearby_widget_deleted)
 	pass
 	
 func _on_area_exited(exiting:Area2D):
-	nearby_widgets.erase(exiting)
+	if exiting is Widget:
+		nearby_widgets.erase(exiting)
+		exiting.deleted.disconnect(_on_nearby_widget_deleted)
 	pass
+	
+func _on_nearby_widget_deleted(deleted_widget:Widget):
+	nearby_widgets.erase(deleted_widget)
 
