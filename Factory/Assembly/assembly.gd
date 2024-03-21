@@ -78,6 +78,7 @@ func add_widget(relative_position:Vector2, widget_type: int):
 
 func add_widget_object(new_widget:Widget):
 	add_child(new_widget)
+	new_widget.record_parent(self)
 	widgets.append(new_widget)
 	new_widget.nudged.connect(_on_widget_nudged)
 	new_widget.combined.connect(_on_widget_combined)
@@ -87,6 +88,7 @@ func add_widget_object(new_widget:Widget):
 func add_widget_from_other(new_widget:Widget, _other:Assembly):
 	var keep_global_transform:bool = true
 	new_widget.reparent(self, keep_global_transform)
+	new_widget.record_parent(self)
 	widgets.append(new_widget)
 	new_widget.nudged.disconnect(_other._on_widget_nudged)
 	new_widget.combined.disconnect(_other._on_widget_combined)
@@ -105,6 +107,8 @@ func check_for_any_perfect_overlap():
 	pass
 	
 func check_perfect_overlap_with(other: Assembly):
+	if other == self:
+		return
 	if(widgets.size() != other.widgets.size()):
 		return
 	

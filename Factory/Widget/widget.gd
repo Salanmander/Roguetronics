@@ -5,6 +5,8 @@ var speed:Vector2 = Vector2(0,0)
 var tex:Texture
 var type:int = -1
 
+var parent_assembly:Assembly
+
 signal nudged(delta: Vector2)
 signal combined(this_widget:Widget, combined_by:Combiner)
 signal deleted(this_widget:Widget)
@@ -13,6 +15,9 @@ signal overlap_detected_with(other_assembly: Assembly)
 func set_parameters(init_position:Vector2, widget_type:int):
 	position = init_position
 	set_type(widget_type)
+	
+func record_parent(new_parent:Assembly):
+	parent_assembly = new_parent
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
