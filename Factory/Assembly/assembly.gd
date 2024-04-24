@@ -4,7 +4,14 @@ class_name Assembly
 var widgets:Array[Widget]
 var nudges:Array[Vector2]
 var affected_by_machines:bool
+var monitorable:bool
 var queued_combine_widget:Widget
+
+# 3x3 array. Contains 1 if the assembly can move in that direction
+# this cycle, -1 if not, 0 if unchecked. Index is the direction, so
+# negative indices are used, and [0][0] is the entry for not
+# moving (unused)
+var mobility:Array[Array]
 
 var last_cycle:float
 
@@ -15,16 +22,26 @@ var widget_packed:PackedScene = load("res://Factory/Widget/widget.tscn")
 
 signal deleted(this_assembly:Assembly)
 signal perfect_overlap(other_assembly: Assembly)
+signal blocked(direction: Vector2i)
 
 func _init():
 	widgets = []
 	nudges = []
+	mobility = [[0, 0, 0],
+				[0, 0, 0],
+				[0, 0, 0]]
 	last_cycle = 0
 	z_index = LAYER
 	affected_by_machines = true
+	monitorable = true
 	
 func set_parameters(init_position: Vector2):
 	position = init_position
+	
+func set_monitorable(new_monitorable: bool):
+	monitorable = new_monitorable
+	for widget:Widget in widgets:
+		widget.monitorable = monitorable
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -34,6 +51,147 @@ func _ready():
 # Is passing in the TileMap a good idea? I don't know!
 func snap_to_grid(grid:TileMap):
 	position = grid.map_to_local( grid.local_to_map(position))
+	
+
+#region Mobility
+
+# Indicate that mobility needs to be checked again.
+func reset_mobility():
+	mobility = [[0, 0, 0],
+				[0, 0, 0],
+				[0, 0, 0]]
+	for widget:Widget in widgets:
+		widget.reset_mobility()
+
+# Sets the mobility array
+func check_mobility():
+	
+	# I don't think this is necessary? Might be needed to prevent
+	# infinite looping.
+	#if checked_mobility:
+		#return
+		
+		
+	# Checking each direction
+	for x:int in [-1, 0, 1]:
+		for y:int in [-1, 0, 1]:
+			if x == 0 && y == 0:
+				continue
+			
+			var all_okay: bool = true
+			for widget:Widget in widgets:
+				# Response can be true, false, or a signal
+				# True means the widget is certain the local surroundings don't
+				# prevent it from moving.
+				# False means the widget is certain it can't move that way
+				# A signal is a signal that will be emitted, with a direction
+				# parameter, if the widget is blocked by something that didn't
+				# realize it when this was checked.
+				var response = widget.can_move_local(Vector2i(x, y))
+				if response is Signal:
+					all_okay = false
+					
+					# Makes the callback be a call to _on_blocked with one input based
+					# on what direction this is currently checking, and one input based
+					# on the signal parameter
+					response.connect(func(dir: Vector2i): _on_blocked(Vector2i(x, y), dir))
+					
+					# These are here in case I need to undo the anonymous function
+					#match [x, y]:
+						#[-1, -1]:
+							#response.connect(_on_blocked_nn)
+						#[-1, 0]:
+							#response.connect(_on_blocked_nz)
+						#[-1, 1]:
+							#response.connect(_on_blocked_np)
+						#[0, -1]:
+							#response.connect(_on_blocked_zn)
+						#[0, 1]:
+							#response.connect(_on_blocked_zp)
+						#[1, -1]:
+							#response.connect(_on_blocked_pn)
+						#[1, 0]:
+							#response.connect(_on_blocked_pz)
+						#[1, 1]:
+							#response.connect(_on_blocked_pp)
+							
+					pass
+				elif !response:
+					all_okay = false
+					record_blockage(Vector2i(x, y))
+					break
+					
+			# If we get through all the widgets and none report a blockage
+			# or potential blockage, record the direction as definitely okay
+			if all_okay:
+				mobility[x][y] = 1
+				
+			
+			pass
+	
+	for widget:Widget in widgets:
+		widget.set_assembly_can_move(mobility)
+			
+	pass
+	
+func can_move(direction: Vector2i):
+	pass
+		
+
+# Called whenever a blockage is seen in a certain direction.
+# Needs to check to see if direction has already been blocked,
+# and emit a signal iff this is the first time it's been noticed.
+# That is to prevent signal infinite loops
+func record_blockage(direction: Vector2i):
+	if(mobility[direction.x][direction.y] == -1):
+		return
+	mobility[direction.x][direction.y] = -1
+	blocked.emit(direction)
+	pass
+
+
+# Callbacks for when a blocked signal is coming from a particular direction
+# If the direction of the signal matches the direction it's coming from, then
+# record that direction as blocked if not already.
+func _on_blocked(signal_from: Vector2i, blocking_dir: Vector2i):
+	if signal_from == blocking_dir:
+		record_blockage(blocking_dir)
+	pass
+# These are here in case I need to undo the anonymous function
+func _on_blocked_nn(direction: Vector2i):
+	if direction == Vector2i(-1, -1):
+		record_blockage(direction)
+	pass
+func _on_blocked_nz(direction: Vector2i):
+	if direction == Vector2i(-1, 0):
+		record_blockage(direction)
+	pass
+func _on_blocked_np(direction: Vector2i):
+	if direction == Vector2i(-1, 1):
+		record_blockage(direction)
+	pass
+func _on_blocked_zn(direction: Vector2i):
+	if direction == Vector2i(0, -1):
+		record_blockage(direction)
+	pass
+func _on_blocked_zp(direction: Vector2i):
+	if direction == Vector2i(0, 1):
+		record_blockage(direction)
+	pass
+func _on_blocked_pn(direction: Vector2i):
+	if direction == Vector2i(1, -1):
+		record_blockage(direction)
+	pass
+func _on_blocked_pz(direction: Vector2i):
+	if direction == Vector2i(1, 0):
+		record_blockage(direction)
+	pass
+func _on_blocked_pp(direction: Vector2i):
+	if direction == Vector2i(1, 1):
+		record_blockage(direction)
+	pass
+
+#endregion
 	
 	
 func run_to(cycle:float):
@@ -57,6 +215,15 @@ func run_to(cycle:float):
 	var dx = dRight + dLeft
 	var dy = dDown + dUp
 	
+	if dx > 0 && mobility[1][0] == -1:
+		dx = 0
+	if dx < 0 && mobility[-1][0] == -1:
+		dx = 0
+	if dy > 0 && mobility[0][1] == -1:
+		dy = 0
+	if dy < 0 && mobility[0][-1] == -1:
+		dy = 0
+	
 	position += Vector2(dx, dy)
 	
 	nudges = []
@@ -79,20 +246,22 @@ func add_widget(relative_position:Vector2, widget_type: int):
 func add_widget_object(new_widget:Widget):
 	add_child(new_widget)
 	new_widget.record_parent(self)
+	new_widget.monitorable = monitorable
 	widgets.append(new_widget)
 	new_widget.nudged.connect(_on_widget_nudged)
 	new_widget.combined.connect(_on_widget_combined)
 	new_widget.overlap_detected_with.connect(_on_overlap_detected)
 	pass
 	
-func add_widget_from_other(new_widget:Widget, _other:Assembly):
+func add_widget_from_other(new_widget:Widget, other:Assembly):
 	var keep_global_transform:bool = true
 	new_widget.reparent(self, keep_global_transform)
 	new_widget.record_parent(self)
+	new_widget.monitorable = monitorable
 	widgets.append(new_widget)
-	new_widget.nudged.disconnect(_other._on_widget_nudged)
-	new_widget.combined.disconnect(_other._on_widget_combined)
-	new_widget.overlap_detected_with.disconnect(_other._on_overlap_detected)
+	new_widget.nudged.disconnect(other._on_widget_nudged)
+	new_widget.combined.disconnect(other._on_widget_combined)
+	new_widget.overlap_detected_with.disconnect(other._on_overlap_detected)
 	new_widget.nudged.connect(_on_widget_nudged)
 	new_widget.combined.connect(_on_widget_combined)
 	new_widget.overlap_detected_with.connect(_on_overlap_detected)
@@ -107,8 +276,8 @@ func check_for_any_perfect_overlap():
 	pass
 	
 func check_perfect_overlap_with(other: Assembly):
-	if other == self:
-		return
+	#if other == self:
+		#return
 	if(widgets.size() != other.widgets.size()):
 		return
 	

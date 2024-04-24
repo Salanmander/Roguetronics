@@ -17,6 +17,7 @@ func set_machine_parameters(init_position: Vector2, init_layer: int):
 	nearby_widgets = [] 
 	last_cycle = 0
 	z_index = init_layer
+	monitorable = false
 	pass
 
 

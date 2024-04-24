@@ -10,6 +10,7 @@ func set_parameters(init_position:Vector2):
 	plan = assembly_packed.instantiate()
 	plan.set_parameters(init_position)
 	plan.affected_by_machines = false
+	plan.set_monitorable(false)
 	add_child(plan)
 	plan.perfect_overlap.connect(_on_perfect_overlap)
 
@@ -19,7 +20,7 @@ func set_parameters(init_position:Vector2):
 func _ready():
 	# Filter to make the goal transparent
 	modulate = Color(1, 1, 1, 0.5)
-	pass # Replace with function body.
+	
 	
 func add_widget(init_position:Vector2, widget_type:int):
 	plan.add_widget(init_position, widget_type)

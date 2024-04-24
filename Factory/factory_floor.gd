@@ -17,12 +17,15 @@ const MODIFY_FLOOR = 1
 const PLACE_THING = 2
 const PLACE_COMBINER = 3
 const PLACE_DISPENSER = 4
+const PLACE_WALL = 5
 
 var selected:int = FLOOR_TILE
 var selected_variant:int = CONVEYOR_UP_VARIANT
 
 var click_mode:int = NONE
 var widget_type:int = 0
+
+var wall_packed:PackedScene = load("res://Factory/Wall/wall.tscn")
 
 var widget_packed:PackedScene = load("res://Factory/Widget/widget.tscn")
 var assembly_packed:PackedScene = load("res://Factory/Assembly/assembly.tscn")
@@ -42,6 +45,7 @@ var run:bool = false
 var cycle_time:float = 1 # Number of seconds for one cycle
 var cycle:float = 0 # Current cycle count
 var last_cycle:float = 0 # Previous frame cycle count
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -66,7 +70,10 @@ func _ready():
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
+	pass
+	
+func _physics_process(delta: float):
 	if run:
 		cycle += delta / cycle_time
 		
@@ -74,6 +81,13 @@ func _process(delta):
 		if cycle - last_cycle >= cycle_fraction:
 			for assembly:Assembly in assemblies:
 				assembly.snap_to_grid(self)
+				assembly.reset_mobility()
+			
+			# Need to check mobility after resetting all of them,
+			# because the mobility check recursively calls it
+			# on other assemblies
+			for assembly:Assembly in assemblies:
+				assembly.check_mobility()
 			
 			goal.check()
 				
@@ -82,6 +96,13 @@ func _process(delta):
 			
 		for assembly:Assembly in assemblies:
 			assembly.run_to(cycle)
+			
+		
+		# This runs if it's the *last* update before the end
+		# of the cycle
+		if cycle - last_cycle >= (1-cycle_fraction):
+			for assembly:Assembly in assemblies:
+				assembly.snap_to_grid(self)
 			
 		last_cycle = cycle
 	pass
@@ -140,6 +161,12 @@ func _unhandled_input(event: InputEvent):
 			add_child(new_dispenser)
 			machines.append(new_dispenser)
 			new_dispenser.dispense.connect(_on_dispense)
+			
+			pass
+		elif(click_mode == PLACE_WALL):
+			var new_wall:Wall = wall_packed.instantiate()
+			new_wall.set_parameters(thing_position)
+			add_child(new_wall)
 			
 			pass
 		pass
@@ -219,6 +246,9 @@ func _on_place_dispenser2_pressed():
 func _on_place_combiner_pressed():
 	click_mode = PLACE_COMBINER
 
+func _on_place_wall_pressed():
+	click_mode = PLACE_WALL
+
 
 func _on_move_object_pressed():
 	run = true
@@ -231,3 +261,10 @@ func _on_stop_object_pressed():
 
 
 
+
+
+
+func _on_test_pressed():
+	Engine.physics_ticks_per_second *= 1.2
+	Engine.max_physics_steps_per_frame *= 1.2
+	pass # Replace with function body.

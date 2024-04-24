@@ -182,6 +182,25 @@ offset_bottom = 191.0
 icon = ExtResource("7_wes8x")
 expand_icon = true
 
+[node name="PlaceWall" type="Button" parent="UILayer/UI"]
+layout_mode = 0
+offset_left = 551.0
+offset_top = 49.0
+offset_right = 617.0
+offset_bottom = 115.0
+text = "Wall"
+expand_icon = true
+
+[node name="Test" type="Button" parent="UILayer/UI"]
+layout_mode = 0
+offset_left = 944.0
+offset_top = 48.0
+offset_right = 1010.0
+offset_bottom = 114.0
+text = "Do The
+Thing"
+expand_icon = true
+
 [node name="FactoryLayer" type="CanvasLayer" parent="."]
 layer = 0
 scale = Vector2(0.4, 0.4)
@@ -203,3 +222,5 @@ script = ExtResource("3_ulfng")
 [connection signal="pressed" from="UILayer/UI/PlaceCombiner" to="FactoryLayer/FactoryFloor" method="_on_place_combiner_pressed"]
 [connection signal="pressed" from="UILayer/UI/PlaceDispenser" to="FactoryLayer/FactoryFloor" method="_on_place_dispenser_pressed"]
 [connection signal="pressed" from="UILayer/UI/PlaceDispenser2" to="FactoryLayer/FactoryFloor" method="_on_place_dispenser2_pressed"]
+[connection signal="pressed" from="UILayer/UI/PlaceWall" to="FactoryLayer/FactoryFloor" method="_on_place_wall_pressed"]
+[connection signal="pressed" from="UILayer/UI/Test" to="FactoryLayer/FactoryFloor" method="_on_test_pressed"]
