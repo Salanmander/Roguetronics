@@ -96,24 +96,6 @@ func check_mobility():
 					# on the signal parameter
 					response.connect(func(dir: Vector2i): _on_blocked(Vector2i(x, y), dir))
 					
-					# These are here in case I need to undo the anonymous function
-					#match [x, y]:
-						#[-1, -1]:
-							#response.connect(_on_blocked_nn)
-						#[-1, 0]:
-							#response.connect(_on_blocked_nz)
-						#[-1, 1]:
-							#response.connect(_on_blocked_np)
-						#[0, -1]:
-							#response.connect(_on_blocked_zn)
-						#[0, 1]:
-							#response.connect(_on_blocked_zp)
-						#[1, -1]:
-							#response.connect(_on_blocked_pn)
-						#[1, 0]:
-							#response.connect(_on_blocked_pz)
-						#[1, 1]:
-							#response.connect(_on_blocked_pp)
 							
 					pass
 				elif !response:
@@ -156,39 +138,6 @@ func record_blockage(direction: Vector2i):
 func _on_blocked(signal_from: Vector2i, blocking_dir: Vector2i):
 	if signal_from == blocking_dir:
 		record_blockage(blocking_dir)
-	pass
-# These are here in case I need to undo the anonymous function
-func _on_blocked_nn(direction: Vector2i):
-	if direction == Vector2i(-1, -1):
-		record_blockage(direction)
-	pass
-func _on_blocked_nz(direction: Vector2i):
-	if direction == Vector2i(-1, 0):
-		record_blockage(direction)
-	pass
-func _on_blocked_np(direction: Vector2i):
-	if direction == Vector2i(-1, 1):
-		record_blockage(direction)
-	pass
-func _on_blocked_zn(direction: Vector2i):
-	if direction == Vector2i(0, -1):
-		record_blockage(direction)
-	pass
-func _on_blocked_zp(direction: Vector2i):
-	if direction == Vector2i(0, 1):
-		record_blockage(direction)
-	pass
-func _on_blocked_pn(direction: Vector2i):
-	if direction == Vector2i(1, -1):
-		record_blockage(direction)
-	pass
-func _on_blocked_pz(direction: Vector2i):
-	if direction == Vector2i(1, 0):
-		record_blockage(direction)
-	pass
-func _on_blocked_pp(direction: Vector2i):
-	if direction == Vector2i(1, 1):
-		record_blockage(direction)
 	pass
 
 #endregion
