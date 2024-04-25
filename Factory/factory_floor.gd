@@ -77,10 +77,15 @@ func _physics_process(delta: float):
 	if run:
 		cycle += delta / cycle_time
 		
+		
+		# Need to combine before checking mobility
+		for machine:Machine in machines:
+			if machine is Combiner:
+				machine.run_to(cycle)
+		
 		var cycle_fraction = fmod(cycle, 1)
 		if cycle - last_cycle >= cycle_fraction:
 			for assembly:Assembly in assemblies:
-				assembly.snap_to_grid(self)
 				assembly.reset_mobility()
 			
 			# Need to check mobility after resetting all of them,
@@ -92,7 +97,8 @@ func _physics_process(delta: float):
 			goal.check()
 				
 		for machine:Machine in machines:
-			machine.run_to(cycle)
+			if !(machine is Combiner):
+				machine.run_to(cycle)
 			
 		for assembly:Assembly in assemblies:
 			assembly.run_to(cycle)

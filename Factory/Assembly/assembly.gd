@@ -55,11 +55,17 @@ func snap_to_grid(grid:TileMap):
 
 #region Mobility
 
+# TODO: disconnect mobility signals before checking each frame
+# TODO: add movement signal connections for nudging
+
 # Indicate that mobility needs to be checked again.
 func reset_mobility():
 	mobility = [[0, 0, 0],
 				[0, 0, 0],
 				[0, 0, 0]]
+	var blockedConnections:Array = blocked.get_connections()
+	#for conn in blockedConnections:
+		#blocked.disconnect(conn.callable)
 	for widget:Widget in widgets:
 		widget.reset_mobility()
 
@@ -279,6 +285,7 @@ func combine_with(other: Assembly, _connect_point: Widget):
 	var to_add:Array[Widget] = other.get_widgets()
 	for widget in to_add:
 		add_widget_from_other(widget, other)
+		
 	
 	other.delete()
 		
