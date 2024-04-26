@@ -122,13 +122,10 @@ func _unhandled_input(event: InputEvent):
 		if(click_mode == MODIFY_FLOOR):
 			# TODO: have framework for getting layer of thing to add
 			remove_machines(thing_position, 0)
-			var new_machine:Belt = belt_packed.instantiate()
-			new_machine.set_parameters(thing_position, conveyor_direction)
-			machines.append(new_machine)
-			add_child(new_machine)
+			make_belt(grid_loc, conveyor_direction)
 			
 		elif(click_mode == PLACE_THING):
-			make_widget(thing_position, widget_type)
+			make_widget(grid_loc, widget_type)
 				
 		elif(click_mode == PLACE_COMBINER):
 			var TOP = Vector2(0, -1)
@@ -152,39 +149,64 @@ func _unhandled_input(event: InputEvent):
 				
 			
 			if min_dist < Consts.GRID_SIZE/4: 
-				var new_combiner = combiner_packed.instantiate()
-				var direction = 0
-				if(wall_at_min_dist.y == 0):
-					direction = PI/2
-				new_combiner.set_parameters(thing_position + Vector2i(wall_at_min_dist), direction)
-				add_child(new_combiner)
-				machines.append(new_combiner)
+				make_combiner(grid_loc, wall_at_min_dist)
 				
 			pass
 		elif(click_mode == PLACE_DISPENSER):
-			var new_dispenser:Dispenser = dispenser_packed.instantiate()
-			new_dispenser.set_parameters(thing_position, widget_type)
-			add_child(new_dispenser)
-			machines.append(new_dispenser)
-			new_dispenser.dispense.connect(_on_dispense)
+			make_dispenser(grid_loc, widget_type)
 			
 			pass
 		elif(click_mode == PLACE_WALL):
-			var new_wall:Wall = wall_packed.instantiate()
-			new_wall.set_parameters(thing_position)
-			add_child(new_wall)
+			make_wall(grid_loc)
 			
 			pass
 		pass
 	pass
 	
-func make_widget(widget_position: Vector2, init_widget_type: int):
+#region object creating functions
+
+func make_widget(grid_position: Vector2i, init_widget_type: int):
+	var widget_position: Vector2 = map_to_local(grid_position)
 	var new_assembly:Assembly = assembly_packed.instantiate()
 	new_assembly.set_parameters(widget_position)
 	new_assembly.add_widget(Vector2(0, 0), init_widget_type) 
 	add_child(new_assembly)
 	assemblies.append(new_assembly)
 	new_assembly.deleted.connect(_on_assembly_delete)
+	
+func make_wall(grid_position: Vector2i):
+	var wall_position: Vector2 = map_to_local(grid_position)
+	var new_wall:Wall = wall_packed.instantiate()
+	new_wall.set_parameters(wall_position)
+	add_child(new_wall)
+	
+func make_belt(grid_position: Vector2i, direction: int):
+	var belt_position: Vector2 = map_to_local(grid_position)
+	var new_machine:Belt = belt_packed.instantiate()
+	new_machine.set_parameters(belt_position, conveyor_direction)
+	machines.append(new_machine)
+	add_child(new_machine)
+	
+func make_dispenser(grid_position: Vector2i, dispense_type: int):
+	var dispenser_position: Vector2 = map_to_local(grid_position)
+	var new_dispenser:Dispenser = dispenser_packed.instantiate()
+	new_dispenser.set_parameters(dispenser_position, dispense_type)
+	add_child(new_dispenser)
+	machines.append(new_dispenser)
+	new_dispenser.dispense.connect(_on_dispense)
+	
+func make_combiner(grid_position: Vector2i, offset_dir: Vector2i):
+	
+	var combiner_position: Vector2 = map_to_local(grid_position)
+	var new_combiner = combiner_packed.instantiate()
+	var direction = 0
+	if(offset_dir.y == 0):
+		direction = PI/2
+	new_combiner.set_parameters(Vector2i(combiner_position) + offset_dir, direction)
+	add_child(new_combiner)
+	machines.append(new_combiner)
+	
+#endregion
 	
 	
 func remove_machines(machine_position: Vector2, machine_layer: int):
@@ -207,7 +229,7 @@ func _on_assembly_delete(deleted: Assembly):
 	assemblies.erase(deleted)
 	
 func _on_dispense(loc: Vector2, init_widget_type: int):
-	make_widget(loc, init_widget_type)
+	make_widget(local_to_map(loc), init_widget_type)
 
 func _on_up_conveyor_select_pressed():
 	conveyor_direction = 0
@@ -267,10 +289,15 @@ func _on_stop_object_pressed():
 
 
 
+#region Debug helpers
 
+func spawnWidget(type: int, x: int, y:int):
+	pass
 
 
 func _on_test_pressed():
 	Engine.physics_ticks_per_second *= 1.2
 	Engine.max_physics_steps_per_frame *= 1.2
 	pass # Replace with function body.
+
+#endregion
