@@ -56,13 +56,8 @@ func _ready():
 	
 	assemblies = []
 	machines = []
-	
-	goal = goal_packed.instantiate()
-	goal.set_parameters(map_to_local(Vector2i(10,2)))
-	goal.add_widget(Vector2(0,0), 2)
-	goal.add_widget(Vector2(0,-Consts.GRID_SIZE), 2)
-	goal.add_widget(Vector2(Consts.GRID_SIZE,0), 1)
-	goal.add_widget(Vector2(-Consts.GRID_SIZE,0), 1)
+
+	setup_debug_objects()
 	
 	add_child(goal)
 	
@@ -202,7 +197,7 @@ func make_combiner(grid_position: Vector2i, offset_dir: Vector2i):
 	var direction = 0
 	if(offset_dir.y == 0):
 		direction = PI/2
-	new_combiner.set_parameters(Vector2i(combiner_position) + offset_dir, direction)
+	new_combiner.set_parameters(Vector2i(combiner_position) + offset_dir*Consts.GRID_SIZE/2, direction)
 	add_child(new_combiner)
 	machines.append(new_combiner)
 	
@@ -291,8 +286,20 @@ func _on_stop_object_pressed():
 
 #region Debug helpers
 
-func spawnWidget(type: int, x: int, y:int):
-	pass
+func setup_debug_objects():
+	
+	goal = goal_packed.instantiate()
+	goal.set_parameters(map_to_local(Vector2i(10,2)))
+	goal.add_widget(Vector2(0,0), 2)
+	goal.add_widget(Vector2(0,-Consts.GRID_SIZE), 2)
+	goal.add_widget(Vector2(Consts.GRID_SIZE,0), 1)
+	goal.add_widget(Vector2(-Consts.GRID_SIZE,0), 1)
+	
+	make_widget(Vector2i(10, 5), 1)
+	make_widget(Vector2i(10, 6), 2)
+	make_widget(Vector2i(9, 6), 1)
+	
+	make_combiner(Vector2i(10, 5), Vector2i(0, 1))
 
 
 func _on_test_pressed():
