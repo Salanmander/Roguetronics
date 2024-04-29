@@ -175,10 +175,10 @@ func make_wall(grid_position: Vector2i):
 	new_wall.set_parameters(wall_position)
 	add_child(new_wall)
 	
-func make_belt(grid_position: Vector2i, direction: int):
+func make_belt(grid_position: Vector2i, direction: float):
 	var belt_position: Vector2 = map_to_local(grid_position)
 	var new_machine:Belt = belt_packed.instantiate()
-	new_machine.set_parameters(belt_position, conveyor_direction)
+	new_machine.set_parameters(belt_position, direction)
 	machines.append(new_machine)
 	add_child(new_machine)
 	
@@ -227,22 +227,22 @@ func _on_dispense(loc: Vector2, init_widget_type: int):
 	make_widget(local_to_map(loc), init_widget_type)
 
 func _on_up_conveyor_select_pressed():
-	conveyor_direction = 0
+	conveyor_direction = Consts.UP
 	click_mode = MODIFY_FLOOR
 
 
 func _on_down_conveyor_select_pressed():
-	conveyor_direction = PI
+	conveyor_direction = Consts.DOWN
 	click_mode = MODIFY_FLOOR
 
 
 func _on_left_conveyor_select_pressed():
-	conveyor_direction = 3*PI/2
+	conveyor_direction = Consts.LEFT
 	click_mode = MODIFY_FLOOR
 
 
 func _on_right_conveyor_select_pressed():
-	conveyor_direction = PI/2
+	conveyor_direction = Consts.RIGHT
 	click_mode = MODIFY_FLOOR
 
 
@@ -295,11 +295,20 @@ func setup_debug_objects():
 	goal.add_widget(Vector2(Consts.GRID_SIZE,0), 1)
 	goal.add_widget(Vector2(-Consts.GRID_SIZE,0), 1)
 	
-	make_widget(Vector2i(10, 5), 1)
 	make_widget(Vector2i(10, 6), 2)
+	make_widget(Vector2i(10, 5), 1)
 	make_widget(Vector2i(9, 6), 1)
 	
 	make_combiner(Vector2i(10, 5), Vector2i(0, 1))
+	
+	make_belt(Vector2i(9, 6), Consts.RIGHT)
+	make_belt(Vector2i(10, 6), Consts.RIGHT)
+	make_belt(Vector2i(11, 6), Consts.RIGHT)
+	make_belt(Vector2i(12, 6), Consts.RIGHT)
+	
+	make_belt(Vector2i(10, 5), Consts.UP)
+	
+	make_wall(Vector2i(11,5))
 
 
 func _on_test_pressed():
