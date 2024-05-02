@@ -63,9 +63,9 @@ func reset_mobility():
 	mobility = [[0, 0, 0],
 				[0, 0, 0],
 				[0, 0, 0]]
-	var blockedConnections:Array = blocked.get_connections()
-	#for conn in blockedConnections:
-		#blocked.disconnect(conn.callable)
+	var blocked_connections:Array = blocked.get_connections()
+	for conn in blocked_connections:
+		blocked.disconnect(conn.callable)
 	for widget:Widget in widgets:
 		widget.reset_mobility()
 
@@ -210,8 +210,7 @@ func add_widget_object(new_widget:Widget):
 	
 func add_widget_from_other(new_widget:Widget, other:Assembly):
 	var keep_global_transform:bool = true
-	new_widget.reparent(self, keep_global_transform)
-	new_widget.record_parent(self)
+	new_widget.reparent_custom(self, keep_global_transform)
 	new_widget.monitorable = monitorable
 	widgets.append(new_widget)
 	new_widget.nudged.disconnect(other._on_widget_nudged)
