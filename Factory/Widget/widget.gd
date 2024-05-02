@@ -135,6 +135,17 @@ func nudge(delta: Vector2):
 func combine(combiner:Combiner):
 	combined.emit(self, combiner)
 	
+func reparent_custom(new_parent: Assembly, keep_global_transform:bool ):
+	
+	# Storing the nearby areas state is necessary because reparenting
+	# seems to trigger *leaving* signals on this area, but not *entering*
+	# ones. (Other areas seem to do just fine keeping track of this one.)
+	var store_nearby_areas = nearby_areas.duplicate()
+	reparent(new_parent, keep_global_transform)
+	nearby_areas = store_nearby_areas
+	
+	record_parent(new_parent)
+	
 
 
 func _on_area_entered(entering:Area2D):
