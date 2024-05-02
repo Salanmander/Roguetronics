@@ -294,21 +294,8 @@ func setup_debug_objects():
 	goal.add_widget(Vector2(0,-Consts.GRID_SIZE), 2)
 	goal.add_widget(Vector2(Consts.GRID_SIZE,0), 1)
 	goal.add_widget(Vector2(-Consts.GRID_SIZE,0), 1)
+
 	
-	make_widget(Vector2i(9, 6), 1)
-	make_widget(Vector2i(10, 5), 1)
-	make_widget(Vector2i(10, 6), 2)
-	
-	make_combiner(Vector2i(10, 5), Vector2i(0, 1))
-	
-	make_belt(Vector2i(9, 6), Consts.RIGHT)
-	make_belt(Vector2i(10, 6), Consts.RIGHT)
-	make_belt(Vector2i(11, 6), Consts.RIGHT)
-	make_belt(Vector2i(12, 6), Consts.RIGHT)
-	
-	make_belt(Vector2i(10, 5), Consts.UP)
-	
-	make_wall(Vector2i(11,5))
 
 
 func _on_test_pressed():
