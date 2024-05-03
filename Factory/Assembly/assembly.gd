@@ -23,6 +23,7 @@ var widget_packed:PackedScene = load("res://Factory/Widget/widget.tscn")
 signal deleted(this_assembly:Assembly)
 signal perfect_overlap(other_assembly: Assembly)
 signal blocked(direction: Vector2i)
+signal nudged(direction: Vector2)
 
 func _init():
 	widgets = []
@@ -63,9 +64,15 @@ func reset_mobility():
 	mobility = [[0, 0, 0],
 				[0, 0, 0],
 				[0, 0, 0]]
+	
+	# Disconnect mobility signals
 	var blocked_connections:Array = blocked.get_connections()
 	for conn in blocked_connections:
 		blocked.disconnect(conn.callable)
+	var nudged_connections:Array = nudged.get_connections()
+	for conn in nudged_connections:
+		nudged.disconnect(conn.callable)
+		
 	for widget:Widget in widgets:
 		widget.reset_mobility()
 
@@ -104,7 +111,7 @@ func check_mobility():
 					
 							
 					pass
-				elif !response:
+				elif not response:
 					all_okay = false
 					record_blockage(Vector2i(x, y))
 					break
@@ -118,6 +125,10 @@ func check_mobility():
 			pass
 	
 	for widget:Widget in widgets:
+		# Passes the nudged signal of this assembly to each widget,
+		# to have it connect it to nearby assemblies.
+		# It might get connected multiple times, but that's okay
+		widget.connect_nudged_signals(nudged)
 		widget.set_assembly_can_move(mobility)
 			
 	pass
@@ -158,25 +169,25 @@ func run_to(cycle:float):
 	for nudge in nudges:
 		var x:float = nudge.x
 		var y:float = nudge.y
-		if x > 0 && x > dRight:
+		if x > 0 and x > dRight:
 			dRight = x
-		if x < 0 && x < dLeft:
+		if x < 0 and x < dLeft:
 			dLeft = x
-		if y > 0 && y > dDown:
+		if y > 0 and y > dDown:
 			dDown = y
-		if y < 0 && y < dUp:
+		if y < 0 and y < dUp:
 			dUp = y
 			
 	var dx = dRight + dLeft
 	var dy = dDown + dUp
 	
-	if dx > 0 && mobility[1][0] == -1:
+	if dx > 0 and mobility[1][0] == -1:
 		dx = 0
-	if dx < 0 && mobility[-1][0] == -1:
+	if dx < 0 and mobility[-1][0] == -1:
 		dx = 0
-	if dy > 0 && mobility[0][1] == -1:
+	if dy > 0 and mobility[0][1] == -1:
 		dy = 0
-	if dy < 0 && mobility[0][-1] == -1:
+	if dy < 0 and mobility[0][-1] == -1:
 		dy = 0
 	
 	position += Vector2(dx, dy)
@@ -237,7 +248,7 @@ func check_perfect_overlap_with(other: Assembly):
 	
 	for widget in widgets:
 		var loc:Vector2 = position + widget.position
-		if !other.has_widget_at_position(loc, widget.type):
+		if not other.has_widget_at_position(loc, widget.type):
 			return
 	
 	# We have the same number of widgets, and have gone through and
@@ -260,6 +271,7 @@ func has_widget_at_position(loc: Vector2, type: int) -> bool:
 func _on_widget_nudged(delta:Vector2):
 	if(affected_by_machines):
 		nudges.append(delta)
+		nudged.emit(delta)
 	pass
 
 func _on_widget_combined(widget:Widget, combiner:Combiner):
@@ -282,7 +294,7 @@ func combine_with(other: Assembly, _connect_point: Widget):
 	assert(queued_combine_widget != null, "Error: Combine was initiated without connection point being set")
 	
 	var to_add:Array[Widget] = other.get_widgets()
-	for widget in to_add:
+	for widget:Widget in to_add:
 		add_widget_from_other(widget, other)
 		
 	

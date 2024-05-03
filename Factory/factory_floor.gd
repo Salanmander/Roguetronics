@@ -92,7 +92,7 @@ func _physics_process(delta: float):
 			goal.check()
 				
 		for machine:Machine in machines:
-			if !(machine is Combiner):
+			if not (machine is Combiner):
 				machine.run_to(cycle)
 			
 		for assembly:Assembly in assemblies:
@@ -130,7 +130,7 @@ func _unhandled_input(event: InputEvent):
 			
 			var directions:Array[Vector2] = [TOP, RIGHT, BOTTOM, LEFT]
 			var min_dist:float = Consts.GRID_SIZE
-			var wall_at_min_dist:Vector2
+			var dir_of_min_dist:Vector2i
 			
 			for dir in directions:
 				var edge_spot:Vector2 = dir*Consts.GRID_SIZE/2.0
@@ -140,11 +140,11 @@ func _unhandled_input(event: InputEvent):
 				var dist:float = click_spot.distance_to(edge_spot)
 				if dist < min_dist:
 					min_dist = dist
-					wall_at_min_dist = edge_spot
+					dir_of_min_dist = dir
 				
 			
 			if min_dist < Consts.GRID_SIZE/4: 
-				make_combiner(grid_loc, wall_at_min_dist)
+				make_combiner(grid_loc, dir_of_min_dist)
 				
 			pass
 		elif(click_mode == PLACE_DISPENSER):

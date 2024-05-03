@@ -110,6 +110,17 @@ func set_assembly_can_move(assembly_mobility: Array):
 	for x in [-1, 0, 1]:
 		for y in [-1, 0, 1]:
 			mobility[x][y] = assembly_mobility[x][y]
+			
+func connect_nudged_signals(signal_from_parent: Signal):
+	for area:Area2D in nearby_areas:
+		var should_connect = false
+		if area is Widget:
+			should_connect = true
+			
+			
+		if not should_connect:
+			continue
+	pass
 
 #endregion
 
@@ -141,10 +152,15 @@ func reparent_custom(new_parent: Assembly, keep_global_transform:bool ):
 	# seems to trigger *leaving* signals on this area, but not *entering*
 	# ones. (Other areas seem to do just fine keeping track of this one.)
 	var store_nearby_areas = nearby_areas.duplicate()
+	record_parent(new_parent)
 	reparent(new_parent, keep_global_transform)
 	nearby_areas = store_nearby_areas
 	
-	record_parent(new_parent)
+	for area:Area2D in nearby_areas:
+		if area is Widget:
+			if area.parent_assembly == self.parent_assembly:
+				nearby_areas.erase(area)
+	
 	
 
 
