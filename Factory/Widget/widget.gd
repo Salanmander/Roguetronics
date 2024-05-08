@@ -115,11 +115,14 @@ func connect_nudged_signals(signal_from_parent: Signal):
 	for area:Area2D in nearby_areas:
 		var should_connect = false
 		if area is Widget:
-			should_connect = true
+			var to_other = (area.global_position - self.global_position).normalized()
+			
+			signal_from_parent.connect(func(delta: Vector2): 
+				area.parent_assembly._on_nudged_toward_direction(to_other, delta))
 			
 			
-		if not should_connect:
-			continue
+			
+		
 	pass
 
 #endregion
@@ -179,6 +182,8 @@ func _on_area_exited(exiting:Area2D):
 	elif exiting is Widget:
 		if exiting in nearby_areas:
 			nearby_areas.erase(exiting)
+			# BUG: sometimes this tries to erase a connection that
+			# doesn't exist. Probably to do with combining widgets again.
 			exiting.deleted.disconnect(_on_nearby_widget_deleted)
 	pass
 	

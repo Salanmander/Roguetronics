@@ -23,7 +23,7 @@ var widget_packed:PackedScene = load("res://Factory/Widget/widget.tscn")
 signal deleted(this_assembly:Assembly)
 signal perfect_overlap(other_assembly: Assembly)
 signal blocked(direction: Vector2i)
-signal nudged(direction: Vector2)
+signal nudged(delta: Vector2)
 
 func _init():
 	widgets = []
@@ -267,6 +267,12 @@ func has_widget_at_position(loc: Vector2, type: int) -> bool:
 		if(this_loc.is_equal_approx(loc) && widget.type == type):
 			return true
 	return false
+	
+func _on_nudged_toward_direction(dir: Vector2, delta: Vector2):
+	var angle_between = delta.angle_to(dir)
+	if abs(angle_between) > 0.01:
+		return
+	_on_widget_nudged(delta)
 	
 func _on_widget_nudged(delta:Vector2):
 	if(affected_by_machines):
