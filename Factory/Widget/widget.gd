@@ -149,6 +149,8 @@ func nudge(delta: Vector2):
 func combine(combiner:Combiner):
 	combined.emit(self, combiner)
 	
+# BUG: There are still some problems with signal connections 
+# while reparenting, I think
 func reparent_custom(new_parent: Assembly, keep_global_transform:bool ):
 	
 	# Storing the nearby areas state is necessary because reparenting
