@@ -159,10 +159,17 @@ func reparent_custom(new_parent: Assembly, keep_global_transform:bool ):
 	reparent(new_parent, keep_global_transform)
 	nearby_areas = store_nearby_areas
 	
+	var to_remove: Array[Area2D] = []
 	for area:Area2D in nearby_areas:
 		if area is Widget:
 			if area.parent_assembly == self.parent_assembly:
-				nearby_areas.erase(area)
+				to_remove.append(area)
+			else:
+				area.deleted.connect(_on_nearby_widget_deleted)
+				
+	for area:Area2D in to_remove:
+		nearby_areas.erase(area)
+				
 	
 	
 
