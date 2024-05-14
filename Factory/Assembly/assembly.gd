@@ -1,11 +1,11 @@
 extends Node2D
 class_name Assembly
 
-var widgets:Array[Widget]
+var widgets:Array[WidgetBody]
 var nudges:Array[Vector2]
 var affected_by_machines:bool
 var monitorable:bool
-var queued_combine_widget:Widget
+var queued_combine_widget:WidgetBody
 
 # 3x3 array. Contains 1 if the assembly can move in that direction
 # this cycle, -1 if not, 0 if unchecked. Index is the direction, so
@@ -18,7 +18,7 @@ var last_cycle:float
 const LAYER = 1
 
 
-var widget_packed:PackedScene = load("res://Factory/Widget/widget.tscn")
+var widget_packed:PackedScene = load("res://Factory/Widget/widget_body.tscn")
 
 signal deleted(this_assembly:Assembly)
 signal perfect_overlap(other_assembly: Assembly)
@@ -41,7 +41,7 @@ func set_parameters(init_position: Vector2):
 	
 func set_monitorable(new_monitorable: bool):
 	monitorable = new_monitorable
-	for widget:Widget in widgets:
+	for widget:WidgetBody in widgets:
 		widget.monitorable = monitorable
 
 # Called when the node enters the scene tree for the first time.
@@ -73,7 +73,7 @@ func reset_mobility():
 	for conn in nudged_connections:
 		nudged.disconnect(conn.callable)
 		
-	for widget:Widget in widgets:
+	for widget:WidgetBody in widgets:
 		widget.reset_mobility()
 
 # Sets the mobility array
@@ -92,7 +92,7 @@ func check_mobility():
 				continue
 			
 			var all_okay: bool = true
-			for widget:Widget in widgets:
+			for widget:WidgetBody in widgets:
 				# Response can be true, false, or a signal
 				# True means the widget is certain the local surroundings don't
 				# prevent it from moving.
@@ -124,7 +124,7 @@ func check_mobility():
 			
 			pass
 	
-	for widget:Widget in widgets:
+	for widget:WidgetBody in widgets:
 		# Passes the nudged signal of this assembly to each widget,
 		# to have it connect it to nearby assemblies.
 		# It might get connected multiple times, but that's okay
@@ -197,19 +197,19 @@ func run_to(cycle:float):
 	#var cycle_fraction = fmod(cycle, 1)
 	#if cycle - last_cycle >= cycle_fraction:
 		#var printStr:String = str(widgets.size(), ": locations: ")
-		#for widget:Widget in widgets:
+		#for widget:WidgetBody in widgets:
 			#printStr = str(printStr, "(", widget.position.x, ", ", widget.position.y, ")")
 		#print(printStr)
 	#last_cycle = cycle
 	pass
 
 func add_widget(relative_position:Vector2, widget_type: int):
-	var new_widget:Widget = widget_packed.instantiate()
+	var new_widget:WidgetBody = widget_packed.instantiate()
 	new_widget.set_parameters(relative_position, widget_type)
 	add_widget_object(new_widget)
 	pass
 
-func add_widget_object(new_widget:Widget):
+func add_widget_object(new_widget:WidgetBody):
 	add_child(new_widget)
 	new_widget.record_parent(self)
 	new_widget.monitorable = monitorable
@@ -219,7 +219,7 @@ func add_widget_object(new_widget:Widget):
 	new_widget.overlap_detected_with.connect(_on_overlap_detected)
 	pass
 	
-func add_widget_from_other(new_widget:Widget, other:Assembly):
+func add_widget_from_other(new_widget:WidgetBody, other:Assembly):
 	var keep_global_transform:bool = true
 	new_widget.reparent_custom(self, keep_global_transform)
 	new_widget.monitorable = monitorable
@@ -231,12 +231,12 @@ func add_widget_from_other(new_widget:Widget, other:Assembly):
 	new_widget.combined.connect(_on_widget_combined)
 	new_widget.overlap_detected_with.connect(_on_overlap_detected)
 	
-func get_widgets() -> Array[Widget]:
+func get_widgets() -> Array[WidgetBody]:
 	return widgets.duplicate()
 
 # TODO: There has *got* to be a better way to do this
 func check_for_any_perfect_overlap():
-	for widget:Widget in widgets:
+	for widget:WidgetBody in widgets:
 		widget.tell_overlaps_to_check_assembly(self)
 	pass
 	
@@ -279,7 +279,7 @@ func _on_widget_nudged(delta:Vector2):
 		nudges.append(delta)
 	pass
 
-func _on_widget_combined(widget:Widget, combiner:Combiner):
+func _on_widget_combined(widget:WidgetBody, combiner:Combiner):
 	var group_name:String = str("combining_by_",combiner.idString)
 	var combining_assemblies:Array[Node] = get_tree().get_nodes_in_group(group_name)
 	if combining_assemblies.size() == 1 && combining_assemblies[0] is Assembly:
@@ -295,11 +295,11 @@ func _on_widget_combined(widget:Widget, combiner:Combiner):
 		
 	pass
 	
-func combine_with(other: Assembly, _connect_point: Widget):
+func combine_with(other: Assembly, _connect_point: WidgetBody):
 	assert(queued_combine_widget != null, "Error: Combine was initiated without connection point being set")
 	
-	var to_add:Array[Widget] = other.get_widgets()
-	for widget:Widget in to_add:
+	var to_add:Array[WidgetBody] = other.get_widgets()
+	for widget:WidgetBody in to_add:
 		add_widget_from_other(widget, other)
 		
 	
@@ -312,7 +312,7 @@ func delete():
 	queue_free()
 	
 func delete_widgets():
-	for widget:Widget in widgets:
+	for widget:WidgetBody in widgets:
 		widget.deleted.emit(widget)
 	
 func _on_combiner_drop(combiner:Combiner):

@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://ddvg4lrv8hfa1"]
+
+[ext_resource type="Script" path="res://Factory/Widget/widget_body.gd" id="1_15423"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5pqkx"]
+size = Vector2(128, 128)
+
+[node name="WidgetBody" type="RigidBody2D"]
+gravity_scale = 0.0
+linear_damp = 10000.0
+script = ExtResource("1_15423")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_5pqkx")
