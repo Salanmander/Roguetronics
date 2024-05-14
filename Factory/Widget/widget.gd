@@ -191,8 +191,6 @@ func _on_area_exited(exiting:Area2D):
 	elif exiting is Widget:
 		if exiting in nearby_areas:
 			nearby_areas.erase(exiting)
-			# BUG: sometimes this tries to erase a connection that
-			# doesn't exist. Probably to do with combining widgets again.
 			exiting.deleted.disconnect(_on_nearby_widget_deleted)
 	pass
 	

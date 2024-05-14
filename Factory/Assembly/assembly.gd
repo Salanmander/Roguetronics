@@ -277,7 +277,6 @@ func _on_nudged_toward_direction(dir: Vector2, delta: Vector2):
 func _on_widget_nudged(delta:Vector2):
 	if(affected_by_machines):
 		nudges.append(delta)
-		nudged.emit(delta)
 	pass
 
 func _on_widget_combined(widget:Widget, combiner:Combiner):
