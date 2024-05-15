@@ -64,6 +64,9 @@ func set_type(widget_type: int):
 	
 	$Sprite2D.texture = tex
 	
+func run_to(cycle: float):
+	pass
+	
 
 #region Mobility
 
@@ -71,6 +74,7 @@ func reset_mobility():
 	mobility = [[0, 0, 0],
 				[0, 0, 0],
 				[0, 0, 0]]
+	linear_velocity = Vector2(0,0)
 
 # This method only checks for the response from a single
 # nearby area in the same direction as the questioned direction.
@@ -145,7 +149,8 @@ func check_overlap_with(other_assembly: Assembly):
 
 	
 func nudge(delta: Vector2):
-	nudged.emit(delta)
+	linear_velocity += delta*60
+	#nudged.emit(delta)
 
 func combine(combiner:Combiner):
 	combined.emit(self, combiner)

@@ -6,6 +6,7 @@
 size = Vector2(128, 128)
 
 [node name="Wall" type="RigidBody2D"]
+freeze = true
 script = ExtResource("1_1citb")
 
 [node name="Polygon2D" type="Polygon2D" parent="."]

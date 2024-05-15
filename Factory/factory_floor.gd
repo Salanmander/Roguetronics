@@ -27,9 +27,9 @@ var widget_type:int = 0
 
 var wall_packed:PackedScene = load("res://Factory/Wall/wall.tscn")
 
-var widget_packed:PackedScene = load("res://Factory/Widget/widget.tscn")
+var widget_packed:PackedScene = load("res://Factory/Widget/widget_body.tscn")
 var assembly_packed:PackedScene = load("res://Factory/Assembly/assembly.tscn")
-var assemblies:Array[Assembly]
+var assemblies:Array[WidgetBody]
 
 
 var belt_packed:PackedScene = load("res://Factory/Machine/Belt/belt.tscn")
@@ -78,31 +78,33 @@ func _physics_process(delta: float):
 				machine.run_to(cycle)
 		
 		var cycle_fraction = fmod(cycle, 1)
-		if cycle - last_cycle >= cycle_fraction:
-			for assembly:Assembly in assemblies:
-				assembly.reset_mobility()
-			
-			# Need to check mobility after resetting all of them,
-			# because the mobility check recursively calls it
-			# on other assemblies
-			for assembly:Assembly in assemblies:
-				assembly.check_mobility()
-			
+		#if cycle - last_cycle >= cycle_fraction:
+			#for assembly:WidgetBody in assemblies:
+				#assembly.reset_mobility()
+			#
+			## Need to check mobility after resetting all of them,
+			## because the mobility check recursively calls it
+			## on other assemblies
+			#for assembly:WidgetBody in assemblies:
+				#assembly.check_mobility()
+			#
 			#goal.check()
+		for assembly:WidgetBody in assemblies:
+			assembly.reset_mobility()
 				
 		for machine:Machine in machines:
 			if not (machine is Combiner):
 				machine.run_to(cycle)
 			
-		for assembly:Assembly in assemblies:
+		for assembly:WidgetBody in assemblies:
 			assembly.run_to(cycle)
 			
 		
 		# This runs if it's the *last* update before the end
 		# of the cycle
-		if cycle - last_cycle >= (1-cycle_fraction):
-			for assembly:Assembly in assemblies:
-				assembly.snap_to_grid(self)
+		#if cycle - last_cycle >= (1-cycle_fraction):
+			#for assembly:WidgetBody in assemblies:
+				#assembly.snap_to_grid(self)
 			
 		last_cycle = cycle
 	pass
@@ -161,9 +163,9 @@ func _unhandled_input(event: InputEvent):
 
 func make_widget(grid_position: Vector2i, init_widget_type: int):
 	var widget_position: Vector2 = map_to_local(grid_position)
-	var new_assembly:Assembly = assembly_packed.instantiate()
-	new_assembly.set_parameters(widget_position)
-	new_assembly.add_widget(Vector2(0, 0), init_widget_type) 
+	var new_assembly:WidgetBody = widget_packed.instantiate()
+	new_assembly.set_parameters(widget_position, 1)
+	#new_assembly.add_widget(Vector2(0, 0), init_widget_type) 
 	add_child(new_assembly)
 	assemblies.append(new_assembly)
 	new_assembly.deleted.connect(_on_assembly_delete)
@@ -219,7 +221,7 @@ func remove_machines(machine_position: Vector2, machine_layer: int):
 		i -= 1
 	pass
 
-func _on_assembly_delete(deleted: Assembly):
+func _on_assembly_delete(deleted: WidgetBody):
 	assemblies.erase(deleted)
 	
 func _on_dispense(loc: Vector2, init_widget_type: int):

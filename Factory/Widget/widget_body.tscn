@@ -6,8 +6,8 @@
 size = Vector2(128, 128)
 
 [node name="WidgetBody" type="RigidBody2D"]
+mass = 0.01
 gravity_scale = 0.0
-linear_damp = 10000.0
 script = ExtResource("1_15423")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
