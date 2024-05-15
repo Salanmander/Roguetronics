@@ -5,8 +5,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5pqkx"]
 size = Vector2(128, 128)
 
-[node name="Wall" type="Area2D"]
-monitoring = false
+[node name="Wall" type="RigidBody2D"]
 script = ExtResource("1_1citb")
 
 [node name="Polygon2D" type="Polygon2D" parent="."]

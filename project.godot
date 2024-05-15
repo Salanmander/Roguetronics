@@ -27,3 +27,7 @@ gdscript/warnings/integer_division=0
 [filesystem]
 
 import/blender/enabled=false
+
+[physics]
+
+2d/default_gravity=0.0

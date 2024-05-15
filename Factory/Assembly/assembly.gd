@@ -212,7 +212,9 @@ func add_widget(relative_position:Vector2, widget_type: int):
 func add_widget_object(new_widget:WidgetBody):
 	add_child(new_widget)
 	new_widget.record_parent(self)
-	new_widget.monitorable = monitorable
+	#new_widget.monitorable = monitorable
+	if not affected_by_machines:
+		new_widget.freeze = true
 	widgets.append(new_widget)
 	new_widget.nudged.connect(_on_widget_nudged)
 	new_widget.combined.connect(_on_widget_combined)

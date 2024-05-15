@@ -59,7 +59,6 @@ func _ready():
 
 	setup_debug_objects()
 	
-	add_child(goal)
 	
 	pass # Replace with function body.
 
@@ -89,7 +88,7 @@ func _physics_process(delta: float):
 			for assembly:Assembly in assemblies:
 				assembly.check_mobility()
 			
-			goal.check()
+			#goal.check()
 				
 		for machine:Machine in machines:
 			if not (machine is Combiner):
@@ -288,12 +287,15 @@ func _on_stop_object_pressed():
 
 func setup_debug_objects():
 	
-	goal = goal_packed.instantiate()
-	goal.set_parameters(map_to_local(Vector2i(10,2)))
-	goal.add_widget(Vector2(0,0), 2)
-	goal.add_widget(Vector2(0,-Consts.GRID_SIZE), 2)
-	goal.add_widget(Vector2(Consts.GRID_SIZE,0), 1)
-	goal.add_widget(Vector2(-Consts.GRID_SIZE,0), 1)
+	#goal = goal_packed.instantiate()
+	#goal.set_parameters(map_to_local(Vector2i(10,2)))
+	#goal.add_widget(Vector2(0,0), 2)
+	#goal.add_widget(Vector2(0,-Consts.GRID_SIZE), 2)
+	#goal.add_widget(Vector2(Consts.GRID_SIZE,0), 1)
+	#goal.add_widget(Vector2(-Consts.GRID_SIZE,0), 1)
+	#add_child(goal)
+	
+	pass
 
 	
 

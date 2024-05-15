@@ -25,7 +25,7 @@ func _ready():
 func add_widget(init_position:Vector2, widget_type:int):
 	plan.add_widget(init_position, widget_type)
 
-func add_widget_object(new_widget:Widget):
+func add_widget_object(new_widget:WidgetBody):
 	plan.add_widget_object(new_widget)
 	
 func check():

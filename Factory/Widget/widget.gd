@@ -80,8 +80,8 @@ func can_move_local(dir: Vector2i):
 		var should_check = false
 		if area is Widget:
 			should_check = true
-		if area is Wall:
-			should_check = true
+		#if area is Wall:
+			#should_check = true
 		
 		if not should_check:
 			continue
@@ -177,18 +177,18 @@ func reparent_custom(new_parent: Assembly, keep_global_transform:bool ):
 
 
 func _on_area_entered(entering:Area2D):
-	if entering is Wall:
-		nearby_areas.append(entering)
-	elif entering is Widget:
+	#if entering is Wall:
+		#nearby_areas.append(entering)
+	if entering is Widget:
 		if entering.parent_assembly != self.parent_assembly:
 			nearby_areas.append(entering)
 			entering.deleted.connect(_on_nearby_widget_deleted)
 	pass
 	
 func _on_area_exited(exiting:Area2D):
-	if exiting is Wall:
-		nearby_areas.erase(exiting)
-	elif exiting is Widget:
+	#if exiting is Wall:
+		#nearby_areas.erase(exiting)
+	if exiting is Widget:
 		if exiting in nearby_areas:
 			nearby_areas.erase(exiting)
 			exiting.deleted.disconnect(_on_nearby_widget_deleted)

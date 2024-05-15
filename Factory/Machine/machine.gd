@@ -7,7 +7,7 @@ class_name Machine
 
 var last_cycle:float
 
-var nearby_widgets:Array[Widget]
+var nearby_widgets:Array[Node2D]
 
 
 
@@ -24,29 +24,13 @@ func set_machine_parameters(init_position: Vector2, init_layer: int):
 # Called when the node enters the scene tree for the first time.
 func _ready():
 		
-	# Connecting signals
-	area_entered.connect(_on_area_entered)
-	area_exited.connect(_on_area_exited)
 	
 	pass # Replace with function body.
 
 
 func run_to(_cycle:float):
+	nearby_widgets = get_overlapping_bodies()
 	pass
 	
 	
-func _on_area_entered(entering:Area2D):
-	if entering is Widget:
-		nearby_widgets.append(entering)
-		entering.deleted.connect(_on_nearby_widget_deleted)
-	pass
-	
-func _on_area_exited(exiting:Area2D):
-	if exiting is Widget:
-		nearby_widgets.erase(exiting)
-		exiting.deleted.disconnect(_on_nearby_widget_deleted)
-	pass
-	
-func _on_nearby_widget_deleted(deleted_widget:Widget):
-	nearby_widgets.erase(deleted_widget)
 
