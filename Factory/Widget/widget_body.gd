@@ -149,7 +149,7 @@ func check_overlap_with(other_assembly: Assembly):
 
 	
 func nudge(delta: Vector2):
-	linear_velocity += delta*60
+	move_and_collide(delta)
 	#nudged.emit(delta)
 
 func combine(combiner:Combiner):
