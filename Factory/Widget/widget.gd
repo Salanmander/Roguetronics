@@ -67,19 +67,49 @@ func set_type(widget_type: int):
 #region redoMobility
 
 func overlaps_can_move() -> bool:
+	var this_shape:Shape2D = shape_owner_get_shape(0,0)
+	var this_transform:Transform2D = get_global_transform()
 
 	for area:Area2D in nearby_areas:
+		var other_shape:Shape2D = area.shape_owner_get_shape(0,0)
+		var other_transform:Transform2D = area.get_global_transform()
+		
+		var contacts = this_shape.collide_and_get_contacts(this_transform, other_shape, other_transform)
+		
+		if(contacts.size() < 2):
+			continue
+			
 		if area is Wall:
 			return false
 		elif area is Widget:
-			var shape_owners = area.shape_owner_get_shape(0,0)
 			
+			var other_assembly = area.parent_assembly
+			if not other_assembly.can_move(contacts[0] - contacts[1]):
+				return false
 			pass
-	
 	
 	return true
 	
+# This does not check if overlaps can move, it just moves them. Checking
+# should be done before calling this method.
 func push_overlaps():
+	var this_shape:Shape2D = shape_owner_get_shape(0,0)
+	var this_transform:Transform2D = get_global_transform()
+
+	for area:Area2D in nearby_areas:
+		var other_shape:Shape2D = area.shape_owner_get_shape(0,0)
+		var other_transform:Transform2D = area.get_global_transform()
+		
+		var contacts = this_shape.collide_and_get_contacts(this_transform, other_shape, other_transform)
+		
+		if(contacts.size() < 2):
+			continue
+			
+		if area is Widget:
+			var other_assembly = area.parent_assembly
+			other_assembly.move(contacts[0] - contacts[1])
+			
+	
 	pass
 
 
