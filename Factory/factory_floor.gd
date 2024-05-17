@@ -80,14 +80,6 @@ func _physics_process(delta: float):
 		
 		var cycle_fraction = fmod(cycle, 1)
 		if cycle - last_cycle >= cycle_fraction:
-			for assembly:Assembly in assemblies:
-				assembly.reset_mobility()
-			
-			# Need to check mobility after resetting all of them,
-			# because the mobility check recursively calls it
-			# on other assemblies
-			for assembly:Assembly in assemblies:
-				assembly.check_mobility()
 			
 			goal.check()
 				
