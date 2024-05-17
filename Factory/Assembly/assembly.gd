@@ -170,6 +170,16 @@ func check_and_move(delta: Vector2):
 	
 		
 func can_move(delta: Vector2) -> bool:
+	
+	for nudge:Vector2 in nudges:
+		var angle = nudge.angle_to(delta)
+		var len_delta = delta.length()
+		var len_nudge = nudge.length()
+		if (is_equal_approx(angle, PI)) and \
+		   (len_delta < len_nudge or is_equal_approx(len_delta, len_nudge) ):
+			return false
+		pass
+	
 	position += delta
 	
 	var can_move:bool = true
@@ -190,6 +200,9 @@ func move(delta:Vector2):
 	# Tell component widgets to push now-overlapping areas
 	for widget:Widget in widgets:
 		widget.push_overlaps()
+		
+func clear_nudges():
+	nudges = []
 	
 
 #endregion
@@ -226,7 +239,6 @@ func run_to(cycle:float):
 	
 	check_and_move(Vector2(dx, dy))
 	
-	nudges = []
 	
 	#var cycle_fraction = fmod(cycle, 1)
 	#if cycle - last_cycle >= cycle_fraction:

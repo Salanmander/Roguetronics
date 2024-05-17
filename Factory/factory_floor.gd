@@ -42,7 +42,7 @@ var goal_packed:PackedScene = load("res://Factory/Goal/goal.tscn")
 var goal:Goal
 
 var run:bool = false
-var cycle_time:float = 1 # Number of seconds for one cycle
+var cycle_time:float = 0.2 # Number of seconds for one cycle
 var cycle:float = 0 # Current cycle count
 var last_cycle:float = 0 # Previous frame cycle count
 
@@ -89,6 +89,10 @@ func _physics_process(delta: float):
 			
 		for assembly:Assembly in assemblies:
 			assembly.run_to(cycle)
+			
+		
+		for assembly:Assembly in assemblies:
+			assembly.clear_nudges()
 			
 		
 		# This runs if it's the *last* update before the end
@@ -286,6 +290,19 @@ func setup_debug_objects():
 	goal.add_widget(Vector2(0,-Consts.GRID_SIZE), 2)
 	goal.add_widget(Vector2(Consts.GRID_SIZE,0), 1)
 	goal.add_widget(Vector2(-Consts.GRID_SIZE,0), 1)
+	
+	make_widget(Vector2i(3, 3), 1)
+	make_widget(Vector2i(3, 4), 1)
+	make_widget(Vector2i(3, 5), 1)
+	make_combiner(Vector2i(3, 3), Vector2i(0, 1))
+	make_combiner(Vector2i(3, 4), Vector2i(0, 1))
+	
+	make_widget(Vector2i(2, 3), 2)
+	make_widget(Vector2i(4, 3), 2)
+	
+	make_belt(Vector2i(2, 3), Consts.RIGHT)
+	make_belt(Vector2i(3, 3), Consts.LEFT)
+	make_belt(Vector2i(4, 3), Consts.LEFT)
 
 	
 
