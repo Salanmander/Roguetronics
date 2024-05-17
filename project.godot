@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Roguetronics"
-run/main_scene="res://Menu/main__menu.tscn"
+run/main_scene="res://Factory/factory.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -27,3 +27,7 @@ gdscript/warnings/integer_division=0
 [filesystem]
 
 import/blender/enabled=false
+
+[physics]
+
+2d/default_gravity=0.0

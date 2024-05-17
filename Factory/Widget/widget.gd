@@ -63,6 +63,27 @@ func set_type(widget_type: int):
 	
 	$Sprite2D.texture = tex
 	
+	
+#region redoMobility
+
+func overlaps_can_move() -> bool:
+
+	for area:Area2D in nearby_areas:
+		if area is Wall:
+			return false
+		elif area is Widget:
+			var shape_owners = area.shape_owner_get_shape(0,0)
+			
+			pass
+	
+	
+	return true
+	
+func push_overlaps():
+	pass
+
+
+#endregion
 
 #region Mobility
 

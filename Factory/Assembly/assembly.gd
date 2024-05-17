@@ -133,9 +133,6 @@ func check_mobility():
 			
 	pass
 	
-func can_move(direction: Vector2i):
-	pass
-		
 
 # Called whenever a blockage is seen in a certain direction.
 # Needs to check to see if direction has already been blocked,
@@ -159,6 +156,43 @@ func _on_blocked(signal_from: Vector2i, blocking_dir: Vector2i):
 
 #endregion
 	
+	
+#region redoMobility
+
+
+# Attempts to move the assembly the given amount
+func check_and_move(delta: Vector2):
+	
+	if not can_move(delta):
+		return
+		
+	move(delta)
+	
+		
+func can_move(delta: Vector2) -> bool:
+	position += delta
+	
+	var can_move:bool = true
+	# Tell component widgets to poll now-overlapping areas for mobility
+	for widget:Widget in widgets:
+		if not widget.overlaps_can_move():
+			can_move = false
+			break
+		pass
+	
+	position -= delta
+	
+	return can_move
+	
+func move(delta:Vector2):
+	position += delta
+	
+	# Tell component widgets to push now-overlapping areas
+	for widget:Widget in widgets:
+		widget.push_overlaps()
+	
+
+#endregion
 	
 func run_to(cycle:float):
 	
@@ -190,7 +224,7 @@ func run_to(cycle:float):
 	if dy < 0 and mobility[0][-1] == -1:
 		dy = 0
 	
-	position += Vector2(dx, dy)
+	check_and_move(Vector2(dx, dy))
 	
 	nudges = []
 	
