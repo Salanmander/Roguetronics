@@ -308,8 +308,14 @@ func setup_debug_objects():
 
 
 func _on_test_pressed():
-	Engine.physics_ticks_per_second *= 1.2
-	Engine.max_physics_steps_per_frame *= 1.2
+	for assembly:Assembly in assemblies:
+		remove_child(assembly)
+	for machine:Machine in machines:
+		remove_child(machine)
+		
+	assemblies = []
+	machines = []
+		
 	pass # Replace with function body.
 
 #endregion
