@@ -34,6 +34,9 @@ func _ready():
 func run_to(_cycle:float):
 	pass
 	
+func reset():
+	last_cycle = 0
+	
 	
 func _on_area_entered(entering:Area2D):
 	if entering is Widget:

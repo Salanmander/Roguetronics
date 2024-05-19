@@ -197,8 +197,7 @@ offset_left = 944.0
 offset_top = 48.0
 offset_right = 1010.0
 offset_bottom = 114.0
-text = "Do The
-Thing"
+text = "Reset"
 expand_icon = true
 
 [node name="FactoryLayer" type="CanvasLayer" parent="."]
@@ -223,4 +222,4 @@ script = ExtResource("3_ulfng")
 [connection signal="pressed" from="UILayer/UI/PlaceDispenser" to="FactoryLayer/FactoryFloor" method="_on_place_dispenser_pressed"]
 [connection signal="pressed" from="UILayer/UI/PlaceDispenser2" to="FactoryLayer/FactoryFloor" method="_on_place_dispenser2_pressed"]
 [connection signal="pressed" from="UILayer/UI/PlaceWall" to="FactoryLayer/FactoryFloor" method="_on_place_wall_pressed"]
-[connection signal="pressed" from="UILayer/UI/Test" to="FactoryLayer/FactoryFloor" method="_on_test_pressed"]
+[connection signal="pressed" from="UILayer/UI/Test" to="FactoryLayer/FactoryFloor" method="reset_to_start_of_run"]

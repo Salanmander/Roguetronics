@@ -17,7 +17,7 @@ var last_cycle:float
 
 const LAYER = 1
 
-
+var assembly_packed:PackedScene = load("res://Factory/Assembly/assembly.tscn")
 var widget_packed:PackedScene = load("res://Factory/Widget/widget.tscn")
 
 signal deleted(this_assembly:Assembly)
@@ -280,6 +280,8 @@ func add_widget_from_other(new_widget:Widget, other:Assembly):
 func get_widgets() -> Array[Widget]:
 	return widgets.duplicate()
 
+#region Combining and deleting
+
 # TODO: There has *got* to be a better way to do this
 func check_for_any_perfect_overlap():
 	for widget:Widget in widgets:
@@ -342,12 +344,24 @@ func _on_widget_combined(widget:Widget, combiner:Combiner):
 		
 	pass
 	
-func combine_with(other: Assembly, _connect_point: Widget):
+func combine_with(other: Assembly, connect_point: Widget):
 	assert(queued_combine_widget != null, "Error: Combine was initiated without connection point being set")
+	
 	
 	var to_add:Array[Widget] = other.get_widgets()
 	for widget:Widget in to_add:
 		add_widget_from_other(widget, other)
+		
+		
+	# connect_point is now in this assembly, so positions can be used directly
+	
+	var p1:Vector2 = queued_combine_widget.position
+	var p2:Vector2 = connect_point.position
+	
+		
+	var new_line = Line2D.new()
+	new_line.points = PackedVector2Array([p1, p2])
+	add_child(new_line)
 		
 	
 	other.delete()
@@ -361,6 +375,18 @@ func delete():
 func delete_widgets():
 	for widget:Widget in widgets:
 		widget.deleted.emit(widget)
+
+#endregion
+
+func clone() -> Assembly:
+	var copy = assembly_packed.instantiate()
+	copy.position = position;
+	copy.monitorable = monitorable;
+	
+	for widget:Widget in widgets:
+		copy.add_widget(widget.position, widget.type)
+	
+	return copy
 	
 func _on_combiner_drop(combiner:Combiner):
 	combiner.drop.disconnect(_on_combiner_drop)

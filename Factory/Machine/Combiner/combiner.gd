@@ -14,7 +14,7 @@ var idString:String
 
 signal drop(combiner: Combiner)
 
-const LAYER = 2
+const LAYER = 3
 
 
 
@@ -59,6 +59,9 @@ func run_to(cycle:float):
 		
 	
 	pass
+	
+func reset():
+	super.reset()
 	
 	
 

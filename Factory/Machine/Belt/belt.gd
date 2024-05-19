@@ -85,6 +85,10 @@ func run_to(cycle:float):
 	
 	pass
 	
+func reset():
+	super.reset()
+	drop()
+	
 func drop():
 	for widget:Widget in held_widgets:
 		widget.deleted.disconnect(_on_widget_deleted)

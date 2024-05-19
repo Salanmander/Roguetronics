@@ -38,11 +38,13 @@ var dispenser_packed:PackedScene = load("res://Factory/Machine/Dispenser/dispens
 var machines:Array[Machine]
 var conveyor_direction:float
 
+var starting_assemblies:Array[Assembly]
+
 var goal_packed:PackedScene = load("res://Factory/Goal/goal.tscn")
 var goal:Goal
 
 var run:bool = false
-var cycle_time:float = 0.2 # Number of seconds for one cycle
+var cycle_time:float = 1 # Number of seconds for one cycle
 var cycle:float = 0 # Current cycle count
 var last_cycle:float = 0 # Previous frame cycle count
 
@@ -70,6 +72,12 @@ func _process(_delta):
 	
 func _physics_process(delta: float):
 	if run:
+		
+		# Save initial assembly state:
+		if cycle == 0:
+			for assembly:Assembly in assemblies:
+				starting_assemblies.append(assembly.clone())
+		
 		cycle += delta / cycle_time
 		
 		
@@ -215,6 +223,42 @@ func remove_machines(machine_position: Vector2, machine_layer: int):
 				
 		i -= 1
 	pass
+	
+#region Resetting
+
+func reset_to_start_of_run():
+	delete_assemblies()
+	cycle = 0
+	
+	assemblies = starting_assemblies
+	starting_assemblies = []
+	
+	for assembly:Assembly in assemblies:
+		add_child(assembly)
+		assembly.deleted.connect(_on_assembly_delete)
+		
+	for machine:Machine in machines:
+		machine.reset()
+	
+	_on_stop_object_pressed()
+
+
+func delete_assemblies():
+	
+	# The assembly delete method removes it from the assemblies array
+	# (indirectly), so we need to duplicate the array first.
+	for assembly:Assembly in assemblies.duplicate():
+		assembly.delete()
+		
+
+func delete_machines():
+	for machine:Machine in machines:
+		remove_child(machine)
+		
+	machines = []
+		
+
+#endregion
 
 func _on_assembly_delete(deleted: Assembly):
 	assemblies.erase(deleted)
@@ -291,30 +335,13 @@ func setup_debug_objects():
 	goal.add_widget(Vector2(Consts.GRID_SIZE,0), 1)
 	goal.add_widget(Vector2(-Consts.GRID_SIZE,0), 1)
 	
-	make_widget(Vector2i(3, 3), 1)
-	make_widget(Vector2i(3, 4), 1)
-	make_widget(Vector2i(3, 5), 1)
-	make_combiner(Vector2i(3, 3), Vector2i(0, 1))
-	make_combiner(Vector2i(3, 4), Vector2i(0, 1))
-	
-	make_widget(Vector2i(2, 3), 2)
-	make_widget(Vector2i(4, 3), 2)
-	
-	make_belt(Vector2i(2, 3), Consts.RIGHT)
-	make_belt(Vector2i(3, 3), Consts.LEFT)
-	make_belt(Vector2i(4, 3), Consts.LEFT)
 
 	
 
 
 func _on_test_pressed():
-	for assembly:Assembly in assemblies:
-		remove_child(assembly)
-	for machine:Machine in machines:
-		remove_child(machine)
-		
-	assemblies = []
-	machines = []
+	
+	reset_to_start_of_run()
 		
 	pass # Replace with function body.
 
