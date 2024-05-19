@@ -347,20 +347,26 @@ func _on_widget_combined(widget:Widget, combiner:Combiner):
 func combine_with(other: Assembly, connect_point: Widget):
 	assert(queued_combine_widget != null, "Error: Combine was initiated without connection point being set")
 	
-	
+	# Add the other widgets
 	var to_add:Array[Widget] = other.get_widgets()
 	for widget:Widget in to_add:
 		add_widget_from_other(widget, other)
 		
+	# Add the other lines
+	var keep_global_transform:bool = true
+	for node in other.get_children():
+		if node is Line2D:
+			node.reparent(self, keep_global_transform)
+			
+		
 		
 	# connect_point is now in this assembly, so positions can be used directly
-	
 	var p1:Vector2 = queued_combine_widget.position
 	var p2:Vector2 = connect_point.position
 	
-		
 	var new_line = Line2D.new()
 	new_line.points = PackedVector2Array([p1, p2])
+	new_line.default_color = Color(0.15, 0.5, 0.8, 1)
 	add_child(new_line)
 		
 	
