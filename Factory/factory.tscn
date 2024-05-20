@@ -201,6 +201,7 @@ text = "Reset"
 expand_icon = true
 
 [node name="Reset2" type="Button" parent="UILayer/UI"]
+layout_mode = 0
 offset_left = 866.0
 offset_top = 122.0
 offset_right = 932.0

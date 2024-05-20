@@ -163,11 +163,12 @@ func _on_blocked(signal_from: Vector2i, blocking_dir: Vector2i):
 # Attempts to move the assembly the given amount
 func check_and_move(delta: Vector2):
 	
-	if not can_move(delta):
-		return
-		
-	move(delta)
+	if can_move(Vector2(delta.x, 0)):
+		move(Vector2(delta.x, 0))
 	
+	if can_move(Vector2(0, delta.y)):
+		move(Vector2(0,delta.y))
+		
 		
 func can_move(delta: Vector2) -> bool:
 	

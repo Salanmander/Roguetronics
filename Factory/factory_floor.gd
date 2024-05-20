@@ -368,3 +368,4 @@ func _on_test_pressed():
 func _on_clear_pressed():
 	delete_assemblies()
 	delete_machines()
+	_on_stop_object_pressed()
