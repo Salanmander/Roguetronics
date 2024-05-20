@@ -51,9 +51,8 @@ var last_cycle:float = 0 # Previous frame cycle count
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	for x in range(25):
-		for y in range(15):
-			#pass
+	for x in range(50):
+		for y in range(40):
 			set_cell(FLOOR_LAYER, Vector2i(x, y), FLOOR_TILE, Vector2i(0,0))
 	
 	assemblies = []

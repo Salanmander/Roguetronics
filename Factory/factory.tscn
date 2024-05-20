@@ -210,8 +210,8 @@ expand_icon = true
 
 [node name="FactoryLayer" type="CanvasLayer" parent="."]
 layer = 0
-scale = Vector2(0.4, 0.4)
-transform = Transform2D(0.4, 0, 0, 0.4, 0, 0)
+scale = Vector2(0.5, 0.5)
+transform = Transform2D(0.5, 0, 0, 0.5, 0, 0)
 
 [node name="FactoryFloor" type="TileMap" parent="FactoryLayer"]
 tile_set = SubResource("TileSet_a558r")
