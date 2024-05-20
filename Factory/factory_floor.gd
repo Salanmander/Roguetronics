@@ -274,6 +274,7 @@ func delete_machines():
 		remove_child(machine)
 		
 	machines = []
+	
 		
 
 #endregion

@@ -183,6 +183,9 @@ func can_move(delta: Vector2) -> bool:
 	
 	position += delta
 	
+	if delta.y == 0:
+		pass # for breakpoint
+	
 	var can_move:bool = true
 	# Tell component widgets to poll now-overlapping areas for mobility
 	for widget:Widget in widgets:
@@ -192,6 +195,9 @@ func can_move(delta: Vector2) -> bool:
 		pass
 	
 	position -= delta
+	
+	if delta.y == 0:
+		pass # for breakpoint
 	
 	return can_move
 	
