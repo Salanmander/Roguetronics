@@ -44,8 +44,8 @@ var goal_packed:PackedScene = load("res://Factory/Goal/goal.tscn")
 var goal:Goal
 
 var run:bool = false
-var cycle_time:float = 1 # Number of seconds for one cycle
-var cycle:float = 0 # Current cycle count
+var cycle_time:float = 0.7 # Number of seconds for one cycle
+var cycle:float = -1 # Current cycle count
 var last_cycle:float = 0 # Previous frame cycle count
 
 
@@ -73,10 +73,17 @@ func _process(_delta):
 func _physics_process(delta: float):
 	if run:
 		
-		# Save initial assembly state:
-		if cycle == 0:
+		# Initial frame. Do first dispense and save initial state
+		if cycle == -1:
 			for assembly:Assembly in assemblies:
 				starting_assemblies.append(assembly.clone())
+			
+			for machine:Machine in machines:
+				if machine is Dispenser:
+					machine.do_dispense()
+				
+			cycle = 0
+			return
 		
 		cycle += delta / cycle_time
 		
@@ -88,7 +95,6 @@ func _physics_process(delta: float):
 		
 		var cycle_fraction = fmod(cycle, 1)
 		if cycle - last_cycle >= cycle_fraction:
-			
 			goal.check()
 				
 		for machine:Machine in machines:
@@ -110,6 +116,7 @@ func _physics_process(delta: float):
 				assembly.snap_to_grid(self)
 			
 		last_cycle = cycle
+		
 	pass
 
 	
@@ -118,7 +125,19 @@ func _unhandled_input(event: InputEvent):
 		event = make_input_local(event)
 		var grid_loc:Vector2i = local_to_map(event.position)
 		var thing_position:Vector2i = map_to_local(grid_loc)
-		if(click_mode == MODIFY_FLOOR):
+		
+		if event.button_index == MOUSE_BUTTON_RIGHT:
+			# Check to see if there's a clickable thing there
+			for machine:Machine in machines:
+				if not machine is Dispenser:
+					continue
+				
+				if (event.position - machine.position).length() < 64:
+					print("Here")
+				
+				
+			
+		elif(click_mode == MODIFY_FLOOR):
 			# TODO: have framework for getting layer of thing to add
 			remove_machines(thing_position, 0)
 			make_belt(grid_loc, conveyor_direction)
@@ -228,7 +247,7 @@ func remove_machines(machine_position: Vector2, machine_layer: int):
 
 func reset_to_start_of_run():
 	delete_assemblies()
-	cycle = 0
+	cycle = -1
 	
 	assemblies = starting_assemblies
 	starting_assemblies = []
@@ -331,7 +350,7 @@ func setup_debug_objects():
 	goal = goal_packed.instantiate()
 	goal.set_parameters(map_to_local(Vector2i(10,2)))
 	goal.add_widget(Vector2(0,0), 2)
-	goal.add_widget(Vector2(0,-Consts.GRID_SIZE), 2)
+	goal.add_widget(Vector2(-2*Consts.GRID_SIZE,0), 2)
 	goal.add_widget(Vector2(Consts.GRID_SIZE,0), 1)
 	goal.add_widget(Vector2(-Consts.GRID_SIZE,0), 1)
 	
@@ -343,6 +362,10 @@ func _on_test_pressed():
 	
 	reset_to_start_of_run()
 		
-	pass # Replace with function body.
 
 #endregion
+
+
+func _on_clear_pressed():
+	delete_assemblies()
+	delete_machines()

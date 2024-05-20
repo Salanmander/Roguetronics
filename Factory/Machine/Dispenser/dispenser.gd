@@ -10,6 +10,9 @@ class_name Dispenser
 # textures multiple times. (Does that already get optimized out?)
 var type:int = -1
 
+var cycle_spacing:int = 4
+var last_spawn_cycle:int = 0
+
 
 const LAYER = 3
 
@@ -47,10 +50,12 @@ func _ready():
 func run_to(cycle:float):
 	var cycle_fraction = fmod(cycle, 1)
 	
-	# When this is the first move of a cycle
-	if cycle - last_cycle >= cycle_fraction:
-		if(nearby_widgets.size() == 0):
-			dispense.emit(position, type)
+	# This runs if it's the *last* update before the end
+	# of the cycle
+	if cycle - last_cycle >= (1-cycle_fraction):
+		if(nearby_widgets.size() == 0 && \
+		   round(cycle) - last_spawn_cycle >= cycle_spacing):
+			do_dispense()
 	
 		
 		
@@ -58,5 +63,9 @@ func run_to(cycle:float):
 		
 	
 	pass
+	
+func do_dispense():
+	dispense.emit(position, type)
+	last_spawn_cycle = round(last_cycle)
 
 

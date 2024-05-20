@@ -2,8 +2,6 @@ extends Area2D
 class_name Machine
 
 
-# Could be refactored at some point so that it doesn't need to load these
-# textures multiple times. (Does that already get optimized out?)
 
 var last_cycle:float
 
