@@ -170,6 +170,7 @@ func _unhandled_input(event: InputEvent):
 				
 			pass
 		elif(click_mode == PLACE_DISPENSER):
+			remove_dispenser_type(widget_type)
 			make_dispenser(grid_loc, widget_type)
 			
 			pass
@@ -223,6 +224,8 @@ func make_combiner(grid_position: Vector2i, offset_dir: Vector2i):
 	add_child(new_combiner)
 	machines.append(new_combiner)
 	
+	
+	
 #endregion
 	
 	
@@ -241,6 +244,7 @@ func remove_machines(machine_position: Vector2, machine_layer: int):
 				
 		i -= 1
 	pass
+	
 	
 #region Resetting
 
@@ -275,7 +279,22 @@ func delete_machines():
 		
 	machines = []
 	
+func delete_walls():
+	var child_list:Array[Node] = get_children()
+	
+	for child:Node in child_list:
+		if child is Wall:
+			remove_child(child)
+	
 		
+func remove_dispenser_type(widget_type: int):
+	
+	for machine:Machine in machines.duplicate():
+		if machine is Dispenser and machine.get_type() == widget_type:
+			machines.erase(machine)
+			remove_child(machine)
+	
+	pass
 
 #endregion
 
@@ -369,4 +388,5 @@ func _on_test_pressed():
 func _on_clear_pressed():
 	delete_assemblies()
 	delete_machines()
-	_on_stop_object_pressed()
+	delete_walls()
+	reset_to_start_of_run()

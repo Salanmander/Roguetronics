@@ -76,86 +76,6 @@ func reset_mobility():
 	for widget:Widget in widgets:
 		widget.reset_mobility()
 
-# Sets the mobility array
-func check_mobility():
-	
-	# I don't think this is necessary? Might be needed to prevent
-	# infinite looping.
-	#if checked_mobility:
-		#return
-		
-		
-	# Checking each direction
-	for x:int in [-1, 0, 1]:
-		for y:int in [-1, 0, 1]:
-			if x == 0 && y == 0:
-				continue
-			
-			var all_okay: bool = true
-			for widget:Widget in widgets:
-				# Response can be true, false, or a signal
-				# True means the widget is certain the local surroundings don't
-				# prevent it from moving.
-				# False means the widget is certain it can't move that way
-				# A signal is a signal that will be emitted, with a direction
-				# parameter, if the widget is blocked by something that didn't
-				# realize it when this was checked.
-				var response = widget.can_move_local(Vector2i(x, y))
-				if response is Signal:
-					all_okay = false
-					
-					# Makes the callback be a call to _on_blocked with one input based
-					# on what direction this is currently checking, and one input based
-					# on the signal parameter
-					response.connect(func(dir: Vector2i): _on_blocked(Vector2i(x, y), dir))
-					
-							
-					pass
-				elif not response:
-					all_okay = false
-					record_blockage(Vector2i(x, y))
-					break
-					
-			# If we get through all the widgets and none report a blockage
-			# or potential blockage, record the direction as definitely okay
-			if all_okay:
-				mobility[x][y] = 1
-				
-			
-			pass
-	
-	for widget:Widget in widgets:
-		# Passes the nudged signal of this assembly to each widget,
-		# to have it connect it to nearby assemblies.
-		# It might get connected multiple times, but that's okay
-		widget.connect_nudged_signals(nudged)
-		widget.set_assembly_can_move(mobility)
-			
-	pass
-	
-
-# Called whenever a blockage is seen in a certain direction.
-# Needs to check to see if direction has already been blocked,
-# and emit a signal iff this is the first time it's been noticed.
-# That is to prevent signal infinite loops
-func record_blockage(direction: Vector2i):
-	if(mobility[direction.x][direction.y] == -1):
-		return
-	mobility[direction.x][direction.y] = -1
-	blocked.emit(direction)
-	pass
-
-
-# Callbacks for when a blocked signal is coming from a particular direction
-# If the direction of the signal matches the direction it's coming from, then
-# record that direction as blocked if not already.
-func _on_blocked(signal_from: Vector2i, blocking_dir: Vector2i):
-	if signal_from == blocking_dir:
-		record_blockage(blocking_dir)
-	pass
-
-#endregion
-	
 	
 #region redoMobility
 
@@ -183,9 +103,6 @@ func can_move(delta: Vector2) -> bool:
 	
 	position += delta
 	
-	if delta.y == 0:
-		pass # for breakpoint
-	
 	var can_move:bool = true
 	# Tell component widgets to poll now-overlapping areas for mobility
 	for widget:Widget in widgets:
@@ -196,8 +113,6 @@ func can_move(delta: Vector2) -> bool:
 	
 	position -= delta
 	
-	if delta.y == 0:
-		pass # for breakpoint
 	
 	return can_move
 	

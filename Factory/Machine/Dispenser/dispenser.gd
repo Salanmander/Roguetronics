@@ -67,5 +67,12 @@ func run_to(cycle:float):
 func do_dispense():
 	dispense.emit(position, type)
 	last_spawn_cycle = round(last_cycle)
+	
+func get_type():
+	return type
+	
+func reset():
+	super.reset()
+	last_spawn_cycle = 0
 
 
