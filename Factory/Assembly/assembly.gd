@@ -112,8 +112,7 @@ func can_move(delta: Vector2) -> bool:
 		pass
 	
 	position -= delta
-	
-	
+
 	return can_move
 	
 func move(delta:Vector2):

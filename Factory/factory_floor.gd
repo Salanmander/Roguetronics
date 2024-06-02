@@ -278,6 +278,7 @@ func delete_machines():
 		remove_child(machine)
 		
 	machines = []
+
 	
 func delete_walls():
 	var child_list:Array[Node] = get_children()
