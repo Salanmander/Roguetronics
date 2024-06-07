@@ -263,5 +263,5 @@ script = ExtResource("3_ulfng")
 [connection signal="pressed" from="UILayer/Button Panel/PlaceDispenser" to="FactoryLayer/FactoryFloor" method="_on_place_dispenser_pressed"]
 [connection signal="pressed" from="UILayer/Button Panel/PlaceDispenser2" to="FactoryLayer/FactoryFloor" method="_on_place_dispenser2_pressed"]
 [connection signal="pressed" from="UILayer/Button Panel/PlaceWall" to="FactoryLayer/FactoryFloor" method="_on_place_wall_pressed"]
-[connection signal="pressed" from="UILayer/Button Panel/Reset" to="FactoryLayer/FactoryFloor" method="reset_to_start_of_run"]
+[connection signal="pressed" from="UILayer/Button Panel/Reset" to="FactoryLayer/FactoryFloor" method="_on_reset_pressed"]
 [connection signal="pressed" from="UILayer/Button Panel/Clear" to="FactoryLayer/FactoryFloor" method="_on_clear_pressed"]

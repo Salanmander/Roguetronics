@@ -68,6 +68,7 @@ func _ready():
 	
 	pass # Replace with function body.
 
+#region process updates
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
@@ -121,6 +122,8 @@ func _physics_process(delta: float):
 		last_cycle = cycle
 		
 	pass
+
+#endregion
 
 #region input
 	
@@ -322,6 +325,9 @@ func remove_dispenser_type(widget_type: int):
 
 #endregion
 
+
+#region button callbacks
+
 func _on_assembly_delete(deleted: Assembly):
 	assemblies.erase(deleted)
 	
@@ -383,8 +389,22 @@ func _on_move_object_pressed():
 
 func _on_stop_object_pressed():
 	run = false
+	
+
+func _on_reset_pressed():
+	
+	reset_to_start_of_run()
+		
 
 
+func _on_clear_pressed():
+	delete_assemblies()
+	delete_machines()
+	delete_walls()
+	reset_to_start_of_run()
+
+
+#endregion
 
 
 
@@ -402,17 +422,5 @@ func setup_debug_objects():
 
 	
 
-
-func _on_test_pressed():
-	
-	reset_to_start_of_run()
-		
-
 #endregion
 
-
-func _on_clear_pressed():
-	delete_assemblies()
-	delete_machines()
-	delete_walls()
-	reset_to_start_of_run()
