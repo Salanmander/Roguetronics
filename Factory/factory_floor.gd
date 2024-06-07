@@ -21,6 +21,7 @@ const PLACE_DISPENSER = 4
 const PLACE_WALL = 5
 
 signal element_selected(selected)
+signal simulation_started()
 
 var selected:int = FLOOR_TILE
 var selected_variant:int = CONVEYOR_UP_VARIANT
@@ -121,8 +122,14 @@ func _physics_process(delta: float):
 		
 	pass
 
+#region input
 	
 func _unhandled_input(event: InputEvent):
+	# Only take input on the factory floor if it's not in the middle of
+	# the simulation.
+	if not is_equal_approx(cycle, -1):
+		return
+	
 	if event is InputEventMouseButton and event.is_pressed():
 		event = make_input_local(event)
 		var grid_loc:Vector2i = local_to_map(event.position)
@@ -186,6 +193,16 @@ func _unhandled_input(event: InputEvent):
 		pass
 	pass
 	
+
+func unhighlight_all():
+	for machine:Machine in machines:
+		machine.unhighlight()
+		
+func highlight(machine: Machine):
+	machine.highlight()
+	
+#endregion
+	
 #region object creating functions
 
 func make_widget(grid_position: Vector2i, init_widget_type: int):
@@ -229,12 +246,6 @@ func make_combiner(grid_position: Vector2i, offset_dir: Vector2i):
 	add_child(new_combiner)
 	machines.append(new_combiner)
 	
-func unhighlight_all():
-	for machine:Machine in machines:
-		machine.unhighlight()
-		
-func highlight(machine: Machine):
-	machine.highlight()
 	
 	
 	
@@ -365,6 +376,8 @@ func _on_place_wall_pressed():
 
 
 func _on_move_object_pressed():
+	simulation_started.emit()
+	unhighlight_all()
 	run = true
 
 

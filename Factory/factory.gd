@@ -7,6 +7,7 @@ extends Node2D
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	floor.element_selected.connect(_on_element_selected)
+	floor.simulation_started.connect(_on_simulation_started)
 	pass # Replace with function body.
 
 
@@ -29,6 +30,9 @@ func _on_element_selected(element):
 	
 	hide_all_controls()
 	show_control(dispenser_controls)
+	
+func _on_simulation_started():
+	hide_all_controls()
 	
 
 	
