@@ -75,6 +75,7 @@ offset_left = 64.0
 offset_top = 44.0
 offset_right = 130.0
 offset_bottom = 110.0
+action_mode = 0
 icon = ExtResource("1_uqvcs")
 expand_icon = true
 
@@ -84,6 +85,7 @@ offset_left = 160.0
 offset_top = 44.0
 offset_right = 226.0
 offset_bottom = 110.0
+action_mode = 0
 expand_icon = true
 
 [node name="DownArrowIcon" type="Sprite2D" parent="UILayer/Button Panel/DownConveyorSelect"]
@@ -98,6 +100,7 @@ offset_left = 261.0
 offset_top = 44.0
 offset_right = 327.0
 offset_bottom = 110.0
+action_mode = 0
 expand_icon = true
 
 [node name="LeftArrowIcon" type="Sprite2D" parent="UILayer/Button Panel/LeftConveyorSelect"]
@@ -112,6 +115,7 @@ offset_left = 360.0
 offset_top = 44.0
 offset_right = 426.0
 offset_bottom = 110.0
+action_mode = 0
 expand_icon = true
 
 [node name="RightArrowIcon" type="Sprite2D" parent="UILayer/Button Panel/RightConveyorSelect"]
@@ -126,6 +130,7 @@ offset_left = 704.0
 offset_top = 49.0
 offset_right = 770.0
 offset_bottom = 115.0
+action_mode = 0
 icon = ExtResource("3_kb4iw")
 expand_icon = true
 
@@ -135,6 +140,7 @@ offset_left = 626.0
 offset_top = 49.0
 offset_right = 692.0
 offset_bottom = 115.0
+action_mode = 0
 icon = ExtResource("4_ca5u6")
 expand_icon = true
 
@@ -144,6 +150,7 @@ offset_left = 788.0
 offset_top = 48.0
 offset_right = 854.0
 offset_bottom = 114.0
+action_mode = 0
 text = "Run"
 expand_icon = true
 
@@ -153,6 +160,7 @@ offset_left = 867.0
 offset_top = 48.0
 offset_right = 933.0
 offset_bottom = 114.0
+action_mode = 0
 text = "Pause"
 expand_icon = true
 
@@ -162,6 +170,7 @@ offset_left = 551.0
 offset_top = 124.0
 offset_right = 617.0
 offset_bottom = 190.0
+action_mode = 0
 icon = ExtResource("4_rb14g")
 expand_icon = true
 
@@ -171,6 +180,7 @@ offset_left = 704.0
 offset_top = 124.0
 offset_right = 770.0
 offset_bottom = 190.0
+action_mode = 0
 icon = ExtResource("6_11ej4")
 expand_icon = true
 
@@ -180,6 +190,7 @@ offset_left = 626.0
 offset_top = 125.0
 offset_right = 692.0
 offset_bottom = 191.0
+action_mode = 0
 icon = ExtResource("7_wes8x")
 expand_icon = true
 
@@ -189,6 +200,7 @@ offset_left = 551.0
 offset_top = 49.0
 offset_right = 617.0
 offset_bottom = 115.0
+action_mode = 0
 text = "Wall"
 expand_icon = true
 
@@ -198,6 +210,7 @@ offset_left = 944.0
 offset_top = 48.0
 offset_right = 1010.0
 offset_bottom = 114.0
+action_mode = 0
 text = "Reset"
 expand_icon = true
 
@@ -207,6 +220,7 @@ offset_left = 866.0
 offset_top = 122.0
 offset_right = 932.0
 offset_bottom = 188.0
+action_mode = 0
 text = "Clear"
 expand_icon = true
 

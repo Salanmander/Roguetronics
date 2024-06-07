@@ -133,6 +133,7 @@ func _unhandled_input(event: InputEvent):
 	if not is_equal_approx(cycle, -1):
 		return
 	
+	
 	if event is InputEventMouseButton and event.is_pressed():
 		event = make_input_local(event)
 		var grid_loc:Vector2i = local_to_map(event.position)
