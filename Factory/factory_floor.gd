@@ -1,4 +1,5 @@
 extends TileMap
+class_name FactoryFloor
 # Might be worth refactoring this at some point so that the tilemap
 # isn't the thing holding all the behavior.
 
@@ -18,6 +19,8 @@ const PLACE_THING = 2
 const PLACE_COMBINER = 3
 const PLACE_DISPENSER = 4
 const PLACE_WALL = 5
+
+signal element_selected(selected)
 
 var selected:int = FLOOR_TILE
 var selected_variant:int = CONVEYOR_UP_VARIANT
@@ -132,7 +135,9 @@ func _unhandled_input(event: InputEvent):
 					continue
 				
 				if (event.position - machine.position).length() < 64:
-					print("Here")
+					unhighlight_all()
+					highlight(machine)
+					element_selected.emit(machine)
 				
 				
 			
@@ -223,6 +228,13 @@ func make_combiner(grid_position: Vector2i, offset_dir: Vector2i):
 	new_combiner.set_parameters(Vector2i(combiner_position) + offset_dir*Consts.GRID_SIZE/2, direction)
 	add_child(new_combiner)
 	machines.append(new_combiner)
+	
+func unhighlight_all():
+	for machine:Machine in machines:
+		machine.unhighlight()
+		
+func highlight(machine: Machine):
+	machine.highlight()
 	
 	
 	

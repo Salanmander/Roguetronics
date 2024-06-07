@@ -70,9 +70,17 @@ func do_dispense():
 	
 func get_type():
 	return type
+
+
+func get_delay():
+	return cycle_spacing
 	
 func reset():
 	super.reset()
 	last_spawn_cycle = 0
+	
+
+func _on_delay_UI_change(new_spacing: int):
+	cycle_spacing = new_spacing
 
 
