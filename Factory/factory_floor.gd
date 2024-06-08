@@ -19,6 +19,7 @@ const PLACE_THING = 2
 const PLACE_COMBINER = 3
 const PLACE_DISPENSER = 4
 const PLACE_WALL = 5
+const PLACE_TRACK = 6
 
 signal element_selected(selected)
 signal simulation_started()
@@ -41,6 +42,9 @@ var combiner_packed:PackedScene = load("res://Factory/Machine/Combiner/combiner.
 var dispenser_packed:PackedScene = load("res://Factory/Machine/Dispenser/dispenser.tscn")
 var machines:Array[Machine]
 var conveyor_direction:float
+
+var dragging_track:bool = false
+var track_start_square:Vector2i
 
 var starting_assemblies:Array[Assembly]
 
@@ -193,6 +197,29 @@ func _unhandled_input(event: InputEvent):
 			make_wall(grid_loc)
 			
 			pass
+		elif click_mode == PLACE_TRACK:
+			dragging_track = true
+			track_start_square = grid_loc
+			
+			pass
+		pass
+	elif event is InputEventMouseButton and event.is_released():
+		if dragging_track:
+			dragging_track = false
+		pass
+	elif dragging_track and event is InputEventMouseMotion:
+		event = make_input_local(event)
+		var grid_loc:Vector2i = local_to_map(event.position)
+		
+		if grid_loc != track_start_square:
+			var new_line:Line2D = Line2D.new()
+			var points:Array[Vector2] = [map_to_local(track_start_square),
+										 map_to_local(grid_loc)]
+			new_line.points = PackedVector2Array(points)
+			add_child(new_line)
+			
+			track_start_square = grid_loc
+			
 		pass
 	pass
 	
@@ -379,6 +406,11 @@ func _on_place_combiner_pressed():
 
 func _on_place_wall_pressed():
 	click_mode = PLACE_WALL
+	
+	
+
+func _on_place_track_pressed():
+	click_mode = PLACE_TRACK
 
 
 func _on_move_object_pressed():
