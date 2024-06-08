@@ -26,9 +26,9 @@ func set_parameters(init_position: Vector2, widget_type: int):
 	type = widget_type
 	var tex
 	if type == 1:
-		tex = load("res://Factory/Machine/Dispenser/dispenser.png")
+		tex = load("res://Factory/Machine/Dispenser/dispenser_widget.png")
 	elif type == 2:
-		tex = load("res://Factory/Machine/Dispenser/dispenser2.png")
+		tex = load("res://Factory/Machine/Dispenser/dispenser_verywidget.png")
 	
 	$Sprite2D.texture = tex
 	pass

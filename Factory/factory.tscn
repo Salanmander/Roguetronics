@@ -3,14 +3,14 @@
 [ext_resource type="Script" path="res://Factory/factory.gd" id="1_ajpdm"]
 [ext_resource type="Texture2D" uid="uid://c75ii64xae637" path="res://Factory/icon.png" id="1_uqvcs"]
 [ext_resource type="Texture2D" uid="uid://ntfyndnf1obk" path="res://Factory/box.png" id="2_5b2d0"]
-[ext_resource type="Texture2D" uid="uid://dyc8rsoqdk0h0" path="res://Factory/floor.png" id="3_dkgit"]
-[ext_resource type="Texture2D" uid="uid://pkehjr4cgwl6" path="res://Factory/Widget/widget.png" id="3_kb4iw"]
+[ext_resource type="Texture2D" uid="uid://bqsb5r8n4oaa" path="res://Factory/floor.png" id="3_dkgit"]
+[ext_resource type="Texture2D" uid="uid://boj4b0l32qimb" path="res://Factory/Widget/widget.png" id="3_kb4iw"]
 [ext_resource type="Script" path="res://Factory/factory_floor.gd" id="3_ulfng"]
-[ext_resource type="Texture2D" uid="uid://b7ox0rp71lvyp" path="res://Factory/Widget/widget2.png" id="4_ca5u6"]
+[ext_resource type="Texture2D" uid="uid://bkhsm6uotntfp" path="res://Factory/Widget/widget2.png" id="4_ca5u6"]
 [ext_resource type="Texture2D" uid="uid://dpvqigf2ldir8" path="res://icon.svg" id="4_fq6om"]
-[ext_resource type="Texture2D" uid="uid://bih81gufhh5ed" path="res://Factory/Machine/Combiner/combiner.png" id="4_rb14g"]
-[ext_resource type="Texture2D" uid="uid://cfqbqy2d8jny" path="res://Factory/Machine/Dispenser/dispenser.png" id="6_11ej4"]
-[ext_resource type="Texture2D" uid="uid://bej2cy44rh6g2" path="res://Factory/Machine/Dispenser/dispenser2.png" id="7_wes8x"]
+[ext_resource type="Texture2D" uid="uid://4jl7a6bsnn7s" path="res://Factory/Machine/Combiner/combiner_V.png" id="6_nnkyd"]
+[ext_resource type="Texture2D" uid="uid://caj4dt65p80sr" path="res://Factory/Machine/Dispenser/dispenser_widget.png" id="7_78wcy"]
+[ext_resource type="Texture2D" uid="uid://cluvv73hlh0vo" path="res://Factory/Machine/Dispenser/dispenser_verywidget.png" id="8_8iadg"]
 [ext_resource type="Script" path="res://Factory/Machine/Dispenser/dispenser_controls.gd" id="9_dhkmi"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hjol2"]
@@ -171,7 +171,7 @@ offset_top = 124.0
 offset_right = 617.0
 offset_bottom = 190.0
 action_mode = 0
-icon = ExtResource("4_rb14g")
+icon = ExtResource("6_nnkyd")
 expand_icon = true
 
 [node name="PlaceDispenser" type="Button" parent="UILayer/Button Panel"]
@@ -181,7 +181,7 @@ offset_top = 124.0
 offset_right = 770.0
 offset_bottom = 190.0
 action_mode = 0
-icon = ExtResource("6_11ej4")
+icon = ExtResource("7_78wcy")
 expand_icon = true
 
 [node name="PlaceDispenser2" type="Button" parent="UILayer/Button Panel"]
@@ -191,7 +191,7 @@ offset_top = 125.0
 offset_right = 692.0
 offset_bottom = 191.0
 action_mode = 0
-icon = ExtResource("7_wes8x")
+icon = ExtResource("8_8iadg")
 expand_icon = true
 
 [node name="PlaceWall" type="Button" parent="UILayer/Button Panel"]
@@ -225,6 +225,7 @@ text = "Clear"
 expand_icon = true
 
 [node name="PlaceTrack" type="Button" parent="UILayer/Button Panel"]
+layout_mode = 0
 offset_left = 476.0
 offset_top = 125.0
 offset_right = 542.0

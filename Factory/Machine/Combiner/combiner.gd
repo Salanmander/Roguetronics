@@ -8,7 +8,10 @@ class_name Combiner
 
 # Could be refactored at some point so that it doesn't need to load these
 # textures multiple times. (Does that already get optimized out?)
-var texture = load("res://Factory/Machine/Combiner/combiner.png")
+var h_texture = load("res://Factory/Machine/Combiner/combiner_H.png")
+var v_texture = load("res://Factory/Machine/Combiner/combiner_V.png")
+
+var direction:float
 
 var idString:String
 
@@ -21,8 +24,8 @@ const LAYER = 3
 # Direction should be either 0 or PI/2
 func set_parameters(init_position: Vector2, direction: float):
 	set_machine_parameters(init_position, LAYER)
-	rotation = direction
 	idString = str(int(position.x), int(position.y))
+	self.direction = direction
 	pass
 
 
@@ -31,7 +34,10 @@ func _ready():
 	super()
 	
 	var child:Sprite2D = $Sprite2D
-	child.texture = texture
+	if is_equal_approx(fmod(direction, PI), 0):
+		child.texture = v_texture
+	else:
+		child.texture = h_texture
 	$LeftCollisionShape.position = Vector2(0, -Consts.GRID_SIZE/2)
 	$RightCollisionShape.position = Vector2(0, Consts.GRID_SIZE/2)
 	
