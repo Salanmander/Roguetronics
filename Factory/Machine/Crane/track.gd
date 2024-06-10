@@ -10,42 +10,57 @@ var looped:bool = false
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
-
-
-
-func click_at(grid_loc:Vector2i):
+	
+func set_parameters(grid_loc:Vector2i):
 	points.append(grid_loc)
 	make_lines()
+
+
+# Returns true if the track has been successfully grabbed
+func can_grab_at(grid_loc:Vector2i) -> bool:
+	return grid_loc == points[-1]
 	
 func drag_to(grid_loc:Vector2i):
 	
 	# First case: drag is still in the same square, do nothing
 	if grid_loc == points[-1]:
-		return
+		pass
 		
 	# Second case: drag goes backwards, pop the last point
-	if points.size() >= 2 and grid_loc == points[-2]:
+	elif points.size() >= 2 and grid_loc == points[-2]:
 		points.remove_at(points.size() - 1)
+		looped = false
 		make_lines()
-		return
 	
-	# Temp default
-	points.append(grid_loc)
-	make_lines()
+	# Third case: drag goes to the very first point, close the loop
+	elif grid_loc == points[0]:
+		points.append(grid_loc)
+		looped = true
+		make_lines()
+		
+	# Fourth case: drag intersects any other point, or track is looped, do nothing
+	elif looped or grid_loc in points:
+		pass
+	
+	# TODO: Fifth case: mouse went too far, go into directional mode
+	
+	
+	# Default, extend the track
+	else:
+		points.append(grid_loc)
+		make_lines()
 		
 		
 func make_lines():
 	# Delete all child nodes
 	var children = get_children()
 	for node in children:
-		# TODO: Use debug inspector to look for orphaned nodes, see
-		# if this is leaving a bunch of stuff in memory, also see if I can
-		# just queue_free without removing
 		node.queue_free()
 		
+	var half_square = Vector2(0.5, 0.5) * Consts.GRID_SIZE
+	
 	# Make a square at the beginning
 	var start = Polygon2D.new()
-	var half_square = Vector2(0.5, 0.5) * Consts.GRID_SIZE
 	var offset = points[0] * Consts.GRID_SIZE + half_square
 	var shape_points = [Vector2(-30, 30) + offset,
 						Vector2(-30, -30) + offset,
@@ -74,7 +89,6 @@ func make_lines():
 			arrow.polygon = PackedVector2Array(shape_points)
 			arrow.color = arrow_color
 			add_child(arrow)
-		
 		
 		var end = Polygon2D.new()
 		offset = points[-1] * Consts.GRID_SIZE + half_square

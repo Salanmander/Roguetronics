@@ -204,12 +204,21 @@ func _unhandled_input(event: InputEvent):
 			
 			pass
 		elif click_mode == PLACE_TRACK:
+			current_track = null
+			
 			dragging_track = true
-			current_track = track_packed.instantiate()
-			add_child(current_track)
 			
-			current_track.click_at(grid_loc)
+			for track:Track in tracks:
+				if track.can_grab_at(grid_loc):
+					current_track = track
+
 			
+			if current_track == null:
+				current_track = track_packed.instantiate()
+				current_track.set_parameters(grid_loc)
+				tracks.append(current_track)
+				add_child(current_track)
+				
 			pass
 		pass
 	elif event is InputEventMouseButton and event.is_released():
