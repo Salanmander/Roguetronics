@@ -43,8 +43,12 @@ var dispenser_packed:PackedScene = load("res://Factory/Machine/Dispenser/dispens
 var machines:Array[Machine]
 var conveyor_direction:float
 
+
+var track_packed:PackedScene = load("res://Factory/Machine/Crane/track.tscn")
 var dragging_track:bool = false
+var current_track:Track
 var track_start_square:Vector2i
+var tracks:Array[Track]
 
 var starting_assemblies:Array[Assembly]
 
@@ -65,6 +69,8 @@ func _ready():
 	
 	assemblies = []
 	machines = []
+	tracks = []
+	current_track = null
 
 	setup_debug_objects()
 	
@@ -199,28 +205,35 @@ func _unhandled_input(event: InputEvent):
 			pass
 		elif click_mode == PLACE_TRACK:
 			dragging_track = true
-			track_start_square = grid_loc
+			current_track = track_packed.instantiate()
+			add_child(current_track)
+			
+			current_track.click_at(grid_loc)
 			
 			pass
 		pass
 	elif event is InputEventMouseButton and event.is_released():
 		if dragging_track:
+			current_track = null
 			dragging_track = false
 		pass
 	elif dragging_track and event is InputEventMouseMotion:
 		event = make_input_local(event)
 		var grid_loc:Vector2i = local_to_map(event.position)
+		var dist_sq = map_to_local(grid_loc).distance_squared_to(event.position)
+		if dist_sq <= pow(Consts.GRID_SIZE/2, 2):
+			current_track.drag_to(grid_loc)
 		
-		if grid_loc != track_start_square:
-			var new_line:Line2D = Line2D.new()
-			var points:Array[Vector2] = [map_to_local(track_start_square),
-										 map_to_local(grid_loc)]
-			new_line.points = PackedVector2Array(points)
-			add_child(new_line)
-			
-			track_start_square = grid_loc
-			
-		pass
+		#if grid_loc != track_start_square:
+			#var new_line:Line2D = Line2D.new()
+			#var points:Array[Vector2] = [map_to_local(track_start_square),
+										 #map_to_local(grid_loc)]
+			#new_line.points = PackedVector2Array(points)
+			#add_child(new_line)
+			#
+			#track_start_square = grid_loc
+			#
+		#pass
 	pass
 	
 
@@ -272,7 +285,7 @@ func make_combiner(grid_position: Vector2i, offset_dir: Vector2i):
 	var direction = 0
 	if(offset_dir.y == 0):
 		direction = PI/2
-	new_combiner.set_parameters(Vector2i(combiner_position) + offset_dir*Consts.GRID_SIZE/2, direction)
+	new_combiner.set_parameters(Vector2(combiner_position) + offset_dir*Consts.GRID_SIZE/2, direction)
 	add_child(new_combiner)
 	machines.append(new_combiner)
 	
