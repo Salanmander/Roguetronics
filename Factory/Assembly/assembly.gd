@@ -54,31 +54,13 @@ func snap_to_grid(grid:TileMap):
 	position = grid.map_to_local( grid.local_to_map(position))
 	
 
+
+	
 #region Mobility
 
-# TODO: disconnect mobility signals before checking each frame
-# TODO: add movement signal connections for nudging
-
-# Indicate that mobility needs to be checked again.
-func reset_mobility():
-	mobility = [[0, 0, 0],
-				[0, 0, 0],
-				[0, 0, 0]]
-	
-	# Disconnect mobility signals
-	var blocked_connections:Array = blocked.get_connections()
-	for conn in blocked_connections:
-		blocked.disconnect(conn.callable)
-	var nudged_connections:Array = nudged.get_connections()
-	for conn in nudged_connections:
-		nudged.disconnect(conn.callable)
-		
-	for widget:Widget in widgets:
-		widget.reset_mobility()
-
-	
-#region redoMobility
-
+# TODO: what should happen if assemblies meet mid-cycle? Suggestion: just
+# let them end up misaligned, and make conveyors only push until there is
+# no overlap.
 
 # Attempts to move the assembly the given amount
 func check_and_move(delta: Vector2):
