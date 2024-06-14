@@ -20,6 +20,7 @@ const PLACE_COMBINER = 3
 const PLACE_DISPENSER = 4
 const PLACE_WALL = 5
 const PLACE_TRACK = 6
+const PLACE_CRANE = 7
 
 signal element_selected(selected)
 signal simulation_started()
@@ -45,6 +46,7 @@ var conveyor_direction:float
 
 
 var track_packed:PackedScene = load("res://Factory/Machine/Crane/track.tscn")
+var crane_packed:PackedScene = load("res://Factory/Machine/Crane/crane.tscn")
 var dragging_track:bool = false
 var current_track:Track
 var track_start_square:Vector2i
@@ -128,6 +130,9 @@ func _physics_process(delta: float):
 		if cycle - last_cycle >= (1-cycle_fraction):
 			for assembly:Assembly in assemblies:
 				assembly.snap_to_grid(self)
+				
+			for track:Track in tracks:
+				track.update_crane_locations()
 			
 		last_cycle = cycle
 		
@@ -203,12 +208,28 @@ func _unhandled_input(event: InputEvent):
 			make_wall(grid_loc)
 			
 			pass
+		elif(click_mode == PLACE_CRANE):
+			var blocked: bool = false
+			for track: Track in tracks:
+				if track.has_crane_at(grid_loc):
+					blocked = true
+			
+			if not blocked:
+				for track: Track in tracks:
+					if track.exists_at(grid_loc):
+						var new_crane: Crane = make_crane(grid_loc)
+						
+						track.add_crane(new_crane)
+						break
+			
+			
+			pass
 		elif click_mode == PLACE_TRACK:
 			current_track = null
 			
 			dragging_track = true
 			
-			for track:Track in tracks:
+			for track: Track in tracks:
 				if track.can_grab_at(grid_loc):
 					current_track = track
 
@@ -228,7 +249,7 @@ func _unhandled_input(event: InputEvent):
 		pass
 	elif dragging_track and event is InputEventMouseMotion:
 		event = make_input_local(event)
-		var grid_loc:Vector2i = local_to_map(event.position)
+		var grid_loc: Vector2i = local_to_map(event.position)
 		var dist_sq = map_to_local(grid_loc).distance_squared_to(event.position)
 		if dist_sq <= pow(Consts.GRID_SIZE/2, 2):
 			current_track.drag_to(grid_loc)
@@ -287,7 +308,7 @@ func make_dispenser(grid_position: Vector2i, dispense_type: int):
 	machines.append(new_dispenser)
 	new_dispenser.dispense.connect(_on_dispense)
 	
-func make_combiner(grid_position: Vector2i, offset_dir: Vector2i):
+func make_combiner(grid_position: Vector2i, offset_dir:Vector2i):
 	
 	var combiner_position: Vector2 = map_to_local(grid_position)
 	var new_combiner = combiner_packed.instantiate()
@@ -297,8 +318,16 @@ func make_combiner(grid_position: Vector2i, offset_dir: Vector2i):
 	new_combiner.set_parameters(Vector2(combiner_position) + offset_dir*Consts.GRID_SIZE/2, direction)
 	add_child(new_combiner)
 	machines.append(new_combiner)
+
+func make_crane(grid_position: Vector2i) -> Crane:
 	
+	var crane_position: Vector2 = map_to_local(grid_position)
+	var new_crane = crane_packed.instantiate()
+	new_crane.set_parameters(crane_position)
+	machines.append(new_crane)
+	new_crane.crashed.connect(crash)
 	
+	return new_crane
 	
 	
 #endregion
@@ -319,9 +348,15 @@ func remove_machines(machine_position: Vector2, machine_layer: int):
 				
 		i -= 1
 	pass
-	
+
 	
 #region Resetting
+
+# TODO: improve the crash, give visual indicator of some kind,
+# don't let it resume while crashed
+func crash():
+	run = false
+	self_modulate = Color(1, 0.6, 0.6, 1)
 
 func reset_to_start_of_run():
 	delete_assemblies()
@@ -350,7 +385,7 @@ func delete_assemblies():
 
 func delete_machines():
 	for machine:Machine in machines:
-		remove_child(machine)
+		machine.queue_free()
 		
 	machines = []
 
@@ -360,7 +395,13 @@ func delete_walls():
 	
 	for child:Node in child_list:
 		if child is Wall:
-			remove_child(child)
+			child.queue_free()
+			
+func delete_tracks():
+	for track:Track in tracks:
+		track.queue_free()
+	
+	tracks = []
 	
 		
 func remove_dispenser_type(widget_type: int):
@@ -368,14 +409,15 @@ func remove_dispenser_type(widget_type: int):
 	for machine:Machine in machines.duplicate():
 		if machine is Dispenser and machine.get_type() == widget_type:
 			machines.erase(machine)
-			remove_child(machine)
+			machine.queue_free()
 	
 	pass
 
 #endregion
 
 
-#region button callbacks
+#region button callbacks and signal connectors
+
 
 func _on_assembly_delete(deleted: Assembly):
 	assemblies.erase(deleted)
@@ -435,6 +477,10 @@ func _on_place_track_pressed():
 	click_mode = PLACE_TRACK
 
 
+func _on_place_crane_pressed():
+	click_mode = PLACE_CRANE
+
+
 func _on_move_object_pressed():
 	simulation_started.emit()
 	unhighlight_all()
@@ -455,6 +501,7 @@ func _on_clear_pressed():
 	delete_assemblies()
 	delete_machines()
 	delete_walls()
+	delete_tracks()
 	reset_to_start_of_run()
 
 
@@ -473,8 +520,19 @@ func setup_debug_objects():
 	goal.add_widget(Vector2(Consts.GRID_SIZE,0), 1)
 	goal.add_widget(Vector2(-Consts.GRID_SIZE,0), 1)
 	
+	
+
+func _on_test_function_pressed():
+	for machine in machines:
+		if machine is Crane:
+			if machine.is_open():
+				machine.close()
+			else:
+				machine.open()
 
 	
 
 #endregion
+
+
 
