@@ -211,7 +211,7 @@ offset_top = 49.0
 offset_right = 1178.0
 offset_bottom = 115.0
 action_mode = 0
-text = "Reset"
+text = "Stop"
 expand_icon = true
 
 [node name="Clear" type="Button" parent="UILayer/Button Panel"]
@@ -221,7 +221,8 @@ offset_top = 123.0
 offset_right = 1100.0
 offset_bottom = 189.0
 action_mode = 0
-text = "Clear"
+text = "Erase
+All"
 expand_icon = true
 
 [node name="PlaceTrack" type="Button" parent="UILayer/Button Panel"]
