@@ -21,6 +21,7 @@ config/icon="res://icon.svg"
 SceneManager="*res://Singletons/scene_manager.gd"
 Consts="*res://Singletons/consts.gd"
 Util="*res://Singletons/util.gd"
+drag_image="*res://Factory/UI/drag_image.tscn"
 
 [debug]
 

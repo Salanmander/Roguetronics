@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dksdy6hagfrlo"]
+[gd_scene load_steps=21 format=3 uid="uid://dksdy6hagfrlo"]
 
 [ext_resource type="Script" path="res://Factory/factory.gd" id="1_ajpdm"]
 [ext_resource type="Texture2D" uid="uid://c75ii64xae637" path="res://Factory/icon.png" id="1_uqvcs"]
@@ -11,7 +11,10 @@
 [ext_resource type="Texture2D" uid="uid://4jl7a6bsnn7s" path="res://Factory/Machine/Combiner/combiner_V.png" id="6_nnkyd"]
 [ext_resource type="Texture2D" uid="uid://caj4dt65p80sr" path="res://Factory/Machine/Dispenser/dispenser_widget.png" id="7_78wcy"]
 [ext_resource type="Texture2D" uid="uid://cluvv73hlh0vo" path="res://Factory/Machine/Dispenser/dispenser_verywidget.png" id="8_8iadg"]
-[ext_resource type="Script" path="res://Factory/Machine/Dispenser/dispenser_controls.gd" id="9_dhkmi"]
+[ext_resource type="Script" path="res://Factory/UI/dispenser_controls.gd" id="9_p24vu"]
+[ext_resource type="Script" path="res://Factory/UI/crane_controls.gd" id="10_5vdjy"]
+[ext_resource type="Script" path="res://Factory/UI/crane_program.gd" id="11_wqryl"]
+[ext_resource type="Script" path="res://Factory/UI/command_bank.gd" id="12_vgtn5"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hjol2"]
 bg_color = Color(0.341176, 0.341176, 0.341176, 1)
@@ -55,6 +58,7 @@ sources/0 = SubResource("TileSetAtlasSource_fyd2g")
 script = ExtResource("1_ajpdm")
 
 [node name="UILayer" type="CanvasLayer" parent="."]
+layer = -1
 
 [node name="DummyPlaceholder" type="Sprite2D" parent="UILayer"]
 position = Vector2(456, 282)
@@ -237,6 +241,7 @@ Track"
 expand_icon = true
 
 [node name="PlaceCrane" type="Button" parent="UILayer/Button Panel"]
+layout_mode = 0
 offset_left = 857.0
 offset_top = 123.0
 offset_right = 923.0
@@ -266,21 +271,21 @@ offset_left = -222.6
 offset_bottom = -215.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_hjol2")
 
-[node name="DispenserControls" type="Control" parent="UILayer/MachineControls"]
+[node name="DispenserControl" type="Control" parent="UILayer/MachineControls"]
 visible = false
 anchors_preset = 0
 offset_right = 222.0
 offset_bottom = 584.0
-script = ExtResource("9_dhkmi")
+script = ExtResource("9_p24vu")
 
-[node name="SpawnDelay" type="SpinBox" parent="UILayer/MachineControls/DispenserControls"]
+[node name="SpawnDelay" type="SpinBox" parent="UILayer/MachineControls/DispenserControl"]
 layout_mode = 0
 offset_left = 66.0
 offset_top = 98.0
 offset_right = 149.063
 offset_bottom = 129.0
 
-[node name="Label" type="Label" parent="UILayer/MachineControls/DispenserControls"]
+[node name="Label" type="Label" parent="UILayer/MachineControls/DispenserControl"]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 73.0
@@ -288,8 +293,41 @@ offset_right = 200.0
 offset_bottom = 96.0
 text = "Cycles between widgets"
 
+[node name="CraneControl" type="Control" parent="UILayer/MachineControls"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 222.0
+offset_bottom = 584.0
+script = ExtResource("10_5vdjy")
+
+[node name="Label" type="Label" parent="UILayer/MachineControls/CraneControl"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 19.0
+offset_right = 204.0
+offset_bottom = 42.0
+text = "Crane Controls"
+
+[node name="CraneProgram" type="VBoxContainer" parent="UILayer/MachineControls/CraneControl"]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 75.0
+offset_right = 64.0
+offset_bottom = 523.0
+theme_override_constants/separation = 0
+script = ExtResource("11_wqryl")
+
+[node name="CommandBank" type="VBoxContainer" parent="UILayer/MachineControls/CraneControl"]
+layout_mode = 0
+offset_left = 133.0
+offset_top = 75.0
+offset_right = 165.0
+offset_bottom = 523.0
+theme_override_constants/separation = 0
+script = ExtResource("12_vgtn5")
+
 [node name="FactoryLayer" type="CanvasLayer" parent="."]
-layer = 0
+layer = -2
 scale = Vector2(0.4, 0.4)
 transform = Transform2D(0.4, 0, 0, 0.4, 0, 0)
 

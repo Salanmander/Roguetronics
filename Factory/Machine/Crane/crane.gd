@@ -2,7 +2,7 @@ extends Machine
 class_name Crane
 
 
-const LAYER: int = 4
+const LAYER: int = -1
 
 var grabber_open: bool
 

@@ -156,7 +156,7 @@ func _unhandled_input(event: InputEvent):
 		if event.button_index == MOUSE_BUTTON_RIGHT:
 			# Check to see if there's a clickable thing there
 			for machine:Machine in machines:
-				if not machine is Dispenser:
+				if not (machine is Dispenser or machine is Crane):
 					continue
 				
 				if (event.position - machine.position).length() < 64:

@@ -1,0 +1,47 @@
+[gd_scene load_steps=4 format=3 uid="uid://b2qhgha37kpn6"]
+
+[ext_resource type="Texture2D" uid="uid://dpvqigf2ldir8" path="res://icon.svg" id="1_johwb"]
+[ext_resource type="Script" path="res://Factory/UI/command_slot.gd" id="1_qydvf"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ds1qf"]
+bg_color = Color(0.290196, 0.290196, 0.290196, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(0.0392157, 0.0392157, 0.0392157, 1)
+border_blend = true
+
+[node name="CommandSlot" type="Panel"]
+custom_minimum_size = Vector2(32, 32)
+offset_right = 32.0
+offset_bottom = 32.0
+focus_mode = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_ds1qf")
+script = ExtResource("1_qydvf")
+
+[node name="CommandImage" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.0
+offset_top = -12.0
+offset_right = 12.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+
+[node name="ActiveIndicator" type="TextureRect" parent="."]
+visible = false
+layout_mode = 0
+offset_left = -20.0
+offset_top = 8.0
+offset_right = -4.0
+offset_bottom = 24.0
+texture = ExtResource("1_johwb")
+expand_mode = 1

@@ -1,8 +1,8 @@
 extends Node2D
 
 @onready var floor: FactoryFloor = $FactoryLayer/FactoryFloor
-@onready var dispenser_controls: DispenserControls = $UILayer/MachineControls/DispenserControls
-
+@onready var dispenser_control: DispenserControl = $UILayer/MachineControls/DispenserControl
+@onready var crane_control: CraneControl = $UILayer/MachineControls/CraneControl
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -17,19 +17,25 @@ func _process(delta):
 	
 	
 func hide_all_controls():
-	dispenser_controls.visible = false
+	dispenser_control.visible = false
+	crane_control.visible = false
 
 func show_control(UIElement: Control):
 	UIElement.visible = true
 	
 func _on_element_selected(element):
-	if not element is Dispenser:
-		return
+	var control_to_show: Control = null
+	if element is Dispenser:
+		dispenser_control.connect_to(element)
+		hide_all_controls()
+		show_control(dispenser_control)
 	
-	dispenser_controls.connect_to(element)
+	elif element is Crane:
+		crane_control.connect_to(element)
+		hide_all_controls()
+		show_control(crane_control)
+		
 	
-	hide_all_controls()
-	show_control(dispenser_controls)
 	
 func _on_simulation_started():
 	hide_all_controls()

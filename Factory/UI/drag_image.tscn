@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://bvb204hheyof2"]
+
+[ext_resource type="Script" path="res://Factory/UI/drag_image.gd" id="2_8i71j"]
+
+[node name="DragImage" type="TextureRect"]
+modulate = Color(1, 1, 1, 0.501961)
+custom_minimum_size = Vector2(24, 24)
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+expand_mode = 1
+script = ExtResource("2_8i71j")

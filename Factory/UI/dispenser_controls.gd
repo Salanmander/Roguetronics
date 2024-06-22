@@ -1,5 +1,5 @@
 extends Control
-class_name DispenserControls
+class_name DispenserControl
 
 @onready var delay_box:SpinBox = $SpawnDelay
 
