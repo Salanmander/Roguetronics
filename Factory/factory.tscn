@@ -294,6 +294,7 @@ offset_bottom = 96.0
 text = "Cycles between widgets"
 
 [node name="CraneControl" type="Control" parent="UILayer/MachineControls"]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 222.0

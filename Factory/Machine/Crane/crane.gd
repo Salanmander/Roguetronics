@@ -15,6 +15,8 @@ signal move_triggered(offset: int)
 signal reset_triggered(start_index: int)
 signal crashed()
 
+var program: Array[int]
+
 func set_parameters(init_position: Vector2):
 	set_machine_parameters(init_position, LAYER)
 	monitorable = true
@@ -23,6 +25,7 @@ func set_parameters(init_position: Vector2):
 func _ready():
 	super()
 	open()
+	program = []
 
 func run_to(cycle: float):
 	
@@ -40,11 +43,25 @@ func run_to(cycle: float):
 	
 	position = last_pos.lerp(target_pos, cycle_fraction)
 	last_cycle = cycle
-	
+
 func reset():
 	super.reset()
 	reset_triggered.emit(initial_track_index)
+	
+#region UI communication
 
+func get_program() -> Array[int]:
+	return program.duplicate()
+
+func set_program(new_program: Array[int]):
+	program = new_program.duplicate()
+	
+func _on_program_UI_change(new_program: Array[int]):
+	set_program(new_program)
+
+#endregion
+
+#region movement
 
 func set_target(target: Vector2):
 	target_pos = target
@@ -55,8 +72,11 @@ func set_initial_index(ind: int):
 func teleport_to(pos: Vector2):
 	position = pos
 	
-		
 
+#endregion
+
+
+#region commands
 
 func open():
 	grabber_open = true
@@ -70,6 +90,8 @@ func close():
 
 func is_open():
 	return grabber_open
+
+#endregion
 	
 func _on_area_entered(other: Area2D):
 	super._on_area_entered(other)
