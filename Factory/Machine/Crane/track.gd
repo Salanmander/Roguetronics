@@ -95,7 +95,7 @@ func _on_crane_move(offset: int, crane: Crane):
 	var current_ind: int = cranes.find(crane)
 	var target_ind: int = current_ind
 	var offset_ind: int = current_ind + offset
-	if offset_ind < points.size():
+	if offset_ind < points.size() and offset_ind >= 0:
 		target_ind = offset_ind
 		
 	if looped:

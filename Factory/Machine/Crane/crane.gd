@@ -36,9 +36,9 @@ func run_to(cycle: float):
 		last_pos = position
 		target_pos = position # Default is stay still
 		
-		# When the signal is emitted, a connected track should
-		# update target_pos of this
-		move_triggered.emit(1)
+		# Run the next command
+		var command:int = program[int(cycle) % program.size()]
+		run_command(command)
 		pass
 	
 	position = last_pos.lerp(target_pos, cycle_fraction)
@@ -47,6 +47,13 @@ func run_to(cycle: float):
 func reset():
 	super.reset()
 	reset_triggered.emit(initial_track_index)
+	
+func run_command(command: int):
+	if command == Consts.FORWARD:
+		move_triggered.emit(1)
+	if command == Consts.BACKWARD:
+		move_triggered.emit(-1)
+	pass
 	
 #region UI communication
 
