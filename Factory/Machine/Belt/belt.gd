@@ -13,15 +13,15 @@ var right_texture = load("res://Factory/Machine/Belt/Right.png")
 var up_texture = load("res://Factory/Machine/Belt/Up.png")
 var down_texture = load("res://Factory/Machine/Belt/Down.png")
 
-var held_widgets:Array[Widget]
-var direction:float
-var arm_offset:Vector2
+var held_widgets: Array[Widget]
+var direction: float
+var arm_offset: Vector2
 
-var last_arm_offset:Vector2
+var last_arm_offset: Vector2
 
 
-var DEBUG_GRABBER:bool = false
-var grabber_display:Sprite2D
+var DEBUG_GRABBER: bool = false
+var grabber_display: Sprite2D
 
 const LAYER:int = 0
 
@@ -38,7 +38,7 @@ func set_parameters(init_position: Vector2, init_direction: float):
 func _ready():
 	super()
 	
-	var child:Sprite2D = $Sprite2D
+	var child: Sprite2D = $Sprite2D
 	if(direction == 0):
 		child.texture = up_texture
 	elif direction == PI/2:
@@ -73,7 +73,7 @@ func run_to(cycle: float):
 	arm_offset = Vector2(0,-1).rotated(direction) * Consts.GRID_SIZE * cycle_fraction
 	
 	# If we're holding something
-	for widget:Widget in held_widgets:
+	for widget: Widget in held_widgets:
 		widget.nudge(arm_offset - last_arm_offset)
 		
 	if DEBUG_GRABBER:
@@ -90,14 +90,14 @@ func reset():
 	drop()
 	
 func drop():
-	for widget:Widget in held_widgets:
+	for widget: Widget in held_widgets:
 		widget.deleted.disconnect(_on_widget_deleted)
 	held_widgets = []
 	
 func grab():
 	if held_widgets.size() == 0 && nearby_widgets.size() > 0:
 		held_widgets = nearby_widgets.duplicate()
-		for widget:Widget in held_widgets:
+		for widget: Widget in held_widgets:
 			widget.deleted.connect(_on_widget_deleted)
 	pass
 	

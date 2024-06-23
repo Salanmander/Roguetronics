@@ -44,7 +44,7 @@ func _ready():
 	pass # Replace with function body.
 
 
-func run_to(cycle:float):
+func run_to(cycle: float):
 	var cycle_fraction = fmod(cycle, 1)
 	
 	# When this is the first move of a cycle

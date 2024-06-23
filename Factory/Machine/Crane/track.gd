@@ -4,11 +4,11 @@ class_name Track
 const track_color = Color(0.5, 0.5, 0.5)
 const arrow_color = Color(0.9, 0.9, 0)
 
-var points:Array[Vector2i] = []
-var looped:bool = false
+var points: Array[Vector2i] = []
+var looped: bool = false
 
-var cranes:Array[Crane] = []
-var next_cycle_cranes:Array[Crane] = []
+var cranes: Array[Crane] = []
+var next_cycle_cranes: Array[Crane] = []
 
 const LAYER:int = 5
 
@@ -17,7 +17,7 @@ func _ready():
 	z_index = LAYER
 	pass # Replace with function body.
 	
-func set_parameters(grid_loc:Vector2i):
+func set_parameters(grid_loc: Vector2i):
 	points.append(grid_loc)
 	cranes.append(null)
 	next_cycle_cranes.append(null)
@@ -28,14 +28,14 @@ func set_parameters(grid_loc:Vector2i):
 #region mouse controls
 
 # Returns true if the track has been successfully grabbed
-func can_grab_at(grid_loc:Vector2i) -> bool:
+func can_grab_at(grid_loc: Vector2i) -> bool:
 	return grid_loc == points[-1]
 
 # Returns true if the location is on any part of the track.
-func exists_at(grid_loc:Vector2i) -> bool:
+func exists_at(grid_loc: Vector2i) -> bool:
 	return grid_loc in points
 	
-func drag_to(grid_loc:Vector2i):
+func drag_to(grid_loc: Vector2i):
 	
 	# First case: drag is still in the same square, do nothing
 	if grid_loc == points[-1]:
@@ -140,7 +140,7 @@ func has_crane_at(loc: Vector2i) -> bool:
 	return false
 	
 func _on_crane_reset(track_index: int, crane: Crane):
-	var new_pos:Vector2 = Util.floor_map_to_local(points[track_index])
+	var new_pos: Vector2 = Util.floor_map_to_local(points[track_index])
 	crane.teleport_to(new_pos)
 	var old_index = cranes.find(crane)
 	cranes[old_index] = null

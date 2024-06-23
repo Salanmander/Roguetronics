@@ -1,6 +1,6 @@
 extends TextureRect
 
-var held_item:int
+var held_item: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

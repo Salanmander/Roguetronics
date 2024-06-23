@@ -6,7 +6,7 @@ func _ready():
 	pass # Replace with function body.
 
 
-func set_parameters(init_position:Vector2):
+func set_parameters(init_position: Vector2):
 	position = init_position
 
 # Walls need a can_move method that takes a direction, because that's how

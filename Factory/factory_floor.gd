@@ -25,42 +25,42 @@ const PLACE_CRANE = 7
 signal element_selected(selected)
 signal simulation_started()
 
-var selected:int = FLOOR_TILE
-var selected_variant:int = CONVEYOR_UP_VARIANT
+var selected: int = FLOOR_TILE
+var selected_variant: int = CONVEYOR_UP_VARIANT
 
-var click_mode:int = NONE
-var widget_type:int = 0
+var click_mode: int = NONE
+var widget_type: int = 0
 
-var wall_packed:PackedScene = load("res://Factory/Wall/wall.tscn")
+var wall_packed: PackedScene = load("res://Factory/Wall/wall.tscn")
 
-var widget_packed:PackedScene = load("res://Factory/Widget/widget.tscn")
-var assembly_packed:PackedScene = load("res://Factory/Assembly/assembly.tscn")
-var assemblies:Array[Assembly]
-
-
-var belt_packed:PackedScene = load("res://Factory/Machine/Belt/belt.tscn")
-var combiner_packed:PackedScene = load("res://Factory/Machine/Combiner/combiner.tscn")
-var dispenser_packed:PackedScene = load("res://Factory/Machine/Dispenser/dispenser.tscn")
-var machines:Array[Machine]
-var conveyor_direction:float
+var widget_packed: PackedScene = load("res://Factory/Widget/widget.tscn")
+var assembly_packed: PackedScene = load("res://Factory/Assembly/assembly.tscn")
+var assemblies: Array[Assembly]
 
 
-var track_packed:PackedScene = load("res://Factory/Machine/Crane/track.tscn")
-var crane_packed:PackedScene = load("res://Factory/Machine/Crane/crane.tscn")
-var dragging_track:bool = false
-var current_track:Track
-var track_start_square:Vector2i
-var tracks:Array[Track]
+var belt_packed: PackedScene = load("res://Factory/Machine/Belt/belt.tscn")
+var combiner_packed: PackedScene = load("res://Factory/Machine/Combiner/combiner.tscn")
+var dispenser_packed: PackedScene = load("res://Factory/Machine/Dispenser/dispenser.tscn")
+var machines: Array[Machine]
+var conveyor_direction: float
 
-var starting_assemblies:Array[Assembly]
 
-var goal_packed:PackedScene = load("res://Factory/Goal/goal.tscn")
-var goal:Goal
+var track_packed: PackedScene = load("res://Factory/Machine/Crane/track.tscn")
+var crane_packed: PackedScene = load("res://Factory/Machine/Crane/crane.tscn")
+var dragging_track: bool = false
+var current_track: Track
+var track_start_square: Vector2i
+var tracks: Array[Track]
 
-var run:bool = false
-var cycle_time:float = 0.7 # Number of seconds for one cycle
-var cycle:float = -1 # Current cycle count
-var last_cycle:float = 0 # Previous frame cycle count
+var starting_assemblies: Array[Assembly]
+
+var goal_packed: PackedScene = load("res://Factory/Goal/goal.tscn")
+var goal: Goal
+
+var run: bool = false
+var cycle_time: float = 0.7 # Number of seconds for one cycle
+var cycle: float = -1 # Current cycle count
+var last_cycle: float = 0 # Previous frame cycle count
 
 
 # Called when the node enters the scene tree for the first time.
@@ -91,10 +91,10 @@ func _physics_process(delta: float):
 		
 		# Initial frame. Do first dispense and save initial state
 		if cycle == -1:
-			for assembly:Assembly in assemblies:
+			for assembly: Assembly in assemblies:
 				starting_assemblies.append(assembly.clone())
 			
-			for machine:Machine in machines:
+			for machine: Machine in machines:
 				if machine is Dispenser:
 					machine.do_dispense()
 				
@@ -105,7 +105,7 @@ func _physics_process(delta: float):
 		
 		
 		# Need to combine before checking mobility
-		for machine:Machine in machines:
+		for machine: Machine in machines:
 			if machine is Combiner:
 				machine.run_to(cycle)
 		
@@ -113,25 +113,25 @@ func _physics_process(delta: float):
 		if cycle - last_cycle >= cycle_fraction:
 			goal.check()
 				
-		for machine:Machine in machines:
+		for machine: Machine in machines:
 			if not (machine is Combiner):
 				machine.run_to(cycle)
 			
-		for assembly:Assembly in assemblies:
+		for assembly: Assembly in assemblies:
 			assembly.run_to(cycle)
 			
 		
-		for assembly:Assembly in assemblies:
+		for assembly: Assembly in assemblies:
 			assembly.clear_nudges()
 			
 		
 		# This runs if it's the *last* update before the end
 		# of the cycle
 		if cycle - last_cycle >= (1-cycle_fraction):
-			for assembly:Assembly in assemblies:
+			for assembly: Assembly in assemblies:
 				assembly.snap_to_grid(self)
 				
-			for track:Track in tracks:
+			for track: Track in tracks:
 				track.update_crane_locations()
 			
 		last_cycle = cycle
@@ -150,12 +150,12 @@ func _unhandled_input(event: InputEvent):
 	
 	if event is InputEventMouseButton and event.is_pressed():
 		event = make_input_local(event)
-		var grid_loc:Vector2i = local_to_map(event.position)
-		var thing_position:Vector2i = map_to_local(grid_loc)
+		var grid_loc: Vector2i = local_to_map(event.position)
+		var thing_position: Vector2i = map_to_local(grid_loc)
 		
 		if event.button_index == MOUSE_BUTTON_RIGHT:
 			# Check to see if there's a clickable thing there
-			for machine:Machine in machines:
+			for machine: Machine in machines:
 				if not (machine is Dispenser or machine is Crane):
 					continue
 				
@@ -180,16 +180,16 @@ func _unhandled_input(event: InputEvent):
 			var BOTTOM = Vector2(0, 1)
 			var LEFT = Vector2(-1, 0)
 			
-			var directions:Array[Vector2] = [TOP, RIGHT, BOTTOM, LEFT]
-			var min_dist:float = Consts.GRID_SIZE
-			var dir_of_min_dist:Vector2i
+			var directions: Array[Vector2] = [TOP, RIGHT, BOTTOM, LEFT]
+			var min_dist: float = Consts.GRID_SIZE
+			var dir_of_min_dist: Vector2i
 			
 			for dir in directions:
-				var edge_spot:Vector2 = dir*Consts.GRID_SIZE/2.0
-				var click_spot:Vector2 = event.position - thing_position*1.0
+				var edge_spot: Vector2 = dir*Consts.GRID_SIZE/2.0
+				var click_spot: Vector2 = event.position - thing_position*1.0
 				click_spot = click_spot.project(dir)
 				
-				var dist:float = click_spot.distance_to(edge_spot)
+				var dist: float = click_spot.distance_to(edge_spot)
 				if dist < min_dist:
 					min_dist = dist
 					dir_of_min_dist = dir
@@ -268,7 +268,7 @@ func _unhandled_input(event: InputEvent):
 	
 
 func unhighlight_all():
-	for machine:Machine in machines:
+	for machine: Machine in machines:
 		machine.unhighlight()
 		
 func highlight(machine: Machine):
@@ -365,7 +365,7 @@ func reset_to_start_of_run():
 	assemblies = starting_assemblies
 	starting_assemblies = []
 	
-	for assembly:Assembly in assemblies:
+	for assembly: Assembly in assemblies:
 		add_child(assembly)
 		assembly.deleted.connect(_on_assembly_delete)
 		
@@ -379,26 +379,26 @@ func delete_assemblies():
 	
 	# The assembly delete method removes it from the assemblies array
 	# (indirectly), so we need to duplicate the array first.
-	for assembly:Assembly in assemblies.duplicate():
+	for assembly: Assembly in assemblies.duplicate():
 		assembly.delete()
 		
 
 func delete_machines():
-	for machine:Machine in machines:
+	for machine: Machine in machines:
 		machine.queue_free()
 		
 	machines = []
 
 	
 func delete_walls():
-	var child_list:Array[Node] = get_children()
+	var child_list: Array[Node] = get_children()
 	
-	for child:Node in child_list:
+	for child: Node in child_list:
 		if child is Wall:
 			child.queue_free()
 			
 func delete_tracks():
-	for track:Track in tracks:
+	for track: Track in tracks:
 		track.queue_free()
 	
 	tracks = []
@@ -406,7 +406,7 @@ func delete_tracks():
 		
 func remove_dispenser_type(widget_type: int):
 	
-	for machine:Machine in machines.duplicate():
+	for machine: Machine in machines.duplicate():
 		if machine is Dispenser and machine.get_type() == widget_type:
 			machines.erase(machine)
 			machine.queue_free()

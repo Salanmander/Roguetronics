@@ -1,26 +1,26 @@
 extends Node2D
 class_name Assembly
 
-var widgets:Array[Widget]
-var nudges:Array[Vector2]
-var affected_by_machines:bool
-var monitorable:bool
-var queued_combine_widget:Widget
+var widgets: Array[Widget]
+var nudges: Array[Vector2]
+var affected_by_machines: bool
+var monitorable: bool
+var queued_combine_widget: Widget
 
 # 3x3 array. Contains 1 if the assembly can move in that direction
 # this cycle, -1 if not, 0 if unchecked. Index is the direction, so
 # negative indices are used, and [0][0] is the entry for not
 # moving (unused)
-var mobility:Array[Array]
+var mobility: Array[Array]
 
-var last_cycle:float
+var last_cycle: float
 
 const LAYER = 1
 
-var assembly_packed:PackedScene = load("res://Factory/Assembly/assembly.tscn")
-var widget_packed:PackedScene = load("res://Factory/Widget/widget.tscn")
+var assembly_packed: PackedScene = load("res://Factory/Assembly/assembly.tscn")
+var widget_packed: PackedScene = load("res://Factory/Widget/widget.tscn")
 
-signal deleted(this_assembly:Assembly)
+signal deleted(this_assembly: Assembly)
 signal perfect_overlap(other_assembly: Assembly)
 signal blocked(direction: Vector2i)
 signal nudged(delta: Vector2)
@@ -50,7 +50,7 @@ func _ready():
 	
 # Puts position at the middle of a grid square.
 # Is passing in the TileMap a good idea? I don't know!
-func snap_to_grid(grid:TileMap):
+func snap_to_grid(grid: TileMap):
 	position = grid.map_to_local( grid.local_to_map(position))
 	
 
@@ -74,7 +74,7 @@ func check_and_move(delta: Vector2):
 		
 func can_move(delta: Vector2) -> bool:
 	
-	for nudge:Vector2 in nudges:
+	for nudge: Vector2 in nudges:
 		var angle = nudge.angle_to(delta)
 		var len_delta = delta.length()
 		var len_nudge = nudge.length()
@@ -85,9 +85,9 @@ func can_move(delta: Vector2) -> bool:
 	
 	position += delta
 	
-	var can_move:bool = true
+	var can_move: bool = true
 	# Tell component widgets to poll now-overlapping areas for mobility
-	for widget:Widget in widgets:
+	for widget: Widget in widgets:
 		if not widget.overlaps_can_move():
 			can_move = false
 			break
@@ -97,11 +97,11 @@ func can_move(delta: Vector2) -> bool:
 
 	return can_move
 	
-func move(delta:Vector2):
+func move(delta: Vector2):
 	position += delta
 	
 	# Tell component widgets to push now-overlapping areas
-	for widget:Widget in widgets:
+	for widget: Widget in widgets:
 		widget.push_overlaps()
 		
 func clear_nudges():
@@ -110,15 +110,15 @@ func clear_nudges():
 
 #endregion
 	
-func run_to(cycle:float):
+func run_to(cycle: float):
 	
-	var dLeft:float = 0
-	var dRight:float = 0
-	var dDown:float = 0
-	var dUp:float = 0
+	var dLeft: float = 0
+	var dRight: float = 0
+	var dDown: float = 0
+	var dUp: float = 0
 	for nudge in nudges:
-		var x:float = nudge.x
-		var y:float = nudge.y
+		var x: float = nudge.x
+		var y: float = nudge.y
 		if x > 0 and x > dRight:
 			dRight = x
 		if x < 0 and x < dLeft:
@@ -152,13 +152,13 @@ func run_to(cycle:float):
 	#last_cycle = cycle
 	pass
 
-func add_widget(relative_position:Vector2, widget_type: int):
-	var new_widget:Widget = widget_packed.instantiate()
+func add_widget(relative_position: Vector2, widget_type: int):
+	var new_widget: Widget = widget_packed.instantiate()
 	new_widget.set_parameters(relative_position, widget_type)
 	add_widget_object(new_widget)
 	pass
 
-func add_widget_object(new_widget:Widget):
+func add_widget_object(new_widget: Widget):
 	add_child(new_widget)
 	new_widget.record_parent(self)
 	new_widget.monitorable = monitorable
@@ -168,8 +168,8 @@ func add_widget_object(new_widget:Widget):
 	new_widget.overlap_detected_with.connect(_on_overlap_detected)
 	pass
 	
-func add_widget_from_other(new_widget:Widget, other:Assembly):
-	var keep_global_transform:bool = true
+func add_widget_from_other(new_widget: Widget, other: Assembly):
+	var keep_global_transform: bool = true
 	new_widget.reparent_custom(self, keep_global_transform)
 	new_widget.monitorable = monitorable
 	widgets.append(new_widget)
@@ -187,7 +187,7 @@ func get_widgets() -> Array[Widget]:
 
 # TODO: There has *got* to be a better way to do this
 func check_for_any_perfect_overlap():
-	for widget:Widget in widgets:
+	for widget: Widget in widgets:
 		widget.tell_overlaps_to_check_assembly(self)
 	pass
 	
@@ -198,7 +198,7 @@ func check_perfect_overlap_with(other: Assembly):
 		return
 	
 	for widget in widgets:
-		var loc:Vector2 = position + widget.position
+		var loc: Vector2 = position + widget.position
 		if not other.has_widget_at_position(loc, widget.type):
 			return
 	
@@ -214,7 +214,7 @@ func found_perfect_overlap_with(other: Assembly):
 	
 func has_widget_at_position(loc: Vector2, type: int) -> bool:
 	for widget in widgets:
-		var this_loc:Vector2 = position + widget.position
+		var this_loc: Vector2 = position + widget.position
 		if(this_loc.is_equal_approx(loc) && widget.type == type):
 			return true
 	return false
@@ -225,17 +225,17 @@ func _on_nudged_toward_direction(dir: Vector2, delta: Vector2):
 		return
 	_on_widget_nudged(delta)
 	
-func _on_widget_nudged(delta:Vector2):
+func _on_widget_nudged(delta: Vector2):
 	if(affected_by_machines):
 		nudges.append(delta)
 		nudged.emit(delta)
 	pass
 
-func _on_widget_combined(widget:Widget, combiner:Combiner):
-	var group_name:String = str("combining_by_",combiner.idString)
-	var combining_assemblies:Array[Node] = get_tree().get_nodes_in_group(group_name)
+func _on_widget_combined(widget: Widget, combiner: Combiner):
+	var group_name: String = str("combining_by_",combiner.idString)
+	var combining_assemblies: Array[Node] = get_tree().get_nodes_in_group(group_name)
 	if combining_assemblies.size() == 1 && combining_assemblies[0] is Assembly:
-		var other_assembly:Assembly = combining_assemblies[0]
+		var other_assembly: Assembly = combining_assemblies[0]
 		if other_assembly == self:
 			return
 		other_assembly.combine_with(self, widget)
@@ -251,12 +251,12 @@ func combine_with(other: Assembly, connect_point: Widget):
 	assert(queued_combine_widget != null, "Error: Combine was initiated without connection point being set")
 	
 	# Add the other widgets
-	var to_add:Array[Widget] = other.get_widgets()
-	for widget:Widget in to_add:
+	var to_add: Array[Widget] = other.get_widgets()
+	for widget: Widget in to_add:
 		add_widget_from_other(widget, other)
 		
 	# Add the other lines
-	var keep_global_transform:bool = true
+	var keep_global_transform: bool = true
 	for node in other.get_children():
 		if node is Line2D:
 			node.reparent(self, keep_global_transform)
@@ -264,8 +264,8 @@ func combine_with(other: Assembly, connect_point: Widget):
 		
 		
 	# connect_point is now in this assembly, so positions can be used directly
-	var p1:Vector2 = queued_combine_widget.position
-	var p2:Vector2 = connect_point.position
+	var p1: Vector2 = queued_combine_widget.position
+	var p2: Vector2 = connect_point.position
 	
 	var new_line = Line2D.new()
 	new_line.points = PackedVector2Array([p1, p2])
@@ -282,7 +282,7 @@ func delete():
 	queue_free()
 	
 func delete_widgets():
-	for widget:Widget in widgets:
+	for widget: Widget in widgets:
 		widget.deleted.emit(widget)
 
 #endregion
@@ -292,14 +292,14 @@ func clone() -> Assembly:
 	copy.position = position;
 	copy.monitorable = monitorable;
 	
-	for widget:Widget in widgets:
+	for widget: Widget in widgets:
 		copy.add_widget(widget.position, widget.type)
 	
 	return copy
 	
-func _on_combiner_drop(combiner:Combiner):
+func _on_combiner_drop(combiner: Combiner):
 	combiner.drop.disconnect(_on_combiner_drop)
-	var group_name:String = str("combining_by_",combiner.idString)
+	var group_name: String = str("combining_by_",combiner.idString)
 	remove_from_group(group_name)
 	queued_combine_widget = null
 	

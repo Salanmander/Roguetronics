@@ -1,7 +1,7 @@
 extends Control
 class_name DispenserControl
 
-@onready var delay_box:SpinBox = $SpawnDelay
+@onready var delay_box: SpinBox = $SpawnDelay
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

@@ -8,10 +8,10 @@ class_name Dispenser
 
 # Could be refactored at some point so that it doesn't need to load these
 # textures multiple times. (Does that already get optimized out?)
-var type:int = -1
+var type: int = -1
 
-var cycle_spacing:int = 4
-var last_spawn_cycle:int = 0
+var cycle_spacing: int = 4
+var last_spawn_cycle: int = 0
 
 
 const LAYER = 3
@@ -47,7 +47,7 @@ func _ready():
 	pass # Replace with function body.
 
 
-func run_to(cycle:float):
+func run_to(cycle: float):
 	var cycle_fraction = fmod(cycle, 1)
 	
 	# This runs if it's the *last* update before the end

@@ -3,11 +3,11 @@ class_name Machine
 
 
 
-var last_cycle:float
+var last_cycle: float
 
-var nearby_widgets:Array[Widget]
+var nearby_widgets: Array[Widget]
 
-var highlight_line:Line2D
+var highlight_line: Line2D
 
 
 
@@ -42,7 +42,7 @@ func _ready():
 	pass # Replace with function body.
 
 
-func run_to(_cycle:float):
+func run_to(_cycle: float):
 	pass
 	
 func reset():
@@ -56,18 +56,18 @@ func unhighlight():
 	
 	
 	
-func _on_area_entered(entering:Area2D):
+func _on_area_entered(entering: Area2D):
 	if entering is Widget:
 		nearby_widgets.append(entering)
 		entering.deleted.connect(_on_nearby_widget_deleted)
 	pass
 	
-func _on_area_exited(exiting:Area2D):
+func _on_area_exited(exiting: Area2D):
 	if exiting is Widget:
 		nearby_widgets.erase(exiting)
 		exiting.deleted.disconnect(_on_nearby_widget_deleted)
 	pass
 	
-func _on_nearby_widget_deleted(deleted_widget:Widget):
+func _on_nearby_widget_deleted(deleted_widget: Widget):
 	nearby_widgets.erase(deleted_widget)
 

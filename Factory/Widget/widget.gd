@@ -1,15 +1,15 @@
 extends Area2D
 class_name Widget
 
-var speed:Vector2 = Vector2(0,0)
-var tex:Texture
-var type:int = -1
+var speed: Vector2 = Vector2(0,0)
+var tex: Texture
+var type: int = -1
 
-var parent_assembly:Assembly
+var parent_assembly: Assembly
 
 
 # Contains nearby areas that are *not* part of the same Assembly
-var nearby_areas:Array[Area2D]
+var nearby_areas: Array[Area2D]
 
 
 
@@ -30,12 +30,12 @@ func _init():
 				[0, 0, 0],
 				[0, 0, 0]]
 
-func set_parameters(init_position:Vector2, widget_type:int):
+func set_parameters(init_position: Vector2, widget_type: int):
 	position = init_position
 	set_type(widget_type)
 
 	
-func record_parent(new_parent:Assembly):
+func record_parent(new_parent: Assembly):
 	parent_assembly = new_parent
 	
 
@@ -67,12 +67,12 @@ func set_type(widget_type: int):
 #region Mobility
 
 func overlaps_can_move() -> bool:
-	var this_shape:Shape2D = shape_owner_get_shape(0,0)
-	var this_transform:Transform2D = get_global_transform()
+	var this_shape: Shape2D = shape_owner_get_shape(0,0)
+	var this_transform: Transform2D = get_global_transform()
 
-	for area:Area2D in nearby_areas:
-		var other_shape:Shape2D = area.shape_owner_get_shape(0,0)
-		var other_transform:Transform2D = area.get_global_transform()
+	for area: Area2D in nearby_areas:
+		var other_shape: Shape2D = area.shape_owner_get_shape(0,0)
+		var other_transform: Transform2D = area.get_global_transform()
 		
 		var contacts = this_shape.collide_and_get_contacts(this_transform, other_shape, other_transform)
 		
@@ -93,12 +93,12 @@ func overlaps_can_move() -> bool:
 # This does not check if overlaps can move, it just moves them. Checking
 # should be done before calling this method.
 func push_overlaps():
-	var this_shape:Shape2D = shape_owner_get_shape(0,0)
-	var this_transform:Transform2D = get_global_transform()
+	var this_shape: Shape2D = shape_owner_get_shape(0,0)
+	var this_transform: Transform2D = get_global_transform()
 
-	for area:Area2D in nearby_areas:
-		var other_shape:Shape2D = area.shape_owner_get_shape(0,0)
-		var other_transform:Transform2D = area.get_global_transform()
+	for area: Area2D in nearby_areas:
+		var other_shape: Shape2D = area.shape_owner_get_shape(0,0)
+		var other_transform: Transform2D = area.get_global_transform()
 		
 		var contacts = this_shape.collide_and_get_contacts(this_transform, other_shape, other_transform)
 		
@@ -117,7 +117,7 @@ func push_overlaps():
 
 
 func tell_overlaps_to_check_assembly(parent: Assembly):
-	var overlaps:Array[Area2D] = get_overlapping_areas()
+	var overlaps: Array[Area2D] = get_overlapping_areas()
 	for other in overlaps:
 		if other is Widget:
 			other.check_overlap_with(parent)
@@ -150,21 +150,21 @@ func reparent_custom(new_parent: Assembly, keep_global_transform:bool ):
 	nearby_areas = store_nearby_areas
 	
 	var to_remove: Array[Area2D] = []
-	for area:Area2D in nearby_areas:
+	for area: Area2D in nearby_areas:
 		if area is Widget:
 			if area.parent_assembly == self.parent_assembly:
 				to_remove.append(area)
 			else:
 				area.deleted.connect(_on_nearby_widget_deleted)
 				
-	for area:Area2D in to_remove:
+	for area: Area2D in to_remove:
 		nearby_areas.erase(area)
 				
 	
 	
 
 
-func _on_area_entered(entering:Area2D):
+func _on_area_entered(entering: Area2D):
 	if entering is Wall:
 		nearby_areas.append(entering)
 	elif entering is Widget:
@@ -173,7 +173,7 @@ func _on_area_entered(entering:Area2D):
 			entering.deleted.connect(_on_nearby_widget_deleted)
 	pass
 	
-func _on_area_exited(exiting:Area2D):
+func _on_area_exited(exiting: Area2D):
 	if exiting is Wall:
 		nearby_areas.erase(exiting)
 	elif exiting is Widget:
@@ -184,6 +184,6 @@ func _on_area_exited(exiting:Area2D):
 			exiting.deleted.disconnect(_on_nearby_widget_deleted)
 	pass
 	
-func _on_nearby_widget_deleted(deleted_widget:Widget):
+func _on_nearby_widget_deleted(deleted_widget: Widget):
 	nearby_areas.erase(deleted_widget)
 	

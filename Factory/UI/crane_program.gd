@@ -27,11 +27,12 @@ func get_program() -> Array[int]:
 			break
 		
 	return program
-	
+
+# TODO: expanding/decreasing the number of slots is untested
 func set_program(program: Array[int]):
 	
 	for i in range(program.size()):
-		var command:int = program[i]
+		var command: int = program[i]
 		if i < slots.size():
 			slots[i].set_command(command)
 		else:

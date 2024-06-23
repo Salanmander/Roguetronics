@@ -1,16 +1,16 @@
 extends Node
 
-const MAIN_MENU : int = 0
-const FACTORY : int = 1
+const MAIN_MENU: int = 0
+const FACTORY: int = 1
 
 
 const FACTORY_CONVEYOR_ID: int = 4
 
-const GRID_SIZE:float = 128
+const GRID_SIZE: float = 128
 
-const BELT:int = 0
-const COMBINER:int = 1
-const DISPENSER:int = 2
+const BELT: int = 0
+const COMBINER: int = 1
+const DISPENSER: int = 2
 
 const UP: int = 0
 const DOWN: int = PI
@@ -25,7 +25,7 @@ const GRAB: int = 3
 const RELEASE: int = 4
 const RAISE: int = 5
 const LOWER: int = 6
-var COMMAND_IMAGES:Array = []
+var COMMAND_IMAGES: Array = []
 
 func _init():
 	COMMAND_IMAGES.resize(NUM_CRANE_COMMANDS)
