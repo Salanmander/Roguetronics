@@ -17,6 +17,7 @@ signal nudged(delta: Vector2)
 signal combined(this_widget:Widget, combined_by:Combiner)
 signal deleted(this_widget:Widget)
 signal overlap_detected_with(other_assembly: Assembly)
+signal forced_to(assembly_pos: Vector2)
 
 
 # 3x3 array. Contains 1 if the widget can move in that direction this cycle,
@@ -66,7 +67,7 @@ func set_type(widget_type: int):
 	
 #region Mobility
 
-func overlaps_can_move() -> bool:
+func overlaps_can_move(ignore_nudges: bool = false) -> bool:
 	var this_shape: Shape2D = shape_owner_get_shape(0,0)
 	var this_transform: Transform2D = get_global_transform()
 
@@ -84,7 +85,7 @@ func overlaps_can_move() -> bool:
 		elif area is Widget:
 			
 			var other_assembly = area.parent_assembly
-			if not other_assembly.can_move(contacts[0] - contacts[1]):
+			if not other_assembly.can_move(contacts[0] - contacts[1], ignore_nudges):
 				return false
 			pass
 	
@@ -133,6 +134,12 @@ func check_overlap_with(other_assembly: Assembly):
 	
 func nudge(delta: Vector2):
 	nudged.emit(delta)
+
+# The position it emits is the position that the *assembly* will
+# need to move its base location to
+func force_to(new_pos: Vector2):
+	var assembly_pos: Vector2 = new_pos - position
+	forced_to.emit(assembly_pos)
 
 func combine(combiner:Combiner):
 	combined.emit(self, combiner)

@@ -122,7 +122,7 @@ func _physics_process(delta: float):
 			
 		
 		for assembly: Assembly in assemblies:
-			assembly.clear_nudges()
+			assembly.clear_moves()
 			
 		
 		# This runs if it's the *last* update before the end
@@ -286,6 +286,7 @@ func make_widget(grid_position: Vector2i, init_widget_type: int):
 	add_child(new_assembly)
 	assemblies.append(new_assembly)
 	new_assembly.deleted.connect(_on_assembly_delete)
+	new_assembly.crashed.connect(crash)
 	
 func make_wall(grid_position: Vector2i):
 	var wall_position: Vector2 = map_to_local(grid_position)
@@ -368,6 +369,7 @@ func reset_to_start_of_run():
 	for assembly: Assembly in assemblies:
 		add_child(assembly)
 		assembly.deleted.connect(_on_assembly_delete)
+		assembly.crashed.connect(crash)
 		
 	for machine:Machine in machines:
 		machine.reset()

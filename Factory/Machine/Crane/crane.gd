@@ -16,6 +16,7 @@ signal reset_triggered(start_index: int)
 signal crashed()
 
 var program: Array[int]
+var held_widgets: Array[Widget]
 
 func set_parameters(init_position: Vector2):
 	set_machine_parameters(init_position, LAYER)
@@ -26,6 +27,7 @@ func _ready():
 	super()
 	open()
 	program = []
+	held_widgets = []
 
 func run_to(cycle: float):
 	
@@ -42,18 +44,18 @@ func run_to(cycle: float):
 		pass
 	
 	position = last_pos.lerp(target_pos, cycle_fraction)
+	for widget:Widget in held_widgets:
+		widget.force_to(position)
 	last_cycle = cycle
 
 func reset():
 	super.reset()
+	for widget: Widget in held_widgets:
+		widget.deleted.disconnect(_on_widget_deleted)
+	held_widgets = []
 	reset_triggered.emit(initial_track_index)
 	
-func run_command(command: int):
-	if command == Consts.FORWARD:
-		move_triggered.emit(1)
-	if command == Consts.BACKWARD:
-		move_triggered.emit(-1)
-	pass
+	
 	
 #region UI communication
 
@@ -85,20 +87,44 @@ func teleport_to(pos: Vector2):
 
 #region commands
 
+func run_command(command: int):
+	if command == Consts.FORWARD:
+		move_triggered.emit(1)
+	if command == Consts.BACKWARD:
+		move_triggered.emit(-1)
+	if command == Consts.GRAB:
+		close()
+	if command == Consts.RELEASE:
+		open()
+
 func open():
 	grabber_open = true
 	$LeftGrabber.open()
 	$RightGrabber.open()
+	
+	for widget: Widget in held_widgets:
+		widget.deleted.disconnect(_on_widget_deleted)
+	held_widgets = []
+
 
 func close():
 	grabber_open = false
 	$LeftGrabber.close()
 	$RightGrabber.close()
+	
+	if held_widgets.size() == 0 && nearby_widgets.size() > 0:
+		held_widgets = nearby_widgets.duplicate()
+		for widget: Widget in held_widgets:
+			widget.deleted.connect(_on_widget_deleted)
 
 func is_open():
 	return grabber_open
 
 #endregion
+
+func _on_widget_deleted(widget: Widget):
+	held_widgets.erase(widget)
+	
 	
 func _on_area_entered(other: Area2D):
 	super._on_area_entered(other)

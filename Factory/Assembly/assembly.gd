@@ -3,6 +3,7 @@ class_name Assembly
 
 var widgets: Array[Widget]
 var nudges: Array[Vector2]
+var forced_positions: Array[Vector2]
 var affected_by_machines: bool
 var monitorable: bool
 var queued_combine_widget: Widget
@@ -11,6 +12,7 @@ var queued_combine_widget: Widget
 # this cycle, -1 if not, 0 if unchecked. Index is the direction, so
 # negative indices are used, and [0][0] is the entry for not
 # moving (unused)
+# TODO: I think this can be gotten rid of
 var mobility: Array[Array]
 
 var last_cycle: float
@@ -24,6 +26,7 @@ signal deleted(this_assembly: Assembly)
 signal perfect_overlap(other_assembly: Assembly)
 signal blocked(direction: Vector2i)
 signal nudged(delta: Vector2)
+signal crashed()
 
 func _init():
 	widgets = []
@@ -72,23 +75,24 @@ func check_and_move(delta: Vector2):
 		move(Vector2(0,delta.y))
 		
 		
-func can_move(delta: Vector2) -> bool:
+func can_move(delta: Vector2, ignore_nudges: bool = false) -> bool:
 	
-	for nudge: Vector2 in nudges:
-		var angle = nudge.angle_to(delta)
-		var len_delta = delta.length()
-		var len_nudge = nudge.length()
-		if (is_equal_approx(angle, PI)) and \
-		   (len_delta < len_nudge or is_equal_approx(len_delta, len_nudge) ):
-			return false
-		pass
+	if not ignore_nudges:
+		for nudge: Vector2 in nudges:
+			var angle = nudge.angle_to(delta)
+			var len_delta = delta.length()
+			var len_nudge = nudge.length()
+			if (is_equal_approx(angle, PI)) and \
+			   (len_delta < len_nudge or is_equal_approx(len_delta, len_nudge) ):
+				return false
+			pass
 	
 	position += delta
 	
 	var can_move: bool = true
 	# Tell component widgets to poll now-overlapping areas for mobility
 	for widget: Widget in widgets:
-		if not widget.overlaps_can_move():
+		if not widget.overlaps_can_move(ignore_nudges):
 			can_move = false
 			break
 		pass
@@ -104,7 +108,8 @@ func move(delta: Vector2):
 	for widget: Widget in widgets:
 		widget.push_overlaps()
 		
-func clear_nudges():
+func clear_moves():
+	forced_positions = []
 	nudges = []
 	
 
@@ -112,35 +117,52 @@ func clear_nudges():
 	
 func run_to(cycle: float):
 	
-	var dLeft: float = 0
-	var dRight: float = 0
-	var dDown: float = 0
-	var dUp: float = 0
-	for nudge in nudges:
-		var x: float = nudge.x
-		var y: float = nudge.y
-		if x > 0 and x > dRight:
-			dRight = x
-		if x < 0 and x < dLeft:
-			dLeft = x
-		if y > 0 and y > dDown:
-			dDown = y
-		if y < 0 and y < dUp:
-			dUp = y
-			
-	var dx = dRight + dLeft
-	var dy = dDown + dUp
+	var forced:bool = forced_positions.size() > 0
 	
-	if dx > 0 and mobility[1][0] == -1:
-		dx = 0
-	if dx < 0 and mobility[-1][0] == -1:
-		dx = 0
-	if dy > 0 and mobility[0][1] == -1:
-		dy = 0
-	if dy < 0 and mobility[0][-1] == -1:
-		dy = 0
-	
-	check_and_move(Vector2(dx, dy))
+	if forced:
+		var new_pos: Vector2 = forced_positions[0]
+		for pos in forced_positions:
+			if not new_pos.is_equal_approx(pos):
+				crashed.emit()
+		
+		var delta: Vector2 = new_pos - position
+		var ignore_nudges: bool = true
+		if not can_move(delta, ignore_nudges):
+			can_move(delta, ignore_nudges)
+			crashed.emit()
+		
+		move(delta)
+		
+	else:
+		var dLeft: float = 0
+		var dRight: float = 0
+		var dDown: float = 0
+		var dUp: float = 0
+		for nudge in nudges:
+			var x: float = nudge.x
+			var y: float = nudge.y
+			if x > 0 and x > dRight:
+				dRight = x
+			if x < 0 and x < dLeft:
+				dLeft = x
+			if y > 0 and y > dDown:
+				dDown = y
+			if y < 0 and y < dUp:
+				dUp = y
+				
+		var dx = dRight + dLeft
+		var dy = dDown + dUp
+		
+		#if dx > 0 and mobility[1][0] == -1:
+			#dx = 0
+		#if dx < 0 and mobility[-1][0] == -1:
+			#dx = 0
+		#if dy > 0 and mobility[0][1] == -1:
+			#dy = 0
+		#if dy < 0 and mobility[0][-1] == -1:
+			#dy = 0
+		
+		check_and_move(Vector2(dx, dy))
 	
 	
 	#var cycle_fraction = fmod(cycle, 1)
@@ -164,6 +186,7 @@ func add_widget_object(new_widget: Widget):
 	new_widget.monitorable = monitorable
 	widgets.append(new_widget)
 	new_widget.nudged.connect(_on_widget_nudged)
+	new_widget.forced_to.connect(_on_widget_forced_to)
 	new_widget.combined.connect(_on_widget_combined)
 	new_widget.overlap_detected_with.connect(_on_overlap_detected)
 	pass
@@ -174,9 +197,12 @@ func add_widget_from_other(new_widget: Widget, other: Assembly):
 	new_widget.monitorable = monitorable
 	widgets.append(new_widget)
 	new_widget.nudged.disconnect(other._on_widget_nudged)
+	new_widget.forced_to.disconnect(other._on_widget_forced_to)
 	new_widget.combined.disconnect(other._on_widget_combined)
 	new_widget.overlap_detected_with.disconnect(other._on_overlap_detected)
+	
 	new_widget.nudged.connect(_on_widget_nudged)
+	new_widget.forced_to.connect(_on_widget_forced_to)
 	new_widget.combined.connect(_on_widget_combined)
 	new_widget.overlap_detected_with.connect(_on_overlap_detected)
 	
@@ -230,6 +256,12 @@ func _on_widget_nudged(delta: Vector2):
 		nudges.append(delta)
 		nudged.emit(delta)
 	pass
+
+# new_position is the position that *this assembly* must have to put
+# the widget in the right place
+func _on_widget_forced_to(new_position: Vector2):
+	if(affected_by_machines):
+		forced_positions.append(new_position)
 
 func _on_widget_combined(widget: Widget, combiner: Combiner):
 	var group_name: String = str("combining_by_",combiner.idString)
