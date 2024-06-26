@@ -12,10 +12,10 @@ const BELT: int = 0
 const COMBINER: int = 1
 const DISPENSER: int = 2
 
-const UP: int = 0
-const DOWN: int = PI
-const RIGHT: int = PI/2
-const LEFT: int = 3*PI/2
+const UP: float = 0
+const DOWN: float = PI
+const RIGHT: float = PI/2
+const LEFT: float = 3*PI/2
 
 const NUM_CRANE_COMMANDS: int = 7
 const NO_COMMAND: int = 0
