@@ -357,11 +357,12 @@ func remove_machines(machine_position: Vector2, machine_layer: int):
 # don't let it resume while crashed
 func crash():
 	run = false
-	self_modulate = Color(1, 0.6, 0.6, 1)
+	modulate = Color(1, 0.6, 0.6, 1)
 
 func reset_to_start_of_run():
 	delete_assemblies()
 	cycle = -1
+	modulate = Color(1, 1, 1, 1)
 	
 	assemblies = starting_assemblies
 	starting_assemblies = []
