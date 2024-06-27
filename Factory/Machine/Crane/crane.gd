@@ -18,6 +18,10 @@ signal crashed()
 var program: Array[int]
 var held_widgets: Array[Widget]
 
+# This changes state before the crane actually gets to the new layer
+var raising: bool
+var lowering: bool
+
 func set_parameters(init_position: Vector2):
 	set_machine_parameters(init_position, LAYER)
 	monitorable = true
@@ -28,6 +32,8 @@ func _ready():
 	open()
 	program = []
 	held_widgets = []
+	raising = false
+	lowering = false
 
 func run_to(cycle: float):
 	
@@ -38,22 +44,50 @@ func run_to(cycle: float):
 		last_pos = position
 		target_pos = position # Default is stay still
 		
-		# Run the next command
-		var command:int = program[int(cycle) % program.size()]
-		run_command(command)
+		if program.size() > 0:
+			# Run the next command
+			var command:int = program[int(cycle) % program.size()]
+			run_command(command)
 		pass
 	
 	position = last_pos.lerp(target_pos, cycle_fraction)
 	for widget:Widget in held_widgets:
 		widget.force_to(position)
+		
+		
+	# This runs if it's the *last* update before the end
+	# of the cycle
+	if cycle - last_cycle >= (1-cycle_fraction):
+		if raising:
+			# Monitor layer 2
+			collision_mask = 0b10
+			$Label.visible = true
+		elif lowering:
+			# Monitor layer 1
+			collision_mask = 0b01
+			$Label.visible = false
+		
+		if raising or lowering:
+			for widget: Widget in held_widgets:
+				widget.layer_change_initiate(collision_mask)
+		
+		raising = false
+		lowering = false
+		
 	last_cycle = cycle
 
 func reset():
 	super.reset()
-	for widget: Widget in held_widgets:
-		widget.deleted.disconnect(_on_widget_deleted)
-	held_widgets = []
+	
+	open()
+	collision_mask = 0b01
+	$Label.visible = false
+	
+	raising = false
+	lowering = false
+	
 	reset_triggered.emit(initial_track_index)
+	
 	
 	
 	
@@ -96,6 +130,10 @@ func run_command(command: int):
 		close()
 	if command == Consts.RELEASE:
 		open()
+	if command == Consts.RAISE:
+		raising = true
+	if command == Consts.LOWER:
+		lowering = true
 
 func open():
 	grabber_open = true

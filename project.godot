@@ -36,6 +36,12 @@ window/size/viewport_height=800
 
 import/blender/enabled=false
 
+[layer_names]
+
+2d_physics/layer_1="On belts"
+2d_physics/layer_2="Lifted cranes"
+2d_physics/layer_10="walls"
+
 [physics]
 
 2d/default_gravity=0.0

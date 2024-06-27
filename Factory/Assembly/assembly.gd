@@ -8,6 +8,8 @@ var affected_by_machines: bool
 var monitorable: bool
 var queued_combine_widget: Widget
 
+var layer_change_this_update: int
+
 # 3x3 array. Contains 1 if the assembly can move in that direction
 # this cycle, -1 if not, 0 if unchecked. Index is the direction, so
 # negative indices are used, and [0][0] is the entry for not
@@ -38,6 +40,7 @@ func _init():
 	z_index = LAYER
 	affected_by_machines = true
 	monitorable = true
+	layer_change_this_update = -1
 	
 func set_parameters(init_position: Vector2):
 	position = init_position
@@ -128,7 +131,6 @@ func run_to(cycle: float):
 		var delta: Vector2 = new_pos - position
 		var ignore_nudges: bool = true
 		if not can_move(delta, ignore_nudges):
-			can_move(delta, ignore_nudges)
 			crashed.emit()
 		
 		move(delta)
@@ -165,6 +167,11 @@ func run_to(cycle: float):
 		check_and_move(Vector2(dx, dy))
 	
 	
+	# Assemblies get run after all the machines go, so we can
+	# reset this every frame.
+	layer_change_this_update = -1
+	
+	
 	#var cycle_fraction = fmod(cycle, 1)
 	#if cycle - last_cycle >= cycle_fraction:
 		#var printStr:String = str(widgets.size(), ": locations: ")
@@ -189,6 +196,7 @@ func add_widget_object(new_widget: Widget):
 	new_widget.forced_to.connect(_on_widget_forced_to)
 	new_widget.combined.connect(_on_widget_combined)
 	new_widget.overlap_detected_with.connect(_on_overlap_detected)
+	new_widget.layer_changed.connect(_on_widget_layer_changed)
 	pass
 	
 func add_widget_from_other(new_widget: Widget, other: Assembly):
@@ -200,11 +208,13 @@ func add_widget_from_other(new_widget: Widget, other: Assembly):
 	new_widget.forced_to.disconnect(other._on_widget_forced_to)
 	new_widget.combined.disconnect(other._on_widget_combined)
 	new_widget.overlap_detected_with.disconnect(other._on_overlap_detected)
+	new_widget.layer_changed.disconnect(other._on_widget_layer_changed)
 	
 	new_widget.nudged.connect(_on_widget_nudged)
 	new_widget.forced_to.connect(_on_widget_forced_to)
 	new_widget.combined.connect(_on_widget_combined)
 	new_widget.overlap_detected_with.connect(_on_overlap_detected)
+	new_widget.layer_changed.connect(_on_widget_layer_changed)
 	
 func get_widgets() -> Array[Widget]:
 	return widgets.duplicate()
@@ -256,6 +266,22 @@ func _on_widget_nudged(delta: Vector2):
 		nudges.append(delta)
 		nudged.emit(delta)
 	pass
+	
+func _on_widget_layer_changed(new_layer: int):
+	if not affected_by_machines:
+		return
+	
+	# BUG: A crane can lift an assembly while another crane is grabbing
+	# it at a lower level.
+	# Probably just need to have each crane broadcast the layer change
+	# every frame, unfortunately.
+	if layer_change_this_update != -1:
+		if layer_change_this_update != new_layer:
+			crashed.emit()
+	else:
+		layer_change_this_update = new_layer
+		for widget:Widget in widgets:
+			widget.set_layer(new_layer)
 
 # new_position is the position that *this assembly* must have to put
 # the widget in the right place

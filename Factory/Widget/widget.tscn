@@ -6,6 +6,7 @@
 size = Vector2(128, 128)
 
 [node name="Widget" type="Area2D"]
+collision_mask = 513
 script = ExtResource("1_rtf7s")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

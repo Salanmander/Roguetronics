@@ -6,6 +6,8 @@
 size = Vector2(128, 128)
 
 [node name="Wall" type="Area2D"]
+collision_layer = 512
+collision_mask = 3
 monitoring = false
 script = ExtResource("1_1citb")
 

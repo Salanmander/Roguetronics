@@ -18,6 +18,7 @@ signal combined(this_widget:Widget, combined_by:Combiner)
 signal deleted(this_widget:Widget)
 signal overlap_detected_with(other_assembly: Assembly)
 signal forced_to(assembly_pos: Vector2)
+signal layer_changed(new_layer: int)
 
 
 # 3x3 array. Contains 1 if the widget can move in that direction this cycle,
@@ -113,6 +114,17 @@ func push_overlaps():
 	
 	pass
 
+func layer_change_initiate(new_layer: int):
+	layer_changed.emit(new_layer)
+	
+func set_layer(new_layer: int):
+	collision_layer = new_layer
+	
+	# Default z-index for widgets is 0
+	z_index = new_layer-1
+	
+	var wall_layer: int = 0b10_0000_0000
+	collision_mask = new_layer + wall_layer
 
 #endregion
 

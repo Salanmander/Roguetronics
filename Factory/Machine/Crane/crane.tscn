@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://b5vwn1ro5i2v1"]
+[gd_scene load_steps=6 format=3 uid="uid://b5vwn1ro5i2v1"]
 
 [ext_resource type="Script" path="res://Factory/Machine/Crane/crane.gd" id="1_ayjcf"]
 [ext_resource type="Script" path="res://Factory/Machine/Crane/left_grabber.gd" id="2_1iwwm"]
@@ -7,7 +7,11 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_idtvp"]
 radius = 63.0
 
+[sub_resource type="LabelSettings" id="LabelSettings_6pidh"]
+font_size = 28
+
 [node name="Crane" type="Area2D"]
+collision_layer = 3
 script = ExtResource("1_ayjcf")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -25,3 +29,12 @@ script = ExtResource("2_1iwwm")
 points = PackedVector2Array(10, 60, 50, 60, 50, -60, 10, -60)
 default_color = Color(0.862745, 0.211765, 0.0784314, 1)
 script = ExtResource("3_1udfs")
+
+[node name="Label" type="Label" parent="."]
+visible = false
+offset_left = -45.0
+offset_top = -67.0
+offset_right = 48.0
+offset_bottom = -31.0
+text = "Raised"
+label_settings = SubResource("LabelSettings_6pidh")
