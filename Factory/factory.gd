@@ -1,4 +1,5 @@
 extends Node2D
+class_name Factory
 
 @onready var floor: FactoryFloor = $FactoryLayer/FactoryFloor
 @onready var dispenser_control: DispenserControl = $UILayer/MachineControls/DispenserControl

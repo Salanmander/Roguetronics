@@ -32,6 +32,10 @@ gdscript/warnings/integer_division=0
 window/size/viewport_width=1400
 window/size/viewport_height=800
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gut/plugin.cfg")
+
 [filesystem]
 
 import/blender/enabled=false

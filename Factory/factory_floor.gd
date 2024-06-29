@@ -278,7 +278,7 @@ func highlight(machine: Machine):
 	
 #region object creating functions
 
-func make_widget(grid_position: Vector2i, init_widget_type: int):
+func make_widget(grid_position: Vector2i, init_widget_type: int) -> Assembly:
 	var widget_position: Vector2 = map_to_local(grid_position)
 	var new_assembly:Assembly = assembly_packed.instantiate()
 	new_assembly.set_parameters(widget_position)
@@ -287,6 +287,7 @@ func make_widget(grid_position: Vector2i, init_widget_type: int):
 	assemblies.append(new_assembly)
 	new_assembly.deleted.connect(_on_assembly_delete)
 	new_assembly.crashed.connect(crash)
+	return new_assembly
 	
 func make_wall(grid_position: Vector2i):
 	var wall_position: Vector2 = map_to_local(grid_position)
