@@ -61,6 +61,7 @@ var run: bool = false
 var cycle_time: float = 0.7 # Number of seconds for one cycle
 var cycle: float = -1 # Current cycle count
 var last_cycle: float = 0 # Previous frame cycle count
+var crashed: bool = false
 
 
 # Called when the node enters the scene tree for the first time.
@@ -358,11 +359,13 @@ func remove_machines(machine_position: Vector2, machine_layer: int):
 # don't let it resume while crashed
 func crash():
 	run = false
+	crashed = true
 	modulate = Color(1, 0.6, 0.6, 1)
 
 func reset_to_start_of_run():
 	delete_assemblies()
 	cycle = -1
+	crashed = false
 	modulate = Color(1, 1, 1, 1)
 	
 	assemblies = starting_assemblies
@@ -486,9 +489,10 @@ func _on_place_crane_pressed():
 
 
 func _on_move_object_pressed():
-	simulation_started.emit()
-	unhighlight_all()
-	run = true
+	if not crashed:
+		simulation_started.emit()
+		unhighlight_all()
+		run = true
 
 
 func _on_stop_object_pressed():
