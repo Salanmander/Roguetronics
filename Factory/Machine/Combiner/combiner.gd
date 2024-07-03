@@ -36,10 +36,12 @@ func _ready():
 	var child:Sprite2D = $Sprite2D
 	if is_equal_approx(fmod(direction, PI), 0):
 		child.texture = v_texture
+		$LeftCollisionShape.position = Vector2(0, -Consts.GRID_SIZE/2)
+		$RightCollisionShape.position = Vector2(0, Consts.GRID_SIZE/2)
 	else:
 		child.texture = h_texture
-	$LeftCollisionShape.position = Vector2(0, -Consts.GRID_SIZE/2)
-	$RightCollisionShape.position = Vector2(0, Consts.GRID_SIZE/2)
+		$LeftCollisionShape.position = Vector2(-Consts.GRID_SIZE/2, 0)
+		$RightCollisionShape.position = Vector2(Consts.GRID_SIZE/2, 0)
 	
 	pass # Replace with function body.
 
