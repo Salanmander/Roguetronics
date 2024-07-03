@@ -132,8 +132,6 @@ func _physics_process(delta: float):
 			for assembly: Assembly in assemblies:
 				assembly.snap_to_grid(self)
 				
-			for track: Track in tracks:
-				track.update_crane_locations()
 			
 		last_cycle = cycle
 		

@@ -7,8 +7,8 @@ const arrow_color = Color(0.9, 0.9, 0)
 var points: Array[Vector2i] = []
 var looped: bool = false
 
-var cranes: Array[Crane] = []
-var next_cycle_cranes: Array[Crane] = []
+# Keys are crane objects, values are indices
+var cranes: Dictionary = {}
 
 const LAYER:int = 5
 
@@ -19,8 +19,6 @@ func _ready():
 	
 func set_parameters(grid_loc: Vector2i):
 	points.append(grid_loc)
-	cranes.append(null)
-	next_cycle_cranes.append(null)
 	make_lines()
 
 	
@@ -44,16 +42,12 @@ func drag_to(grid_loc: Vector2i):
 	# Second case: drag goes backwards, pop the last point
 	elif points.size() >= 2 and grid_loc == points[-2]:
 		points.remove_at(points.size() - 1)
-		cranes.remove_at(cranes.size() - 1)
-		next_cycle_cranes.remove_at(cranes.size() - 1)
 		looped = false
 		make_lines()
 	
 	# Third case: drag goes to the very first point, close the loop
 	elif grid_loc == points[0]:
 		points.append(grid_loc)
-		cranes.append(null)
-		next_cycle_cranes.append(null)
 		looped = true
 		make_lines()
 		
@@ -67,8 +61,6 @@ func drag_to(grid_loc: Vector2i):
 	# Default, extend the track
 	else:
 		points.append(grid_loc)
-		cranes.append(null)
-		next_cycle_cranes.append(null)
 		make_lines()
 
 #endregion
@@ -88,11 +80,11 @@ func add_crane(crane: Crane):
 	var grid_loc: Vector2i = Util.floor_local_to_map(crane.position)
 	var ind: int = points.find(grid_loc)
 	crane.set_initial_index(ind)
-	cranes[ind] = crane
+	cranes[crane] = ind
 	
 
 func _on_crane_move(offset: int, crane: Crane):
-	var current_ind: int = cranes.find(crane)
+	var current_ind: int = cranes[crane]
 	var target_ind: int = current_ind
 	var offset_ind: int = current_ind + offset
 	if offset_ind < points.size() and offset_ind >= 0:
@@ -107,34 +99,16 @@ func _on_crane_move(offset: int, crane: Crane):
 		
 	var target_point = points[target_ind]
 	
-	# Move crane into the next frame list, and remove it from this one
-	next_cycle_cranes[target_ind] = crane
-	cranes[current_ind] = null
+	# update crane location
+	cranes[crane] = target_ind
 	
 	crane.set_target(Util.floor_map_to_local(target_point))
 	pass
-	
-# This is needed to update the crane array after *all* the cranes have moved
-func update_crane_locations():
-	# Move all cranes to the same space in next_frame if they haven't
-	# been messed with this frame
-	for i in range(cranes.size()):
-		if cranes[i] == null:
-			continue
-		
-		next_cycle_cranes[i] = cranes[i]
-		cranes[i] = null
-	
-	var temp = cranes
-	cranes = next_cycle_cranes
-	next_cycle_cranes = temp
+
 	
 func has_crane_at(loc: Vector2i) -> bool:
-	for i in range(points.size()):
-		if cranes[i] == null:
-			continue
-		
-		if loc == points[i]:
+	for crane: Crane in cranes:
+		if points[cranes[crane]] == loc:
 			return true
 	
 	return false
@@ -142,9 +116,7 @@ func has_crane_at(loc: Vector2i) -> bool:
 func _on_crane_reset(track_index: int, crane: Crane):
 	var new_pos: Vector2 = Util.floor_map_to_local(points[track_index])
 	crane.teleport_to(new_pos)
-	var old_index = cranes.find(crane)
-	cranes[old_index] = null
-	cranes[track_index] = crane
+	cranes[crane] = track_index
 
 #endregion
 		
