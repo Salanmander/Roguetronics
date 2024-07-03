@@ -11,7 +11,7 @@ func before_all():
 # Single widget on conveyor
 func test_passes():
 	factory = factory_packed.instantiate()
-	#add_child(factory)
+	add_child(factory)
 	
 	var floor: FactoryFloor = factory.get_node("FactoryLayer/FactoryFloor")
 	
