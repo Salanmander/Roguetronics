@@ -10,12 +10,6 @@ var queued_combine_widget: Widget
 
 var layer_change_this_update: int
 
-# 3x3 array. Contains 1 if the assembly can move in that direction
-# this cycle, -1 if not, 0 if unchecked. Index is the direction, so
-# negative indices are used, and [0][0] is the entry for not
-# moving (unused)
-# TODO: I think this can be gotten rid of
-var mobility: Array[Array]
 
 var last_cycle: float
 
@@ -33,9 +27,6 @@ signal crashed()
 func _init():
 	widgets = []
 	nudges = []
-	mobility = [[0, 0, 0],
-				[0, 0, 0],
-				[0, 0, 0]]
 	last_cycle = 0
 	z_index = LAYER
 	affected_by_machines = true
