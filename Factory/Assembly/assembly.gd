@@ -179,31 +179,53 @@ func add_widget(relative_position: Vector2, widget_type: int):
 func add_widget_object(new_widget: Widget):
 	add_child(new_widget)
 	new_widget.record_parent(self)
-	new_widget.monitorable = monitorable
-	widgets.append(new_widget)
-	new_widget.nudged.connect(_on_widget_nudged)
-	new_widget.forced_to.connect(_on_widget_forced_to)
-	new_widget.combined.connect(_on_widget_combined)
-	new_widget.overlap_detected_with.connect(_on_overlap_detected)
-	new_widget.layer_changed.connect(_on_widget_layer_changed)
+	
+	add_widget_helper(new_widget)
 	pass
 	
 func add_widget_from_other(new_widget: Widget, other: Assembly):
 	var keep_global_transform: bool = true
 	new_widget.reparent_custom(self, keep_global_transform)
-	new_widget.monitorable = monitorable
-	widgets.append(new_widget)
+	
 	new_widget.nudged.disconnect(other._on_widget_nudged)
 	new_widget.forced_to.disconnect(other._on_widget_forced_to)
 	new_widget.combined.disconnect(other._on_widget_combined)
 	new_widget.overlap_detected_with.disconnect(other._on_overlap_detected)
 	new_widget.layer_changed.disconnect(other._on_widget_layer_changed)
 	
+	add_widget_helper(new_widget)
+	
+	
+func add_widget_helper(new_widget: Widget):
+	new_widget.monitorable = monitorable
+	widgets.append(new_widget)
+	
 	new_widget.nudged.connect(_on_widget_nudged)
 	new_widget.forced_to.connect(_on_widget_forced_to)
 	new_widget.combined.connect(_on_widget_combined)
 	new_widget.overlap_detected_with.connect(_on_overlap_detected)
 	new_widget.layer_changed.connect(_on_widget_layer_changed)
+	
+	if(new_widget.position.x < 0):
+		var shift_amount = -new_widget.position.x
+		
+		# Shift assembly in the same direction that the new widget is
+		position.x -= shift_amount
+		
+		# Shift all widgets in the opposite direction
+		for widget: Widget in widgets:
+			widget.shift_by(Vector2(shift_amount, 0))
+			
+			
+	if(new_widget.position.y < 0):
+		var shift_amount = -new_widget.position.y
+		
+		# Shift assembly in the same direction that the new widget is
+		position.y -= shift_amount
+		
+		# Shift all widgets in the opposite direction
+		for widget: Widget in widgets:
+			widget.shift_by(Vector2(0, shift_amount))
 	
 func get_widgets() -> Array[Widget]:
 	return widgets.duplicate()

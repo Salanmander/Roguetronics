@@ -179,7 +179,11 @@ func reparent_custom(new_parent: Assembly, keep_global_transform:bool ):
 	for area: Area2D in to_remove:
 		nearby_areas.erase(area)
 				
-	
+
+# Changes the position of the Widget. Necessary because Assemblies
+# change their origin location to it exactly at the top-left corner
+func shift_by(shift: Vector2):
+	position += shift
 	
 
 
