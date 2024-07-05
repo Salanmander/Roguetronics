@@ -49,10 +49,11 @@ func _ready():
 func snap_to_grid():
 	
 	var center_position = Util.floor_map_to_local( Util.floor_local_to_map(position))
-	if position.distance_squared_to(center_position) < pow(Consts.GRID_SIZE/16, 2):
-		position = center_position
-
-
+	if abs(position.x - center_position.x) < Consts.GRID_SIZE/16:
+		position.x = center_position.x
+	
+	if abs(position.y - center_position.y) < Consts.GRID_SIZE/16:
+		position.y = center_position.y
 	
 #region Mobility
 

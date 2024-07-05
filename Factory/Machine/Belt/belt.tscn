@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://Factory/Machine/Belt/belt.gd" id="1_js1g8"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7gccq"]
-size = Vector2(122, 127)
+size = Vector2(122, 122)
 
 [node name="Belt" type="Area2D"]
 script = ExtResource("1_js1g8")
