@@ -74,7 +74,8 @@ func run_to(cycle: float):
 	
 	# If we're holding something
 	for widget: Widget in held_widgets:
-		widget.nudge(arm_offset - last_arm_offset)
+		if widget in nearby_widgets:
+			widget.nudge(arm_offset - last_arm_offset)
 		
 	if DEBUG_GRABBER:
 		grabber_display.position = arm_offset

@@ -45,19 +45,16 @@ func set_monitorable(new_monitorable: bool):
 func _ready():
 	pass # Replace with function body.
 	
-# Puts position at the middle of a grid square.
-# Is passing in the TileMap a good idea? I don't know!
-func snap_to_grid(grid: TileMap):
-	position = grid.map_to_local( grid.local_to_map(position))
+# Puts position at the middle of a grid square if it's close enough
+func snap_to_grid():
 	
+	var center_position = Util.floor_map_to_local( Util.floor_local_to_map(position))
+	if position.distance_squared_to(center_position) < pow(Consts.GRID_SIZE/16, 2):
+		position = center_position
 
 
 	
 #region Mobility
-
-# TODO: what should happen if assemblies meet mid-cycle? Suggestion: just
-# let them end up misaligned, and make conveyors only push until there is
-# no overlap.
 
 # Attempts to move the assembly the given amount
 func check_and_move(delta: Vector2):

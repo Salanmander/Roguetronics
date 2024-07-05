@@ -130,7 +130,7 @@ func _physics_process(delta: float):
 		# of the cycle
 		if cycle - last_cycle >= (1-cycle_fraction):
 			for assembly: Assembly in assemblies:
-				assembly.snap_to_grid(self)
+				assembly.snap_to_grid()
 				
 			
 		last_cycle = cycle
