@@ -262,6 +262,16 @@ text = "Do The
 Thing"
 expand_icon = true
 
+[node name="NewPuzzle" type="Button" parent="UILayer/Button Panel"]
+offset_left = 1240.0
+offset_top = 44.0
+offset_right = 1306.0
+offset_bottom = 110.0
+action_mode = 0
+text = "New 
+Puzzle"
+expand_icon = true
+
 [node name="MachineControls" type="Panel" parent="UILayer"]
 anchors_preset = -1
 anchor_left = 0.999
@@ -354,3 +364,4 @@ script = ExtResource("3_ulfng")
 [connection signal="pressed" from="UILayer/Button Panel/PlaceTrack" to="FactoryLayer/FactoryFloor" method="_on_place_track_pressed"]
 [connection signal="pressed" from="UILayer/Button Panel/PlaceCrane" to="FactoryLayer/FactoryFloor" method="_on_place_crane_pressed"]
 [connection signal="pressed" from="UILayer/Button Panel/TestFunction" to="FactoryLayer/FactoryFloor" method="_on_test_function_pressed"]
+[connection signal="pressed" from="UILayer/Button Panel/NewPuzzle" to="FactoryLayer/FactoryFloor" method="_on_new_puzzle_pressed"]

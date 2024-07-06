@@ -224,8 +224,9 @@ func add_widget_helper(new_widget: Widget):
 			widget.shift_by(shift_vector)
 			
 		for link: Line2D in links:
-			var point_shifts = [shift_vector, shift_vector]
-			link.points = link.points + point_shifts
+			var new1: Vector2 = link.points[0] + shift_vector
+			var new2: Vector2 = link.points[1] + shift_vector
+			link.points = PackedVector2Array([new1, new2])
 			
 			
 	if(new_widget.position.y < 0):
@@ -241,8 +242,9 @@ func add_widget_helper(new_widget: Widget):
 			widget.shift_by(shift_vector)
 			
 		for link: Line2D in links:
-			var point_shifts = [shift_vector, shift_vector]
-			link.points = link.points + point_shifts
+			var new1: Vector2 = link.points[0] + shift_vector
+			var new2: Vector2 = link.points[1] + shift_vector
+			link.points = PackedVector2Array([new1, new2])
 	
 func get_widgets() -> Array[Widget]:
 	return widgets.duplicate()
