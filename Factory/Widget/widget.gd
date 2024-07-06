@@ -16,7 +16,6 @@ var nearby_areas: Array[Area2D]
 signal nudged(delta: Vector2)
 signal combined(this_widget:Widget, combined_by:Combiner)
 signal deleted(this_widget:Widget)
-signal overlap_detected_with(other_assembly: Assembly)
 signal forced_to(assembly_pos: Vector2)
 signal layer_changed(new_layer: int)
 
@@ -64,6 +63,9 @@ func set_type(widget_type: int):
 	
 	
 	$Sprite2D.texture = tex
+	
+func get_type() -> int:
+	return type
 	
 	
 #region Mobility
@@ -128,17 +130,6 @@ func set_layer(new_layer: int):
 
 #endregion
 
-
-func tell_overlaps_to_check_assembly(parent: Assembly):
-	var overlaps: Array[Area2D] = get_overlapping_areas()
-	for other in overlaps:
-		if other is Widget:
-			other.check_overlap_with(parent)
-	pass
-	
-func check_overlap_with(other_assembly: Assembly):
-	overlap_detected_with.emit(other_assembly)
-	pass
 	
 	
 

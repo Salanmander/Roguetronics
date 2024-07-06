@@ -2,6 +2,7 @@ extends Node2D
 class_name Assembly
 
 var widgets: Array[Widget]
+var links: Array[Line2D]
 var nudges: Array[Vector2]
 var forced_positions: Array[Vector2]
 var affected_by_machines: bool
@@ -190,11 +191,16 @@ func add_widget_from_other(new_widget: Widget, other: Assembly):
 	new_widget.nudged.disconnect(other._on_widget_nudged)
 	new_widget.forced_to.disconnect(other._on_widget_forced_to)
 	new_widget.combined.disconnect(other._on_widget_combined)
-	new_widget.overlap_detected_with.disconnect(other._on_overlap_detected)
 	new_widget.layer_changed.disconnect(other._on_widget_layer_changed)
 	
 	add_widget_helper(new_widget)
 	
+func add_link(p1: Vector2, p2: Vector2):
+	var new_line: Line2D = Line2D.new()
+	new_line.points = PackedVector2Array([p1, p2])
+	new_line.default_color = Color(0.15, 0.5, 0.8, 1)
+	add_child(new_line)
+	links.append(new_line)
 	
 func add_widget_helper(new_widget: Widget):
 	new_widget.monitorable = monitorable
@@ -203,7 +209,6 @@ func add_widget_helper(new_widget: Widget):
 	new_widget.nudged.connect(_on_widget_nudged)
 	new_widget.forced_to.connect(_on_widget_forced_to)
 	new_widget.combined.connect(_on_widget_combined)
-	new_widget.overlap_detected_with.connect(_on_overlap_detected)
 	new_widget.layer_changed.connect(_on_widget_layer_changed)
 	
 	if(new_widget.position.x < 0):
@@ -212,9 +217,15 @@ func add_widget_helper(new_widget: Widget):
 		# Shift assembly in the same direction that the new widget is
 		position.x -= shift_amount
 		
-		# Shift all widgets in the opposite direction
+		var shift_vector: Vector2 = Vector2(shift_amount, 0)
+		
+		# Shift all widgets and links in the opposite direction
 		for widget: Widget in widgets:
-			widget.shift_by(Vector2(shift_amount, 0))
+			widget.shift_by(shift_vector)
+			
+		for link: Line2D in links:
+			var point_shifts = [shift_vector, shift_vector]
+			link.points = link.points + point_shifts
 			
 			
 	if(new_widget.position.y < 0):
@@ -223,48 +234,91 @@ func add_widget_helper(new_widget: Widget):
 		# Shift assembly in the same direction that the new widget is
 		position.y -= shift_amount
 		
-		# Shift all widgets in the opposite direction
+		
+		# Shift all widgets and links in the opposite direction
+		var shift_vector: Vector2 = Vector2(0, shift_amount)
 		for widget: Widget in widgets:
-			widget.shift_by(Vector2(0, shift_amount))
+			widget.shift_by(shift_vector)
+			
+		for link: Line2D in links:
+			var point_shifts = [shift_vector, shift_vector]
+			link.points = link.points + point_shifts
 	
 func get_widgets() -> Array[Widget]:
 	return widgets.duplicate()
+	
+func get_links() -> Array[Line2D]:
+	return links.duplicate()
 
-#region Combining and deleting
 
-# TODO: There has *got* to be a better way to do this
-func check_for_any_perfect_overlap():
+#region match checking
+	
+func check_for_overlap_with(others: Array[Assembly]):
+	for other: Assembly in others:
+		if other.position.is_equal_approx(position) and matches(other):
+			perfect_overlap.emit(other)
+	pass
+
+
+func matches(other: Assembly):
+	
+	var other_widgets: Array[Widget] = other.get_widgets()
+	
+	if widgets.size() != other_widgets.size():
+		return false
+		
+		
+	var other_links: Array[Line2D] = other.get_links()
+	
+	if links.size() != other_links.size():
+		return false
+		
+		
+	# Check that all widgets match
+	
 	for widget: Widget in widgets:
-		widget.tell_overlaps_to_check_assembly(self)
-	pass
+		var found: bool = false
+		
+		for other_widget: Widget in other_widgets:
+			
+			if widget.position.is_equal_approx(other_widget.position) and \
+			   widget.get_type() == other_widget.get_type():
+				found = true
+				break
+		
+		if not found:
+			return false
+		
 	
-func check_perfect_overlap_with(other: Assembly):
-	#if other == self:
-		#return
-	if(widgets.size() != other.widgets.size()):
-		return
+	# Check that all links match
 	
-	for widget in widgets:
-		var loc: Vector2 = position + widget.position
-		if not other.has_widget_at_position(loc, widget.type):
-			return
+	for link: Line2D in links:
+		var found: bool = false
+		
+		# Links always have exactly two points. We need to know they're
+		# the same two points, but we don't care what order they're in
+		var point1: Vector2 = link.points[0]
+		var point2: Vector2 = link.points[1]
+		for other_link: Line2D in other_links:
+			var o_point1: Vector2 = other_link.points[0]
+			var o_point2: Vector2 = other_link.points[1]
+			
+			if (point1.is_equal_approx(o_point1) and \
+				point2.is_equal_approx(o_point2)) or \
+			   (point1.is_equal_approx(o_point2) and \
+				point2.is_equal_approx(o_point1)):
+				found = true
+				break
+		
+		if not found:
+			return false
 	
-	# We have the same number of widgets, and have gone through and
-	# found we have the same type in the same locations
-	found_perfect_overlap_with(other)
-	other.found_perfect_overlap_with(self)
-	pass
+	return true
 	
-func found_perfect_overlap_with(other: Assembly):
-	perfect_overlap.emit(other)
-	pass
-	
-func has_widget_at_position(loc: Vector2, type: int) -> bool:
-	for widget in widgets:
-		var this_loc: Vector2 = position + widget.position
-		if(this_loc.is_equal_approx(loc) && widget.type == type):
-			return true
-	return false
+
+#endregion
+			
+		
 	
 func _on_nudged_toward_direction(dir: Vector2, delta: Vector2):
 	var angle_between = delta.angle_to(dir)
@@ -300,6 +354,10 @@ func _on_widget_forced_to(new_position: Vector2):
 	if(affected_by_machines):
 		forced_positions.append(new_position)
 
+
+
+#region Combining and deleting
+
 func _on_widget_combined(widget: Widget, combiner: Combiner):
 	var group_name: String = str("combining_by_",combiner.idString)
 	var combining_assemblies: Array[Node] = get_tree().get_nodes_in_group(group_name)
@@ -326,9 +384,9 @@ func combine_with(other: Assembly, connect_point: Widget):
 		
 	# Add the other lines
 	var keep_global_transform: bool = true
-	for node in other.get_children():
-		if node is Line2D:
-			node.reparent(self, keep_global_transform)
+	for link in other.get_links():
+		link.reparent(self, keep_global_transform)
+		links.append(link)
 			
 		
 		
@@ -336,10 +394,8 @@ func combine_with(other: Assembly, connect_point: Widget):
 	var p1: Vector2 = queued_combine_widget.position
 	var p2: Vector2 = connect_point.position
 	
-	var new_line = Line2D.new()
-	new_line.points = PackedVector2Array([p1, p2])
-	new_line.default_color = Color(0.15, 0.5, 0.8, 1)
-	add_child(new_line)
+	add_link(p1, p2)
+	
 		
 	
 	other.delete()
@@ -372,7 +428,3 @@ func _on_combiner_drop(combiner: Combiner):
 	remove_from_group(group_name)
 	queued_combine_widget = null
 	
-func _on_overlap_detected(other_assembly: Assembly):
-	check_perfect_overlap_with(other_assembly)
-	
-	pass

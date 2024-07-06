@@ -112,7 +112,7 @@ func _physics_process(delta: float):
 		
 		var cycle_fraction = fmod(cycle, 1)
 		if cycle - last_cycle >= cycle_fraction:
-			goal.check()
+			goal.check_against(assemblies)
 				
 		for machine: Machine in machines:
 			if not (machine is Combiner):
@@ -522,9 +522,13 @@ func setup_debug_objects():
 	goal = goal_packed.instantiate()
 	goal.set_parameters(map_to_local(Vector2i(10,2)))
 	goal.add_widget(Vector2(0,0), 2)
-	goal.add_widget(Vector2(-2*Consts.GRID_SIZE,0), 2)
 	goal.add_widget(Vector2(Consts.GRID_SIZE,0), 1)
-	goal.add_widget(Vector2(-Consts.GRID_SIZE,0), 1)
+	goal.add_widget(Vector2(2*Consts.GRID_SIZE,0), 2)
+	goal.add_widget(Vector2(3*Consts.GRID_SIZE,0), 1)
+	
+	goal.add_link(Vector2(0,0), Vector2(Consts.GRID_SIZE,0))
+	goal.add_link(Vector2(Consts.GRID_SIZE,0), Vector2(2*Consts.GRID_SIZE,0))
+	goal.add_link(Vector2(2*Consts.GRID_SIZE,0), Vector2(3*Consts.GRID_SIZE,0))
 	
 	
 

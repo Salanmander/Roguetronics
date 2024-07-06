@@ -28,8 +28,11 @@ func add_widget(init_position:Vector2, widget_type:int):
 func add_widget_object(new_widget:Widget):
 	plan.add_widget_object(new_widget)
 	
-func check():
-	plan.check_for_any_perfect_overlap()
+func add_link(p1: Vector2, p2: Vector2):
+	plan.add_link(p1, p2)
+	
+func check_against(others: Array[Assembly]):
+	plan.check_for_overlap_with(others)
 	
 func _on_perfect_overlap(other:Assembly):
 	other.delete_widgets()
