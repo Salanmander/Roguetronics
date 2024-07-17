@@ -70,6 +70,23 @@ func check_and_move(delta: Vector2):
 		
 func can_move(delta: Vector2, ignore_nudges: bool = false) -> bool:
 	
+	var forced:bool = forced_positions.size() > 0
+	
+	
+	if forced:
+		var new_pos: Vector2 = forced_positions[0]
+		# We don't need to check other forced positions right now.
+		# They'll get checked later when this moves, and will cause a crash
+		# at that time. And we're okay with crashes being after some motion has
+		# happened.
+		
+		var forced_delta: Vector2 = new_pos - position
+		var x_okay: bool = delta.x == 0 or forced_delta.x/delta.x >= 1
+		var y_okay: bool = delta.y == 0 or forced_delta.y/delta.y >= 1
+		
+		if not(x_okay and y_okay):
+			return false
+	
 	if not ignore_nudges:
 		for nudge: Vector2 in nudges:
 			var angle = nudge.angle_to(delta)

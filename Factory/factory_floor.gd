@@ -395,8 +395,8 @@ func remove_machines(machine_position: Vector2, machine_layer: int):
 	
 #region Resetting
 
-# TODO: improve the crash, give visual indicator of some kind,
-# don't let it resume while crashed
+# TODO: improve the crash, give visual indicator of the thing that caused
+# the crash
 func crash():
 	run = false
 	crashed = true

@@ -263,6 +263,7 @@ Thing"
 expand_icon = true
 
 [node name="NewPuzzle" type="Button" parent="UILayer/Button Panel"]
+layout_mode = 0
 offset_left = 1240.0
 offset_top = 44.0
 offset_right = 1306.0
@@ -339,8 +340,8 @@ script = ExtResource("12_vgtn5")
 
 [node name="FactoryLayer" type="CanvasLayer" parent="."]
 layer = -2
-scale = Vector2(0.4, 0.4)
-transform = Transform2D(0.4, 0, 0, 0.4, 0, 0)
+scale = Vector2(0.6, 0.6)
+transform = Transform2D(0.6, 0, 0, 0.6, 0, 0)
 
 [node name="FactoryFloor" type="TileMap" parent="FactoryLayer"]
 tile_set = SubResource("TileSet_a558r")

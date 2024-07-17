@@ -38,10 +38,10 @@ func _ready():
 func run_to(cycle: float):
 	
 	# Crash if any widget is out-of-place relative to this crane.
-	for widget:Widget in held_widgets:
-		var widget_pos = widget.get_global_transform()
-		if not get_global_transform().is_equal_approx(widget_pos):
-			crashed.emit()
+	#for widget:Widget in held_widgets:
+		#var widget_pos = widget.get_global_transform()
+		#if not get_global_transform().is_equal_approx(widget_pos):
+			#crashed.emit()
 	
 	var cycle_fraction: float = fmod(cycle, 1)
 	
