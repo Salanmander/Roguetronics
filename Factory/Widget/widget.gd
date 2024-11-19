@@ -147,8 +147,7 @@ func force_to(new_pos: Vector2):
 func combine(combiner:Combiner):
 	combined.emit(self, combiner)
 	
-# BUG: There are still some problems with signal connections 
-# while reparenting, I think
+
 func reparent_custom(new_parent: Assembly, keep_global_transform:bool ):
 	
 	# Storing the nearby areas state is necessary because reparenting
@@ -184,7 +183,8 @@ func _on_area_entered(entering: Area2D):
 	elif entering is Widget:
 		if entering.parent_assembly != self.parent_assembly:
 			nearby_areas.append(entering)
-			entering.deleted.connect(_on_nearby_widget_deleted)
+			if not entering.deleted.is_connected(_on_nearby_widget_deleted):
+				entering.deleted.connect(_on_nearby_widget_deleted)
 	pass
 	
 func _on_area_exited(exiting: Area2D):
