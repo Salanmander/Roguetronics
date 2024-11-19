@@ -276,9 +276,7 @@ func add_widget_helper(new_widget: Widget):
 			widget.shift_by(shift_vector)
 			
 		for link: Line2D in links:
-			var new1: Vector2 = link.points[0] + shift_vector
-			var new2: Vector2 = link.points[1] + shift_vector
-			link.points = PackedVector2Array([new1, new2])
+			link.position += shift_vector
 			
 			
 	if(new_widget.position.y < 0):
@@ -435,7 +433,7 @@ func combine_with(other: Assembly, connect_point: Widget):
 		
 	# Add the other lines
 	var keep_global_transform: bool = true
-	for link in other.get_links():
+	for link: Line2D in other.get_links():
 		link.reparent(self, keep_global_transform)
 		links.append(link)
 			
@@ -449,7 +447,6 @@ func combine_with(other: Assembly, connect_point: Widget):
 	# line is at (0, 0)
 	add_link(p1, p2)
 	
-		
 	
 	other.delete()
 		
