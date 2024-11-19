@@ -81,8 +81,12 @@ func can_move(delta: Vector2, ignore_nudges: bool = false) -> bool:
 		# happened.
 		
 		var forced_delta: Vector2 = new_pos - position
-		var x_okay: bool = delta.x == 0 or forced_delta.x/delta.x >= 1
-		var y_okay: bool = delta.y == 0 or forced_delta.y/delta.y >= 1
+		print(delta)
+		var x_okay: bool = is_equal_approx(delta.x, 0) or forced_delta.x/delta.x > 0.99
+		var y_okay: bool = is_equal_approx(delta.y, 0) or forced_delta.y/delta.y > 0.99
+		
+		var temp1 = is_equal_approx(delta.x, 0)
+		var temp2 = forced_delta.x/delta.x > 0.99
 		
 		if not(x_okay and y_okay):
 			return false
@@ -212,9 +216,40 @@ func add_widget_from_other(new_widget: Widget, other: Assembly):
 	
 	add_widget_helper(new_widget)
 	
+	
+# Adds a line to the assembly as a link. One of the points will be at 0,0.
+# The second point will always be in the positive x direction if possible.
+# If there's no difference, it will be in the positive y direction.
+#      x
+#     /
+#    O---x
+#    |\
+#    | x
+#    x
 func add_link(p1: Vector2, p2: Vector2):
+	# Figure out which point counts as the origin of this link
+	var origin: Vector2
+	var other: Vector2
+	if(p1.x < p2.x):
+		origin = p1
+		other = p2
+	elif(p1.x == p2.x and p1.y < p2.y):
+		origin = p1
+		other = p2
+	else:
+		origin = p2
+		other = p1
+	
 	var new_line: Line2D = Line2D.new()
-	new_line.points = PackedVector2Array([p1, p2])
+	
+	# Set the location of the new line based on the location of the origin point
+	new_line.position = origin
+	
+	# Change the other point to be relative to the origin.
+	other = other - origin
+	
+	# The first one in the list is always the origin point
+	new_line.points = PackedVector2Array([Vector2(0, 0), other])
 	new_line.default_color = Color(0.15, 0.5, 0.8, 1)
 	add_child(new_line)
 	links.append(new_line)
@@ -314,18 +349,15 @@ func matches(other: Assembly):
 	for link: Line2D in links:
 		var found: bool = false
 		
-		# Links always have exactly two points. We need to know they're
-		# the same two points, but we don't care what order they're in
-		var point1: Vector2 = link.points[0]
+		# Links always have exactly two points. The first one is
+		# at (0, 0) relative to the link's position. We care about
+		# the position and the second point.
 		var point2: Vector2 = link.points[1]
 		for other_link: Line2D in other_links:
-			var o_point1: Vector2 = other_link.points[0]
 			var o_point2: Vector2 = other_link.points[1]
 			
-			if (point1.is_equal_approx(o_point1) and \
-				point2.is_equal_approx(o_point2)) or \
-			   (point1.is_equal_approx(o_point2) and \
-				point2.is_equal_approx(o_point1)):
+			if (link.position.is_equal_approx(other_link.position) and \
+				point2.is_equal_approx(o_point2)):
 				found = true
 				break
 		
@@ -413,6 +445,8 @@ func combine_with(other: Assembly, connect_point: Widget):
 	var p1: Vector2 = queued_combine_widget.position
 	var p2: Vector2 = connect_point.position
 	
+	# add_link will re-normalize so that one of the points of the
+	# line is at (0, 0)
 	add_link(p1, p2)
 	
 		

@@ -340,8 +340,8 @@ script = ExtResource("12_vgtn5")
 
 [node name="FactoryLayer" type="CanvasLayer" parent="."]
 layer = -2
-scale = Vector2(0.6, 0.6)
-transform = Transform2D(0.6, 0, 0, 0.6, 0, 0)
+scale = Vector2(0.4, 0.4)
+transform = Transform2D(0.4, 0, 0, 0.4, 0, 0)
 
 [node name="FactoryFloor" type="TileMap" parent="FactoryLayer"]
 tile_set = SubResource("TileSet_a558r")
