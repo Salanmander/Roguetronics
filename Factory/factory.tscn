@@ -1,14 +1,18 @@
-[gd_scene load_steps=22 format=3 uid="uid://dksdy6hagfrlo"]
+[gd_scene load_steps=26 format=3 uid="uid://dksdy6hagfrlo"]
 
 [ext_resource type="Script" path="res://Factory/factory.gd" id="1_ajpdm"]
 [ext_resource type="Texture2D" uid="uid://c75ii64xae637" path="res://Factory/icon.png" id="1_uqvcs"]
 [ext_resource type="Texture2D" uid="uid://ntfyndnf1obk" path="res://Factory/box.png" id="2_5b2d0"]
 [ext_resource type="Texture2D" uid="uid://bqsb5r8n4oaa" path="res://Factory/floor.png" id="3_dkgit"]
+[ext_resource type="Texture2D" uid="uid://b5pmq2adijk2f" path="res://Factory/Machine/Belt/Up.png" id="3_eq8jf"]
 [ext_resource type="Texture2D" uid="uid://boj4b0l32qimb" path="res://Factory/Widget/widget.png" id="3_kb4iw"]
 [ext_resource type="Script" path="res://Factory/factory_floor.gd" id="3_ulfng"]
+[ext_resource type="Texture2D" uid="uid://dkeoj2tmqbes0" path="res://Factory/Machine/Belt/Down.png" id="4_a4k1t"]
 [ext_resource type="Texture2D" uid="uid://bkhsm6uotntfp" path="res://Factory/Widget/widget2.png" id="4_ca5u6"]
 [ext_resource type="Texture2D" uid="uid://dpvqigf2ldir8" path="res://icon.svg" id="4_fq6om"]
+[ext_resource type="Texture2D" uid="uid://bbd43mjxxih1d" path="res://Factory/Machine/Belt/Left.png" id="5_dmtan"]
 [ext_resource type="Texture2D" uid="uid://4jl7a6bsnn7s" path="res://Factory/Machine/Combiner/combiner_V.png" id="6_nnkyd"]
+[ext_resource type="Texture2D" uid="uid://cd6mpuwh8w5s1" path="res://Factory/Machine/Belt/Right.png" id="6_to7fd"]
 [ext_resource type="Texture2D" uid="uid://caj4dt65p80sr" path="res://Factory/Machine/Dispenser/dispenser_widget.png" id="7_78wcy"]
 [ext_resource type="Texture2D" uid="uid://cluvv73hlh0vo" path="res://Factory/Machine/Dispenser/dispenser_verywidget.png" id="8_8iadg"]
 [ext_resource type="Script" path="res://Factory/UI/dispenser_controls.gd" id="9_p24vu"]
@@ -81,7 +85,7 @@ offset_top = 44.0
 offset_right = 130.0
 offset_bottom = 110.0
 action_mode = 0
-icon = ExtResource("1_uqvcs")
+icon = ExtResource("3_eq8jf")
 expand_icon = true
 
 [node name="DownConveyorSelect" type="Button" parent="UILayer/Button Panel"]
@@ -91,13 +95,8 @@ offset_top = 44.0
 offset_right = 226.0
 offset_bottom = 110.0
 action_mode = 0
+icon = ExtResource("4_a4k1t")
 expand_icon = true
-
-[node name="DownArrowIcon" type="Sprite2D" parent="UILayer/Button Panel/DownConveyorSelect"]
-position = Vector2(33, 33)
-rotation = 3.14159
-scale = Vector2(0.45, 0.45)
-texture = ExtResource("1_uqvcs")
 
 [node name="LeftConveyorSelect" type="Button" parent="UILayer/Button Panel"]
 layout_mode = 0
@@ -106,13 +105,8 @@ offset_top = 44.0
 offset_right = 327.0
 offset_bottom = 110.0
 action_mode = 0
+icon = ExtResource("5_dmtan")
 expand_icon = true
-
-[node name="LeftArrowIcon" type="Sprite2D" parent="UILayer/Button Panel/LeftConveyorSelect"]
-position = Vector2(33, 33)
-rotation = -1.5708
-scale = Vector2(0.45, 0.45)
-texture = ExtResource("1_uqvcs")
 
 [node name="RightConveyorSelect" type="Button" parent="UILayer/Button Panel"]
 layout_mode = 0
@@ -121,13 +115,8 @@ offset_top = 44.0
 offset_right = 426.0
 offset_bottom = 110.0
 action_mode = 0
+icon = ExtResource("6_to7fd")
 expand_icon = true
-
-[node name="RightArrowIcon" type="Sprite2D" parent="UILayer/Button Panel/RightConveyorSelect"]
-position = Vector2(33, 33)
-rotation = 1.5708
-scale = Vector2(0.45, 0.45)
-texture = ExtResource("1_uqvcs")
 
 [node name="PlaceWidget" type="Button" parent="UILayer/Button Panel"]
 layout_mode = 0
@@ -253,6 +242,7 @@ Crane"
 expand_icon = true
 
 [node name="TestFunction" type="Button" parent="UILayer/Button Panel"]
+visible = false
 layout_mode = 0
 offset_left = 64.0
 offset_top = 115.0
