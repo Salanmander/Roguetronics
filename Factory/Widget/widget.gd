@@ -183,6 +183,10 @@ func _on_area_entered(entering: Area2D):
 	elif entering is Widget:
 		if entering.parent_assembly != self.parent_assembly:
 			nearby_areas.append(entering)
+			
+			# BUG: sometimes this tries to create a connection that
+			# already exists. Probably to do with combining widgets again.
+			# Workaround: just check
 			if not entering.deleted.is_connected(_on_nearby_widget_deleted):
 				entering.deleted.connect(_on_nearby_widget_deleted)
 	pass
@@ -195,7 +199,9 @@ func _on_area_exited(exiting: Area2D):
 			nearby_areas.erase(exiting)
 			# BUG: sometimes this tries to erase a connection that
 			# doesn't exist. Probably to do with combining widgets again.
-			exiting.deleted.disconnect(_on_nearby_widget_deleted)
+			# Workaround: just check
+			if(exiting.deleted.is_connected(_on_nearby_widget_deleted)):
+				exiting.deleted.disconnect(_on_nearby_widget_deleted)
 	pass
 	
 func _on_nearby_widget_deleted(deleted_widget: Widget):
