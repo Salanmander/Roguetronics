@@ -309,6 +309,12 @@ func make_dispenser(grid_position: Vector2i, dispense_type: int):
 	machines.append(new_dispenser)
 	new_dispenser.dispense.connect(_on_dispense)
 	
+	# TODO: Better solution for getting rid of interface for
+	# dispensers that no longer exist 
+	unhighlight_all()
+	highlight(new_dispenser)
+	element_selected.emit(new_dispenser)
+	
 func make_combiner(grid_position: Vector2i, offset_dir:Vector2i):
 	
 	var combiner_position: Vector2 = map_to_local(grid_position)
