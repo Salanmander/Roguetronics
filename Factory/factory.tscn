@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://dksdy6hagfrlo"]
+[gd_scene load_steps=22 format=3 uid="uid://dksdy6hagfrlo"]
 
 [ext_resource type="Script" path="res://Factory/factory.gd" id="1_ajpdm"]
 [ext_resource type="Texture2D" uid="uid://c75ii64xae637" path="res://Factory/icon.png" id="1_uqvcs"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" path="res://Factory/UI/crane_controls.gd" id="10_5vdjy"]
 [ext_resource type="Script" path="res://Factory/UI/crane_program.gd" id="11_wqryl"]
 [ext_resource type="Script" path="res://Factory/UI/command_bank.gd" id="12_vgtn5"]
+[ext_resource type="PackedScene" uid="uid://dxem5lqhmeff1" path="res://Factory/Tutorial/tutorial_panel.tscn" id="16_i8wsv"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hjol2"]
 bg_color = Color(0.341176, 0.341176, 0.341176, 1)
@@ -273,6 +274,17 @@ text = "New
 Puzzle"
 expand_icon = true
 
+[node name="TutorialButton" type="Button" parent="UILayer/Button Panel"]
+layout_mode = 0
+offset_left = 1201.0
+offset_top = 118.0
+offset_right = 1343.0
+offset_bottom = 184.0
+theme_override_font_sizes/font_size = 23
+action_mode = 0
+text = "Instructions"
+expand_icon = true
+
 [node name="MachineControls" type="Panel" parent="UILayer"]
 anchors_preset = -1
 anchor_left = 0.999
@@ -348,6 +360,18 @@ tile_set = SubResource("TileSet_a558r")
 format = 2
 script = ExtResource("3_ulfng")
 
+[node name="TutorialPanel" parent="." instance=ExtResource("16_i8wsv")]
+visible = false
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 186.0
+offset_top = 91.0
+offset_right = 1069.0
+offset_bottom = 519.0
+grow_horizontal = 1
+grow_vertical = 1
+
 [connection signal="pressed" from="UILayer/Button Panel/UpConveyorSelect" to="FactoryLayer/FactoryFloor" method="_on_up_conveyor_select_pressed"]
 [connection signal="pressed" from="UILayer/Button Panel/DownConveyorSelect" to="FactoryLayer/FactoryFloor" method="_on_down_conveyor_select_pressed"]
 [connection signal="pressed" from="UILayer/Button Panel/LeftConveyorSelect" to="FactoryLayer/FactoryFloor" method="_on_left_conveyor_select_pressed"]
@@ -366,3 +390,5 @@ script = ExtResource("3_ulfng")
 [connection signal="pressed" from="UILayer/Button Panel/PlaceCrane" to="FactoryLayer/FactoryFloor" method="_on_place_crane_pressed"]
 [connection signal="pressed" from="UILayer/Button Panel/TestFunction" to="FactoryLayer/FactoryFloor" method="_on_test_function_pressed"]
 [connection signal="pressed" from="UILayer/Button Panel/NewPuzzle" to="FactoryLayer/FactoryFloor" method="_on_new_puzzle_pressed"]
+[connection signal="pressed" from="UILayer/Button Panel/TutorialButton" to="." method="_on_tutorial_button_pressed"]
+[connection signal="closed" from="TutorialPanel" to="." method="_on_tutorial_closed"]

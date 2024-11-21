@@ -42,6 +42,9 @@ func _on_simulation_started():
 	hide_all_controls()
 	
 
+
+func _on_tutorial_button_pressed():
+	$TutorialPanel.visible = true
 	
-
-
+func _on_tutorial_closed():
+	$TutorialPanel.visible = false

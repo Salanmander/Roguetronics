@@ -1,0 +1,174 @@
+[gd_scene load_steps=6 format=3 uid="uid://dxem5lqhmeff1"]
+
+[ext_resource type="Texture2D" uid="uid://cd6mpuwh8w5s1" path="res://Factory/Machine/Belt/Right.png" id="1_6wcmd"]
+[ext_resource type="Script" path="res://Factory/Tutorial/tutorial_panel.gd" id="1_bu3ev"]
+[ext_resource type="Texture2D" uid="uid://basuoeu4jl45y" path="res://Factory/Machine/Combiner/combiner_H.png" id="2_c6lyi"]
+[ext_resource type="Texture2D" uid="uid://caj4dt65p80sr" path="res://Factory/Machine/Dispenser/dispenser_widget.png" id="3_71p1t"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hjol2"]
+bg_color = Color(0.341176, 0.341176, 0.341176, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.129412, 0.129412, 0.129412, 1)
+border_blend = true
+
+[node name="TutorialPanel" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -512.0
+offset_bottom = -364.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hjol2")
+script = ExtResource("1_bu3ev")
+
+[node name="GoalButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 374.0
+offset_right = 100.0
+offset_bottom = 415.0
+text = "Goal
+"
+
+[node name="GoalDisplay" type="Label" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 43.0
+offset_top = 39.0
+offset_right = 565.0
+offset_bottom = 246.0
+text = "The transparent widgets show the shape you want to make. To match, the locations of the links between the widgets must also match. If you put a matching assembly of widgets on top of the goal, so that it overlaps perfectly, it will disappear.
+
+Built a factory that repeatedly delivers matching assemblies to the goal location."
+autowrap_mode = 3
+
+[node name="ConveyorButton" type="Button" parent="."]
+offset_left = 117.0
+offset_top = 372.0
+offset_right = 181.0
+offset_bottom = 413.0
+icon = ExtResource("1_6wcmd")
+icon_alignment = 1
+expand_icon = true
+
+[node name="ConveyorDisplay" type="Label" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 43.0
+offset_top = 39.0
+offset_right = 565.0
+offset_bottom = 246.0
+text = "Conveyor belts move a widget on top of them one space in the direction they're facing. If it's attached to other widgets, they all move together. They can also push un-attached widgets.
+
+If opposite-facing conveyor belts would end up pushing the same object, no movement happens."
+autowrap_mode = 3
+
+[node name="CombinerButton" type="Button" parent="."]
+offset_left = 194.0
+offset_top = 371.0
+offset_right = 258.0
+offset_bottom = 412.0
+icon = ExtResource("2_c6lyi")
+icon_alignment = 1
+expand_icon = true
+
+[node name="CombinerDisplay" type="Label" parent="."]
+visible = false
+offset_left = 43.0
+offset_top = 39.0
+offset_right = 565.0
+offset_bottom = 246.0
+text = "Combiners are placed on the edges between squares. If there is ever a widget on both sides of the combiner, it will create a link between the two widgets.
+
+Those widgets, and anything else attached to them, will now be part of an assembly that all moves together."
+autowrap_mode = 3
+
+[node name="DispenserButton" type="Button" parent="."]
+offset_left = 277.0
+offset_top = 370.0
+offset_right = 341.0
+offset_bottom = 411.0
+icon = ExtResource("3_71p1t")
+icon_alignment = 1
+expand_icon = true
+
+[node name="DispenserDisplay" type="Label" parent="."]
+visible = false
+offset_left = 43.0
+offset_top = 39.0
+offset_right = 565.0
+offset_bottom = 246.0
+text = "Dispensers create a new widget of their color periodically. The number of cycles between dispenses can be configured by right-clicking on the dispenser. By default a dispenser is selected when placed. In order to create a new widget, at least that number of cycles must have passed since the last time it created one, and there must be no widget currently under it.
+
+There can only be one dispenser of each color."
+autowrap_mode = 3
+
+[node name="CraneButton" type="Button" parent="."]
+offset_left = 356.0
+offset_top = 369.0
+offset_right = 420.0
+offset_bottom = 410.0
+text = "Tracks/Cranes"
+icon_alignment = 1
+expand_icon = true
+
+[node name="CraneDisplay" type="Label" parent="."]
+visible = false
+offset_left = 43.0
+offset_top = 39.0
+offset_right = 858.0
+offset_bottom = 331.0
+text = "Cranes move along tracks and can pick up and put down widgets.
+
+To place a track select the \"drag track\" button, and click where you want the track to start, then drag along the path you want it to take. You can edit the path later with the \"drag track\" tool by clicking on the END of the track and dragging backwards.
+
+You can place cranes anywhere on an existing track. Right click the crane to edit its program. Drag icons to the vertical list to set up its program. A crane will run each command in order, and will loop back to the beginning after reaching the last command that has been placed. Empty spaces will cause it to wait.
+
+The commands are: Move forward/backward, grab/release, raise/lower. Raising a widget allows it to move over unraised widgets. Cranes can create crashes, which will stop the factory (screen tints red)."
+autowrap_mode = 3
+
+[node name="ControlsButton" type="Button" parent="."]
+offset_left = 489.0
+offset_top = 368.0
+offset_right = 607.0
+offset_bottom = 409.0
+text = "Run/Stop"
+icon_alignment = 1
+expand_icon = true
+
+[node name="ControlsDisplay" type="Label" parent="."]
+visible = false
+offset_left = 43.0
+offset_top = 39.0
+offset_right = 706.0
+offset_bottom = 331.0
+text = "\"Run\" makes the factory start running.
+
+\"Pause\" stops time, but leaves everything in its current state.
+
+\"Stop\" resets everything to the state it was in before you started the factory.
+
+\"Erase all\" removes everything except the goal. Unfortunately there is currently no way to remove individual elements (except that you can replace belts with one that points a different direction, and place a new dispenser to remove the previous one).
+
+\"New goal\" gives you a randomized goal. There is no way to get back the last one."
+autowrap_mode = 3
+
+[node name="CloseButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 839.0
+offset_top = 11.0
+offset_right = 870.0
+offset_bottom = 43.0
+text = "X"
+
+[connection signal="button_down" from="GoalButton" to="." method="_on_goal_button_button_down"]
+[connection signal="button_down" from="ConveyorButton" to="." method="_on_conveyor_button_button_down"]
+[connection signal="button_down" from="CombinerButton" to="." method="_on_combiner_button_button_down"]
+[connection signal="button_down" from="DispenserButton" to="." method="_on_dispenser_button_button_down"]
+[connection signal="button_down" from="CraneButton" to="." method="_on_crane_button_button_down"]
+[connection signal="button_down" from="ControlsButton" to="." method="_on_controls_button_button_down"]
+[connection signal="button_down" from="CloseButton" to="." method="_on_close_button_button_down"]
