@@ -9,6 +9,15 @@ class_name Factory
 func _ready():
 	floor.element_selected.connect(_on_element_selected)
 	floor.simulation_started.connect(_on_simulation_started)
+	
+	# TEMP: this is just a test
+	for available: MachinePrototype in GameState.machines_available:
+		
+		var prototypes: Array[ButtonPrototype] = available.get_button_prototypes()
+		
+		for proto: ButtonPrototype in prototypes:
+			var button: Button = proto.get_button($FactoryLayer/FactoryFloor)
+			$UILayer/ButtonPanel.add_child(button)
 	pass # Replace with function body.
 
 
@@ -35,8 +44,6 @@ func _on_element_selected(element):
 		crane_control.connect_to(element)
 		hide_all_controls()
 		show_control(crane_control)
-		
-	
 	
 func _on_simulation_started():
 	hide_all_controls()
@@ -48,3 +55,5 @@ func _on_tutorial_button_pressed():
 	
 func _on_tutorial_closed():
 	$TutorialPanel.visible = false
+
+

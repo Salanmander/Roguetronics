@@ -27,6 +27,9 @@ const RAISE: int = 5
 const LOWER: int = 6
 var COMMAND_IMAGES: Array = []
 
+const POW_BELT = 0
+const POW_CRANE = 1
+
 func _init():
 	COMMAND_IMAGES.resize(NUM_CRANE_COMMANDS)
 	COMMAND_IMAGES[NO_COMMAND] = null

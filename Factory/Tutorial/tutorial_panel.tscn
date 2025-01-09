@@ -47,6 +47,7 @@ Built a factory that repeatedly delivers matching assemblies to the goal locatio
 autowrap_mode = 3
 
 [node name="ConveyorButton" type="Button" parent="."]
+layout_mode = 0
 offset_left = 117.0
 offset_top = 372.0
 offset_right = 181.0
@@ -68,6 +69,7 @@ If opposite-facing conveyor belts would end up pushing the same object, no movem
 autowrap_mode = 3
 
 [node name="CombinerButton" type="Button" parent="."]
+layout_mode = 0
 offset_left = 194.0
 offset_top = 371.0
 offset_right = 258.0
@@ -78,6 +80,7 @@ expand_icon = true
 
 [node name="CombinerDisplay" type="Label" parent="."]
 visible = false
+layout_mode = 0
 offset_left = 43.0
 offset_top = 39.0
 offset_right = 565.0
@@ -88,6 +91,7 @@ Those widgets, and anything else attached to them, will now be part of an assemb
 autowrap_mode = 3
 
 [node name="DispenserButton" type="Button" parent="."]
+layout_mode = 0
 offset_left = 277.0
 offset_top = 370.0
 offset_right = 341.0
@@ -98,6 +102,7 @@ expand_icon = true
 
 [node name="DispenserDisplay" type="Label" parent="."]
 visible = false
+layout_mode = 0
 offset_left = 43.0
 offset_top = 39.0
 offset_right = 565.0
@@ -108,6 +113,7 @@ There can only be one dispenser of each color."
 autowrap_mode = 3
 
 [node name="CraneButton" type="Button" parent="."]
+layout_mode = 0
 offset_left = 356.0
 offset_top = 369.0
 offset_right = 420.0
@@ -118,6 +124,7 @@ expand_icon = true
 
 [node name="CraneDisplay" type="Label" parent="."]
 visible = false
+layout_mode = 0
 offset_left = 43.0
 offset_top = 39.0
 offset_right = 858.0
@@ -132,6 +139,7 @@ The commands are: Move forward/backward, grab/release, raise/lower. Raising a wi
 autowrap_mode = 3
 
 [node name="ControlsButton" type="Button" parent="."]
+layout_mode = 0
 offset_left = 489.0
 offset_top = 368.0
 offset_right = 607.0
@@ -142,6 +150,7 @@ expand_icon = true
 
 [node name="ControlsDisplay" type="Label" parent="."]
 visible = false
+layout_mode = 0
 offset_left = 43.0
 offset_top = 39.0
 offset_right = 706.0

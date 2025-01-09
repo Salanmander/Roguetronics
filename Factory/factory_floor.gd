@@ -21,6 +21,7 @@ const PLACE_DISPENSER = 4
 const PLACE_WALL = 5
 const PLACE_TRACK = 6
 const PLACE_CRANE = 7
+const DELETE = 8
 
 signal element_selected(selected)
 signal simulation_started()
@@ -42,6 +43,7 @@ var belt_packed: PackedScene = load("res://Factory/Machine/Belt/belt.tscn")
 var combiner_packed: PackedScene = load("res://Factory/Machine/Combiner/combiner.tscn")
 var dispenser_packed: PackedScene = load("res://Factory/Machine/Dispenser/dispenser.tscn")
 var machines: Array[Machine]
+var walls: Array[Wall]
 var conveyor_direction: float
 
 
@@ -72,6 +74,7 @@ func _ready():
 	
 	assemblies = []
 	machines = []
+	walls = []
 	tracks = []
 	current_track = null
 
@@ -162,6 +165,7 @@ func _unhandled_input(event: InputEvent):
 					unhighlight_all()
 					highlight(machine)
 					element_selected.emit(machine)
+					
 				
 				
 			
@@ -172,6 +176,30 @@ func _unhandled_input(event: InputEvent):
 			
 		elif(click_mode == PLACE_THING):
 			make_widget(grid_loc, widget_type)
+			
+		
+		elif(click_mode == DELETE):
+			# Delete machines
+			var removed_machines: Array[Machine] = []
+			for machine: Machine in machines:
+				if(machine.position.is_equal_approx(thing_position) or 
+				   machine.position.distance_squared_to(event.position) < (Consts.GRID_SIZE/2) ** 2):
+					remove_child(machine)
+					machine.queue_free()
+					removed_machines.append(machine)
+			for machine: Machine in removed_machines:
+				machines.erase(machine)
+				
+			# Delete walls
+			var removed_walls: Array[Wall] = []
+			for wall: Wall in walls:
+				if(wall.position.is_equal_approx(thing_position)):
+					remove_child(wall)
+					wall.queue_free()
+					removed_walls.append(wall)
+			for wall: Wall in removed_walls:
+				walls.erase(wall)
+			
 				
 		elif(click_mode == PLACE_COMBINER):
 			var TOP = Vector2(0, -1)
@@ -293,6 +321,7 @@ func make_wall(grid_position: Vector2i):
 	var new_wall:Wall = wall_packed.instantiate()
 	new_wall.set_parameters(wall_position)
 	add_child(new_wall)
+	walls.append(new_wall)
 	
 func make_belt(grid_position: Vector2i, direction: float):
 	var belt_position: Vector2 = map_to_local(grid_position)
@@ -532,6 +561,10 @@ func _on_place_track_pressed():
 
 func _on_place_crane_pressed():
 	click_mode = PLACE_CRANE
+	
+	
+func _on_delete_pressed():
+	click_mode = DELETE
 
 
 func _on_move_object_pressed():
@@ -594,6 +627,5 @@ func _on_test_function_pressed():
 	
 
 #endregion
-
 
 
