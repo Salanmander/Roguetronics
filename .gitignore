@@ -12,6 +12,11 @@ Abstractory.console.exe
 Abstractory.exe
 Abstractory.pck
 
+# Temp files that sometimes get left
+*.tmp
+
+
 # Other stuff
 ~$thub Reference.docx
 *.import
+
