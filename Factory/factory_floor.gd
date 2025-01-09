@@ -508,7 +508,7 @@ func _on_dispense(loc: Vector2, init_widget_type: int):
 	make_widget(local_to_map(loc), init_widget_type)
 
 	
-func _on_conveyor_select_pressed(direction: int):
+func _on_conveyor_select_pressed(direction: float):
 	conveyor_direction = direction
 	click_mode = MODIFY_FLOOR
 
