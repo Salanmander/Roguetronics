@@ -154,6 +154,14 @@ action_mode = 0
 text = "Delete"
 expand_icon = true
 
+[node name="MachineButtonContainer" type="GridContainer" parent="UILayer/ButtonPanel"]
+layout_mode = 0
+offset_left = 27.0
+offset_top = 34.0
+offset_right = 910.0
+offset_bottom = 196.0
+columns = 8
+
 [node name="MachineControls" type="Panel" parent="UILayer"]
 anchors_preset = -1
 anchor_left = 0.999

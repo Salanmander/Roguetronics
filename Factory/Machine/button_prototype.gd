@@ -7,15 +7,15 @@ var callback_inputs: Array = []
 var icon: CompressedTexture2D = null
 var text: String = ""
 
-func _init(call: String = "", 
-		   ico: CompressedTexture2D = null,
-		   tex: String = ""):
-	callback = call
-	icon = ico
-	text = tex
+func _init():
+	callback = ""
+	callback_inputs = []
+	icon = null
+	text = ""
 
-func set_callback(call: String):
+func set_callback(call: String, inputs: Array = []):
 	callback = call
+	callback_inputs = inputs
 	
 func set_icon(ico: CompressedTexture2D):
 	icon = ico
@@ -31,6 +31,8 @@ func get_button(connect_to: Node) -> Button:
 	ret.button_down.connect(func(): connect_to.callv(callback, callback_inputs))
 	if(icon):
 		ret.icon = icon
+		ret.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		ret.vertical_icon_alignment = VERTICAL_ALIGNMENT_CENTER
 	else:
 		ret.text = text
 	return ret

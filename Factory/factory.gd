@@ -10,14 +10,22 @@ func _ready():
 	floor.element_selected.connect(_on_element_selected)
 	floor.simulation_started.connect(_on_simulation_started)
 	
-	# TEMP: this is just a test
+	
+	# Create buttons for available machines
+	var buttonContainer: GridContainer = $UILayer/ButtonPanel/MachineButtonContainer
+	print(buttonContainer.size)
 	for available: MachinePrototype in GameState.machines_available:
 		
 		var prototypes: Array[ButtonPrototype] = available.get_button_prototypes()
 		
 		for proto: ButtonPrototype in prototypes:
 			var button: Button = proto.get_button($FactoryLayer/FactoryFloor)
-			$UILayer/ButtonPanel.add_child(button)
+			
+			var width: float = buttonContainer.size.x / buttonContainer.columns
+			var height: float = buttonContainer.size.y / 2
+			button.custom_minimum_size = Vector2(width, height)
+			button.expand_icon = true
+			buttonContainer.add_child(button)
 	pass # Replace with function body.
 
 

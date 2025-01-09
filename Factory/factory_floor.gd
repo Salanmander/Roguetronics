@@ -507,23 +507,9 @@ func _on_assembly_delete(deleted: Assembly):
 func _on_dispense(loc: Vector2, init_widget_type: int):
 	make_widget(local_to_map(loc), init_widget_type)
 
-func _on_up_conveyor_select_pressed():
-	conveyor_direction = Consts.UP
-	click_mode = MODIFY_FLOOR
-
-
-func _on_down_conveyor_select_pressed():
-	conveyor_direction = Consts.DOWN
-	click_mode = MODIFY_FLOOR
-
-
-func _on_left_conveyor_select_pressed():
-	conveyor_direction = Consts.LEFT
-	click_mode = MODIFY_FLOOR
-
-
-func _on_right_conveyor_select_pressed():
-	conveyor_direction = Consts.RIGHT
+	
+func _on_conveyor_select_pressed(direction: int):
+	conveyor_direction = direction
 	click_mode = MODIFY_FLOOR
 
 
