@@ -522,16 +522,11 @@ func _on_place_widget2_pressed():
 	click_mode = PLACE_THING
 	widget_type = 2
 
-func _on_place_dispenser_pressed():
+func _on_place_dispenser_pressed(type: int):
 	click_mode = PLACE_DISPENSER
-	widget_type = 1
+	widget_type = type
 	pass # Replace with function body.
 
-
-func _on_place_dispenser2_pressed():
-	click_mode = PLACE_DISPENSER
-	widget_type = 2
-	pass # Replace with function body.
 	
 func _on_place_combiner_pressed():
 	click_mode = PLACE_COMBINER

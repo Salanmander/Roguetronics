@@ -13,4 +13,6 @@ var machines_available: Array[MachinePrototype]
 func _ready():
 	machines_available.append(BeltPrototype.new())
 	machines_available.append(CombinerPrototype.new())
+	machines_available.append(CranePrototype.new())
+	machines_available.append(DispenserPrototype.new())
 
