@@ -14,7 +14,7 @@ const CONVEYOR_RIGHT_VARIANT = 3
 const FLOOR_TILE = 0
 
 const NONE = 0
-const MODIFY_FLOOR = 1
+const PLACE_CONVEYOR = 1
 const PLACE_THING = 2
 const PLACE_COMBINER = 3
 const PLACE_DISPENSER = 4
@@ -169,7 +169,7 @@ func _unhandled_input(event: InputEvent):
 				
 				
 			
-		elif(click_mode == MODIFY_FLOOR):
+		elif(click_mode == PLACE_CONVEYOR):
 			# TODO: have framework for getting layer of thing to add
 			remove_machines(thing_position, 0)
 			make_belt(grid_loc, conveyor_direction)
@@ -510,7 +510,7 @@ func _on_dispense(loc: Vector2, init_widget_type: int):
 	
 func _on_conveyor_select_pressed(direction: float):
 	conveyor_direction = direction
-	click_mode = MODIFY_FLOOR
+	click_mode = PLACE_CONVEYOR
 
 
 func _on_place_object_pressed():
