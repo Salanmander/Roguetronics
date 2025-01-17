@@ -24,8 +24,7 @@ func set_text(tex: String):
 	text = tex
 
 
-# TODO: Add variable amount of inputs to callback
-func get_button(connect_to: Node) -> Button:
+func get_button(connect_to: Object) -> Button:
 	var ret: Button = Button.new()
 	ret.size = Vector2i(100, 100)
 	ret.button_down.connect(func(): connect_to.callv(callback, callback_inputs))

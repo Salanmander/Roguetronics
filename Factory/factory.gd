@@ -13,7 +13,7 @@ func _ready():
 	
 	# Create buttons for available machines
 	var buttonContainer: GridContainer = $UILayer/ButtonPanel/MachineButtonContainer
-	print(buttonContainer.size)
+
 	for available: MachinePrototype in GameState.machines_available:
 		
 		var prototypes: Array[ButtonPrototype] = available.get_button_prototypes()

@@ -1,0 +1,33 @@
+[gd_scene load_steps=3 format=3 uid="uid://31yknlv0rup5"]
+
+[ext_resource type="Script" path="res://Rewards/reward_screen.gd" id="1_ft6ak"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_7ia30"]
+font_size = 51
+
+[node name="RewardScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ft6ak")
+
+[node name="SelectionPanel" type="GridContainer" parent="."]
+layout_mode = 0
+offset_left = 240.0
+offset_top = 218.0
+offset_right = 1216.0
+offset_bottom = 572.0
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 474.0
+offset_top = 108.0
+offset_right = 991.0
+offset_bottom = 189.0
+text = "Choose a new ability!"
+label_settings = SubResource("LabelSettings_7ia30")
+horizontal_alignment = 1
+vertical_alignment = 1

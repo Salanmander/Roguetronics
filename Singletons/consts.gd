@@ -11,6 +11,7 @@ const GRID_SIZE: float = 128
 const BELT: int = 0
 const COMBINER: int = 1
 const DISPENSER: int = 2
+const CRANE: int = 3
 
 const UP: float = 0
 const DOWN: float = PI

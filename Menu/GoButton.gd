@@ -1,7 +1,5 @@
 extends Button
 
-var fact = preload("res://Factory/factory.tscn")
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

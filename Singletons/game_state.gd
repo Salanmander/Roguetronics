@@ -2,6 +2,7 @@ extends Node
 
 
 var machines_available: Array[MachinePrototype]
+var upgrades_available: Array[Upgrade]
 
 # make a MachinePrototype class
 # Prototype holds all the information necessary to know a machine's powers
@@ -12,7 +13,17 @@ var machines_available: Array[MachinePrototype]
 
 func _ready():
 	machines_available.append(BeltPrototype.new())
-	machines_available.append(CombinerPrototype.new())
-	machines_available.append(CranePrototype.new())
 	machines_available.append(DispenserPrototype.new())
+	
+	var upgrade_type = "res://Factory/Machine/Combiner/combiner_prototype.gd"
+	var upgrade_icon = "res://Factory/Machine/Combiner/combiner_H.png"
+	upgrades_available.append(NewMachine.new(upgrade_type, upgrade_icon))
+	
+	upgrade_type = "res://Factory/Machine/Crane/crane_prototype.gd"
+	upgrades_available.append(NewMachine.new(upgrade_type))
+	
+	
+func add_machine(machine_prototype_path: String):
+	var proto = load(machine_prototype_path)
+	machines_available.append(proto.new())
 
