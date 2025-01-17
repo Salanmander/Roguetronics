@@ -65,3 +65,8 @@ func _on_tutorial_closed():
 	$TutorialPanel.visible = false
 
 
+
+
+func _on_win_pressed():
+	SceneManager.switch_scene(Consts.REWARD)
+	pass # Replace with function body.

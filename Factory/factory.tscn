@@ -154,6 +154,15 @@ action_mode = 0
 text = "Delete"
 expand_icon = true
 
+[node name="Win" type="Button" parent="UILayer/ButtonPanel"]
+offset_left = 1313.0
+offset_top = 42.0
+offset_right = 1379.0
+offset_bottom = 108.0
+action_mode = 0
+text = "Win"
+expand_icon = true
+
 [node name="MachineButtonContainer" type="GridContainer" parent="UILayer/ButtonPanel"]
 layout_mode = 0
 offset_left = 27.0
@@ -257,4 +266,5 @@ grow_vertical = 1
 [connection signal="pressed" from="UILayer/ButtonPanel/NewPuzzle" to="FactoryLayer/FactoryFloor" method="_on_new_puzzle_pressed"]
 [connection signal="pressed" from="UILayer/ButtonPanel/TutorialButton" to="." method="_on_tutorial_button_pressed"]
 [connection signal="button_down" from="UILayer/ButtonPanel/DeleteButton" to="FactoryLayer/FactoryFloor" method="_on_delete_pressed"]
+[connection signal="pressed" from="UILayer/ButtonPanel/Win" to="." method="_on_win_pressed"]
 [connection signal="closed" from="TutorialPanel" to="." method="_on_tutorial_closed"]

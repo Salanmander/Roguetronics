@@ -3,7 +3,8 @@ extends Node
 
 var _scenes : Dictionary = {
 	Consts.MAIN_MENU: "res://Menu/main__menu.tscn",
-	Consts.FACTORY: "res://Factory/factory.tscn"
+	Consts.FACTORY: "res://Factory/factory.tscn",
+	Consts.REWARD: "res://Rewards/reward_screen.tscn"
 }
 
 

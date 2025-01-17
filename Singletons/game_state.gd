@@ -26,4 +26,17 @@ func _ready():
 func add_machine(machine_prototype_path: String):
 	var proto = load(machine_prototype_path)
 	machines_available.append(proto.new())
+	
+	# Filter to get only the upgrades that *aren't* the upgrade we just
+	# got
+	# TODO: Replace with data structure for keeping track of all
+	# upgrades
+	upgrades_available = upgrades_available.filter(\
+		func(upgrade: Upgrade): \
+			return not( (upgrade is NewMachine) and (upgrade.get_machine_type() == machine_prototype_path) )\
+		)
+	pass
+	
+
+		
 
