@@ -9,6 +9,7 @@ class_name Factory
 func _ready():
 	floor.element_selected.connect(_on_element_selected)
 	floor.simulation_started.connect(_on_simulation_started)
+	floor.won.connect(_on_puzzle_completed)
 	
 	
 	# Create buttons for available machines
@@ -63,10 +64,13 @@ func _on_tutorial_button_pressed():
 	
 func _on_tutorial_closed():
 	$TutorialPanel.visible = false
+	
+	
+func _on_puzzle_completed():
+	SceneManager.switch_scene(Consts.REWARD)
 
 
 
 
 func _on_win_pressed():
 	SceneManager.switch_scene(Consts.REWARD)
-	pass # Replace with function body.

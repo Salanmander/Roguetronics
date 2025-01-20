@@ -25,6 +25,7 @@ const DELETE = 8
 
 signal element_selected(selected)
 signal simulation_started()
+signal won()
 
 var selected: int = FLOOR_TILE
 var selected_variant: int = CONVEYOR_UP_VARIANT
@@ -80,7 +81,6 @@ func _ready():
 
 	setup_debug_objects()
 	
-	add_child(goal)
 	
 	pass # Replace with function body.
 
@@ -365,12 +365,15 @@ func make_crane(grid_position: Vector2i) -> Crane:
 	
 	return new_crane
 	
+func add_goal(goal: Goal):
+	add_child(goal)
+	goal.completed.connect(_on_goal_completed.bind(goal))
+	
 func make_random_goal():
 	if(goal):
 		goal.queue_free()
 	
 	goal = goal_packed.instantiate()
-	add_child(goal)
 	goal.set_parameters(map_to_local(Vector2i(10,2)))
 	
 	var num_widgets: int = randi_range(3,5)
@@ -406,6 +409,8 @@ func make_random_goal():
 		goal.add_widget(expand_to, randi_range(1,2))
 		current_locations.append(expand_to)
 		goal.add_link(expand_from, expand_to)
+		
+	add_goal(goal)
 	
 	
 #endregion
@@ -429,6 +434,9 @@ func remove_machines(machine_position: Vector2, machine_layer: int):
 
 	
 #region Resetting
+
+func win():
+	won.emit()
 
 # TODO: improve the crash, give visual indicator of the thing that caused
 # the crash
@@ -503,6 +511,12 @@ func remove_dispenser_type(widget_type: int):
 
 func _on_assembly_delete(deleted: Assembly):
 	assemblies.erase(deleted)
+
+# TODO: do I want this to also have a way to note the goal object?
+# should the goal object keep track of how many things it needs?
+# Should it still send the number completed?
+func _on_goal_completed(goal: Goal):
+	won.emit()
 	
 func _on_dispense(loc: Vector2, init_widget_type: int):
 	make_widget(local_to_map(loc), init_widget_type)
@@ -594,7 +608,7 @@ func setup_debug_objects():
 	goal.add_link(Vector2(0,0), Vector2(Consts.GRID_SIZE,0))
 	goal.add_link(Vector2(Consts.GRID_SIZE,0), Vector2(2*Consts.GRID_SIZE,0))
 	goal.add_link(Vector2(2*Consts.GRID_SIZE,0), Vector2(3*Consts.GRID_SIZE,0))
-	
+	add_goal(goal)
 	
 
 func _on_test_function_pressed():

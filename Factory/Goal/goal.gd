@@ -4,6 +4,10 @@ class_name Goal
 var assembly_packed = load("res://Factory/Assembly/assembly.tscn")
 var plan:Assembly
 
+var copies_made: int = 0
+var copies_needed: int = 3
+signal completed()
+
 var LAYER = 0
 
 func set_parameters(init_position:Vector2):
@@ -37,6 +41,10 @@ func check_against(others: Array[Assembly]):
 func _on_perfect_overlap(other:Assembly):
 	other.delete_widgets()
 	other.delete()
+	copies_made += 1
+	if(copies_made >= copies_needed):
+		completed.emit()
+	
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
