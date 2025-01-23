@@ -10,4 +10,3 @@ var button: ButtonPrototype
 
 func get_button_prototype() -> ButtonPrototype:
 	return button
-

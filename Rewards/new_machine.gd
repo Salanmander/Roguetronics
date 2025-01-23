@@ -18,4 +18,3 @@ func _init(machine_type: String = "", icon_path: String = ""):
 
 func get_machine_type() -> String:
 	return machine_type
-

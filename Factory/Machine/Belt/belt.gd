@@ -105,4 +105,3 @@ func grab():
 func _on_widget_deleted(widget: Widget):
 	held_widgets.erase(widget)
 	
-

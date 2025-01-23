@@ -14,5 +14,3 @@ func add_scene(scene_identifier: int, scene_path: String) -> void:
 func switch_scene(scene_identifier: int) -> void:
 	get_tree().change_scene_to_file(_scenes[scene_identifier])
 		
-
-

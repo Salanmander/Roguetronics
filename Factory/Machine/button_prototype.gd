@@ -35,10 +35,3 @@ func get_button(connect_to: Object) -> Button:
 	else:
 		ret.text = text
 	return ret
-
-
-
-
-
-
-

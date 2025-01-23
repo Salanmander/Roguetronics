@@ -155,6 +155,7 @@ text = "Delete"
 expand_icon = true
 
 [node name="Win" type="Button" parent="UILayer/ButtonPanel"]
+layout_mode = 0
 offset_left = 1313.0
 offset_top = 42.0
 offset_right = 1379.0
