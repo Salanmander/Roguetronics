@@ -20,7 +20,3 @@ func connect_to(dispenser: Dispenser):
 	
 	delay_box.value_changed.connect(dispenser._on_delay_UI_change)
 	
-
-
-
-

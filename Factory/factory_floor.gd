@@ -1,4 +1,4 @@
-extends TileMap
+extends TileMapLayer
 class_name FactoryFloor
 # Might be worth refactoring this at some point so that the tilemap
 # isn't the thing holding all the behavior.
@@ -71,7 +71,7 @@ var crashed: bool = false
 func _ready():
 	for x in range(50):
 		for y in range(40):
-			set_cell(FLOOR_LAYER, Vector2i(x, y), FLOOR_TILE, Vector2i(0,0))
+			set_cell(Vector2i(x, y), FLOOR_TILE, Vector2i(0,0))
 	
 	assemblies = []
 	machines = []
@@ -462,7 +462,7 @@ func reset_to_start_of_run():
 	for machine:Machine in machines:
 		machine.reset()
 	
-	_on_stop_object_pressed()
+	_on_pause_pressed()
 
 
 func delete_assemblies():
@@ -562,15 +562,19 @@ func _on_delete_pressed():
 	click_mode = DELETE
 
 
-func _on_move_object_pressed():
+
+
+func _on_run_pressed() -> void:
 	if not crashed:
 		simulation_started.emit()
 		unhighlight_all()
 		run = true
 
 
-func _on_stop_object_pressed():
+
+func _on_pause_pressed() -> void:
 	run = false
+
 	
 
 func _on_reset_pressed():

@@ -52,5 +52,3 @@ func set_program(program: Array[int]):
 		slots.resize(num_slots)
 	
 		
-
-
