@@ -6,7 +6,7 @@ func _ready():
 	# Create buttons for available upgrades
 	var upgradeContainer: GridContainer = $SelectionPanel
 
-	for available: Upgrade in GameState.upgrades_available:
+	for available: Upgrade in GameState.get_upgrades_available():
 		
 		var proto: ButtonPrototype = available.get_button_prototype()
 		var button: Button = proto.get_button(self)
@@ -23,6 +23,6 @@ func _process(delta):
 	pass
 	
 	
-func _on_new_machine_upgrade_pressed(machine_prototype_path: String):
-	GameState.add_machine(machine_prototype_path)
+func _on_new_machine_upgrade_pressed(machine_upgrade: NewMachine):
+	GameState.add_machine(machine_upgrade)
 	SceneManager.switch_scene(Consts.FACTORY)

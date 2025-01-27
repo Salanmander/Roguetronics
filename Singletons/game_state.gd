@@ -2,7 +2,7 @@ extends Node
 
 
 var machines_available: Array[MachinePrototype]
-var upgrades_available: Array[Upgrade]
+var upgrades: UpgradeTree
 
 # make a MachinePrototype class
 # Prototype holds all the information necessary to know a machine's powers
@@ -15,27 +15,19 @@ func _ready():
 	machines_available.append(BeltPrototype.new())
 	machines_available.append(DispenserPrototype.new())
 	
-	var upgrade_type = "res://Factory/Machine/Combiner/combiner_prototype.gd"
-	var upgrade_icon = "res://Factory/Machine/Combiner/combiner_H.png"
-	upgrades_available.append(NewMachine.new(upgrade_type, upgrade_icon))
+	upgrades = UpgradeTree.new()
 	
-	upgrade_type = "res://Factory/Machine/Crane/crane_prototype.gd"
-	upgrades_available.append(NewMachine.new(upgrade_type))
+func get_upgrades_available():
+	return upgrades.get_upgrades_available()
 	
 	
-func add_machine(machine_prototype_path: String):
+	
+func add_machine(machine_upgrade: NewMachine):
+	var machine_prototype_path = machine_upgrade.machine_type
 	var proto = load(machine_prototype_path)
 	machines_available.append(proto.new())
 	
-	# Filter to get only the upgrades that *aren't* the upgrade we just
-	# got
-	# TODO: Replace with data structure for keeping track of all
-	# upgrades
-	upgrades_available = upgrades_available.filter(\
-		func(upgrade: Upgrade): \
-			return not( (upgrade is NewMachine) and (upgrade.get_machine_type() == machine_prototype_path) )\
-		)
-	pass
+	upgrades.mark_upgrade_obtained(machine_upgrade)
 	
 
 		
