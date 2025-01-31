@@ -13,7 +13,6 @@ var upgrades: UpgradeTree
 
 func _ready():
 	machines_available.append(BeltPrototype.new())
-	machines_available.append(DispenserPrototype.new())
 	
 	upgrades = UpgradeTree.new()
 	
@@ -28,6 +27,19 @@ func add_machine(machine_upgrade: NewMachine):
 	machines_available.append(proto.new())
 	
 	upgrades.mark_upgrade_obtained(machine_upgrade)
+	
+func improve_machine(improvement: MachineImprovement):
+	var machine_class = improvement.machine_affected
+	var machine:MachinePrototype
+	
+	for candidate:MachinePrototype in machines_available:
+		if candidate.get_script().get_global_name() == machine_class:
+			machine = candidate
+	
+	if machine:
+		machine.call(improvement.machine_callback)
+	
+	upgrades.mark_upgrade_obtained(improvement)
 	
 
 		

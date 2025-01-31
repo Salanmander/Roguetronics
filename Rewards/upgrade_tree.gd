@@ -14,8 +14,20 @@ func _init() -> void:
 	
 	upgrade_type = "res://Factory/Machine/Crane/crane_prototype.gd"
 	var crane_upgrade: NewMachine = NewMachine.new(upgrade_type)
-	crane_upgrade.add_requirement(combine_upgrade)
 	upgrades_unobtained.append(crane_upgrade)
+	
+	upgrade_type = "res://Factory/Machine/Dispenser/dispenser_prototype.gd"
+	upgrade_icon = "res://Factory/Machine/Dispenser/dispenser_widget.png"
+	var dispense_upgrade: NewMachine = NewMachine.new(upgrade_type, upgrade_icon)
+	upgrades_unobtained.append(dispense_upgrade)
+	
+	# Upgrade for improving dispenser to add very widget
+	var machine_to_upgrade = "DispenserPrototype"
+	var upgrade_callback = "enable_very_widget"
+	upgrade_icon = "res://Factory/Machine/Dispenser/dispenser_verywidget.png"
+	var enable_very_widget: MachineImprovement = MachineImprovement.new(machine_to_upgrade, upgrade_callback, upgrade_icon)
+	enable_very_widget.add_requirement(dispense_upgrade)
+	upgrades_unobtained.append(enable_very_widget)
 
 
 func get_upgrades_available() -> Array[Upgrade]:
