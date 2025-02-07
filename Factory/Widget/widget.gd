@@ -1,7 +1,6 @@
 extends Area2D
 class_name Widget
 
-var speed: Vector2 = Vector2(0,0)
 var tex: Texture
 var type: int = -1
 
