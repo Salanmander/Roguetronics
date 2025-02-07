@@ -79,7 +79,7 @@ func _ready():
 	tracks = []
 	current_track = null
 
-	setup_debug_objects()
+	make_random_goal()
 	
 	
 	pass # Replace with function body.
@@ -365,52 +365,18 @@ func make_crane(grid_position: Vector2i) -> Crane:
 	
 	return new_crane
 	
-func add_goal(goal: Goal):
+func add_goal(new_goal: Goal):
+	if(goal):
+		goal.queue_free()
+	goal = new_goal
 	add_child(goal)
 	goal.completed.connect(_on_goal_completed.bind(goal))
 	
 func make_random_goal():
-	if(goal):
-		goal.queue_free()
 	
-	goal = goal_packed.instantiate()
-	goal.set_parameters(map_to_local(Vector2i(10,2)))
-	
-	var num_widgets: int = randi_range(3,5)
-	
-	var current_locations: Array[Vector2] = [Vector2(0, 0)]
-	
-	goal.add_widget(Vector2(0,0), randi_range(1,2))
-	
-	var directions: Array[Vector2] = \
-		[Vector2(Consts.GRID_SIZE,0),\
-		 Vector2(0, Consts.GRID_SIZE)]
-		
-	for i in range(1, num_widgets):
-		# pick one of the current locations to expand from
-		var expand_from: Vector2 = current_locations.pick_random()
-		
-		# Expand in a random direction. Retry as long as that direction
-		# already has a widget in it
-		var expand_to: Vector2 = expand_from + directions.pick_random()
-		var num_tries: int = 0
-		while expand_to in current_locations:
-			expand_to = expand_from + directions.pick_random()
-			num_tries += 1
-			if num_tries > 8:
-				break
-		
-		# If we've tried a bunch of times, just don't add a widget this time,
-		# that's fine.
-		if num_tries > 8:
-			continue
-		
-		
-		goal.add_widget(expand_to, randi_range(1,2))
-		current_locations.append(expand_to)
-		goal.add_link(expand_from, expand_to)
-		
-	add_goal(goal)
+	var new_goal = PuzzleManager.get_random_goal()
+	new_goal.set_goal_position(map_to_local(Vector2i(10, 2)))
+	add_goal( new_goal)
 	
 	
 #endregion

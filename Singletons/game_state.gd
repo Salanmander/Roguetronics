@@ -16,8 +16,25 @@ func _ready():
 	
 	upgrades = UpgradeTree.new()
 	
+	var upgrade_nodes: Array[Upgrade] = upgrades.get_upgrades_available()
+	
+	# TODO: more elegant way to set an initial upgrade
+	var upgrade_to_get: Upgrade = null
+	for upgrade:Upgrade in upgrade_nodes:
+		if upgrade is NewMachine:
+			print(upgrade.machine_type)
+			if upgrade.machine_type == "res://Factory/Machine/Dispenser/dispenser_prototype.gd":
+				upgrade_to_get = upgrade
+	
+	if(upgrade_to_get):
+		add_machine(upgrade_to_get)
+				
+	
 func get_upgrades_available():
 	return upgrades.get_upgrades_available()
+	
+func get_machines_available():
+	return machines_available.duplicate()
 	
 	
 	

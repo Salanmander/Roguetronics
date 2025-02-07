@@ -12,6 +12,15 @@ func _init():
 	buttons.append(button)
 	
 	pass
+	
+func get_widget_types() -> Array[int]:
+	var widget_types: Array[int] = []
+	
+	
+	for button: ButtonPrototype in buttons:
+		widget_types.append(button.get_dispenser_type())
+	
+	return widget_types
 
 
 func enable_very_widget() -> void:

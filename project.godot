@@ -23,6 +23,7 @@ Consts="*res://Singletons/consts.gd"
 Util="*res://Singletons/util.gd"
 drag_image="*res://Factory/UI/drag_image.tscn"
 GameState="*res://Singletons/game_state.gd"
+PuzzleManager="*res://Singletons/puzzle_manager.gd"
 
 [debug]
 

@@ -41,6 +41,9 @@ func set_monitorable(new_monitorable: bool):
 	monitorable = new_monitorable
 	for widget:Widget in widgets:
 		widget.monitorable = monitorable
+		
+func set_plan_position(new_position: Vector2):
+	position = new_position
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

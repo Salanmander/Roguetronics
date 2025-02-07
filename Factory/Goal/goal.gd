@@ -25,6 +25,9 @@ func _ready():
 	# Filter to make the goal transparent
 	modulate = Color(1, 1, 1, 0.5)
 	
+func set_goal_position(new_position: Vector2):
+	plan.set_plan_position(new_position)
+	
 	
 func add_widget(init_position:Vector2, widget_type:int):
 	plan.add_widget(init_position, widget_type)

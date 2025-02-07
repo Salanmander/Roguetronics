@@ -35,3 +35,10 @@ func get_button(connect_to: Object) -> Button:
 	else:
 		ret.text = text
 	return ret
+	
+# Function to return the widget type of a dispenser button. Should only
+# be called on buttons for dispensers
+func get_dispenser_type() -> int:
+	assert(callback == "_on_place_dispenser_pressed", "dispenser type requested for non-dispenser")
+	return callback_inputs[0]
+	
