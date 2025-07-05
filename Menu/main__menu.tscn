@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b6msrxop4pc88"]
 
-[ext_resource type="Script" path="res://Menu/GoButton.gd" id="1_2mo5q"]
+[ext_resource type="Script" path="res://Menu/main__menu.gd" id="1_coeu2"]
 
 [node name="Main  Menu" type="Control"]
 layout_mode = 3
@@ -9,17 +9,28 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_coeu2")
 
-[node name="GoButton" type="Button" parent="."]
+[node name="NewGame" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.041
-anchor_top = 0.04
-anchor_right = 0.126
-anchor_bottom = 0.167
-offset_left = 14.768
-offset_top = 23.08
-offset_right = -15.152
-offset_bottom = -13.216
-text = "Hello"
-script = ExtResource("1_2mo5q")
+offset_left = 619.0
+offset_top = 282.0
+offset_right = 770.0
+offset_bottom = 332.0
+action_mode = 0
+text = "New Game"
+
+[node name="Continue" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+offset_left = 619.0
+offset_top = 356.0
+offset_right = 770.0
+offset_bottom = 406.0
+disabled = true
+action_mode = 0
+text = "Continue"
+
+[connection signal="pressed" from="NewGame" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="Continue" to="." method="_on_continue_pressed"]
