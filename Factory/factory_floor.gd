@@ -314,6 +314,7 @@ func make_widget(grid_position: Vector2i, init_widget_type: int) -> Assembly:
 	assemblies.append(new_assembly)
 	new_assembly.deleted.connect(_on_assembly_delete)
 	new_assembly.crashed.connect(crash)
+	
 	return new_assembly
 	
 func make_wall(grid_position: Vector2i):
@@ -471,6 +472,11 @@ func remove_dispenser_type(widget_type: int):
 
 #endregion
 
+# Teardown to free nodes held in arrays but not in the scene tree
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE:
+		for assembly:Assembly in starting_assemblies:
+			assembly.queue_free()
 
 #region button callbacks and signal connectors
 
