@@ -19,7 +19,7 @@ func test_passes():
 	floor.make_belt(Vector2i(3, 3), Consts.UP)
 	var assembly1: Assembly = floor.make_widget(Vector2i(3, 3), 1)
 	
-	floor._on_move_object_pressed()
+	floor._on_run_pressed()
 	
 	await wait_seconds(2)
 	
