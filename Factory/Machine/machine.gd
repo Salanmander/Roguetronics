@@ -70,4 +70,3 @@ func _on_area_exited(exiting: Area2D):
 	
 func _on_nearby_widget_deleted(deleted_widget: Widget):
 	nearby_widgets.erase(deleted_widget)
-
