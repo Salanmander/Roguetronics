@@ -5,6 +5,20 @@ const FACTORY: int = 1
 const REWARD: int = 2
 
 
+const SCENE_FILES: Dictionary = {
+	Consts.MAIN_MENU: "res://Menu/main_menu.tscn",
+	Consts.FACTORY: "res://Factory/factory.tscn",
+	Consts.REWARD: "res://Rewards/reward_screen.tscn"
+}
+
+const SCENE_FROM_CLASS: Dictionary = {
+	"MainMenu": Consts.MAIN_MENU,
+	"Factory": Consts.FACTORY,
+	"RewardScreen": Consts.REWARD
+}
+
+
+
 const FACTORY_CONVEYOR_ID: int = 4
 
 const GRID_SIZE: float = 128
@@ -31,6 +45,9 @@ var COMMAND_IMAGES: Array = []
 
 const POW_BELT = 0
 const POW_CRANE = 1
+
+# TODO: When save system becomes more robust, this should go away probably
+const SAVE_FILENAME = "default.sav"
 
 func _init():
 	COMMAND_IMAGES.resize(NUM_CRANE_COMMANDS)

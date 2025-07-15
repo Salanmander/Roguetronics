@@ -1,7 +1,11 @@
 extends Control
+class_name RewardScreen
 
 
 func _ready():
+	
+	# TEMP
+	GameState.save_to_disk.call_deferred()
 	
 	# Create buttons for available upgrades
 	var upgradeContainer: GridContainer = $SelectionPanel

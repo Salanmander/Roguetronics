@@ -1,8 +1,12 @@
 extends Control
+class_name MainMenu
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	
+	# TEMP
+	GameState.load_from_disk.call_deferred()
 	pass # Replace with function body.
 
 

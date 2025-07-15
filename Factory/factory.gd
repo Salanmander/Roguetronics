@@ -7,6 +7,9 @@ class_name Factory
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	
+	# TEMP
+	GameState.save_to_disk.call_deferred()
 	floor.element_selected.connect(_on_element_selected)
 	floor.simulation_started.connect(_on_simulation_started)
 	floor.won.connect(_on_puzzle_completed)

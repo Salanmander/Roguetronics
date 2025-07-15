@@ -564,6 +564,10 @@ func _on_clear_pressed():
 	
 func _on_new_puzzle_pressed():
 	make_random_goal()
+	
+	
+func _on_save_pressed() -> void:
+	GameState.save_to_disk()
 
 
 #endregion

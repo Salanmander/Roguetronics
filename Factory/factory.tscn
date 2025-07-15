@@ -172,6 +172,15 @@ offset_right = 910.0
 offset_bottom = 196.0
 columns = 8
 
+[node name="Save" type="Button" parent="UILayer/ButtonPanel"]
+offset_left = 1115.0
+offset_top = 123.0
+offset_right = 1181.0
+offset_bottom = 189.0
+action_mode = 0
+text = "Save"
+expand_icon = true
+
 [node name="MachineControls" type="Panel" parent="UILayer"]
 anchors_preset = -1
 anchor_left = 0.999
@@ -267,4 +276,5 @@ grow_vertical = 1
 [connection signal="pressed" from="UILayer/ButtonPanel/TutorialButton" to="." method="_on_tutorial_button_pressed"]
 [connection signal="pressed" from="UILayer/ButtonPanel/DeleteButton" to="FactoryLayer/FactoryFloor" method="_on_delete_pressed"]
 [connection signal="pressed" from="UILayer/ButtonPanel/Win" to="." method="_on_win_pressed"]
+[connection signal="pressed" from="UILayer/ButtonPanel/Save" to="FactoryLayer/FactoryFloor" method="_on_save_pressed"]
 [connection signal="closed" from="TutorialPanel" to="." method="_on_tutorial_closed"]
