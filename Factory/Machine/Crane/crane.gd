@@ -143,8 +143,8 @@ func run_command(command: int):
 
 func open():
 	grabber_open = true
-	$LeftGrabber.open()
-	$RightGrabber.open()
+	$OpenGrabber.visible = true
+	$ClosedGrabber.visible = false
 	
 	for widget: Widget in held_widgets:
 		widget.deleted.disconnect(_on_widget_deleted)
@@ -153,8 +153,8 @@ func open():
 
 func close():
 	grabber_open = false
-	$LeftGrabber.close()
-	$RightGrabber.close()
+	$OpenGrabber.visible = false
+	$ClosedGrabber.visible = true
 	
 	if held_widgets.size() == 0 && nearby_widgets.size() > 0:
 		held_widgets = nearby_widgets.duplicate()
