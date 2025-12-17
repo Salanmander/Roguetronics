@@ -122,10 +122,10 @@ func _on_crane_reset(track_index: int, crane: Crane):
 		
 		
 func make_lines():
-	# Delete all child lines and polygons
+	# Delete all child lines and polygons and sprites
 	var children = get_children()
 	for node in children:
-		if node is Line2D or node is Polygon2D:
+		if node is Line2D or node is Polygon2D or node is Sprite2D:
 			node.queue_free()
 		
 	
@@ -169,6 +169,31 @@ func make_lines():
 		end.polygon = PackedVector2Array(shape_points)
 		end.color = track_color
 		add_child(end)
+		
+	# Add sprites on top where appropriate
+	if points.size() >= 2:
+		
+		var start_loc = Util.floor_map_to_local(points[0])
+		var next_loc = Util.floor_map_to_local(points[1])
+		var diff = next_loc - start_loc
+		var dir_letter = "x"
+		if(diff.x == 0 and diff.y > 0):
+			dir_letter = "S"
+		if(diff.x == 0 and diff.y < 0):
+			dir_letter = "N"
+		if(diff.x > 0 and diff.y == 0):
+			dir_letter = "E"
+		if(diff.x < 0 and diff.y == 0):
+			dir_letter = "W"
+			
+		if( dir_letter != "x" ):
+			var terminal = Sprite2D.new()
+			var texture_path: String = "res://Factory/Machine/Crane/Terminal" + dir_letter + ".png"
+			terminal.texture = load(texture_path)
+			terminal.position = start_loc
+			
+			add_child(terminal)
+			
 	
 	
 	
