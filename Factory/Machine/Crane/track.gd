@@ -172,27 +172,49 @@ func make_lines():
 		
 	# Add sprites on top where appropriate
 	if points.size() >= 2:
-		
-		var start_loc = Util.floor_map_to_local(points[0])
-		var next_loc = Util.floor_map_to_local(points[1])
-		var diff = next_loc - start_loc
-		var dir_letter = "x"
-		if(diff.x == 0 and diff.y > 0):
-			dir_letter = "S"
-		if(diff.x == 0 and diff.y < 0):
-			dir_letter = "N"
-		if(diff.x > 0 and diff.y == 0):
-			dir_letter = "E"
-		if(diff.x < 0 and diff.y == 0):
-			dir_letter = "W"
+		# Track sprites are identified with a direction code:
+		#
+		#     7 0 1
+		#      \|/
+		#     6-*-2
+		#      /|\
+		#     5 4 3
+		#
+		# Code is 2 digits giving direction that the track extends.
+		# Order is always smaller number first.
+		# The second part is "x" if the track is a terminal.
+		for i in range(0, points.size()):
+			var start_loc: Vector2 = Util.floor_map_to_local(points[i])
+			var dir_letters: Array[String] = ["x", "x"]
+			for ind_diff in [-1, 1]:
+				var new_ind: int = i + ind_diff
+				if(new_ind < 0 or new_ind >= points.size()):
+					continue
+				var next_loc: Vector2 = Util.floor_map_to_local(points[i + ind_diff])
+				var diff = next_loc - start_loc
+				var dir_letter = "x"
+				if(diff.x == 0 and diff.y > 0):
+					dir_letter = "4"
+				if(diff.x == 0 and diff.y < 0):
+					dir_letter = "0"
+				if(diff.x > 0 and diff.y == 0):
+					dir_letter = "2"
+				if(diff.x < 0 and diff.y == 0):
+					dir_letter = "6"
+				
+				# (ind_diff + 1)/2 turns [-1, 1] into [0,1]
+				dir_letters[(ind_diff+1)/2] = dir_letter
 			
-		if( dir_letter != "x" ):
-			var terminal = Sprite2D.new()
-			var texture_path: String = "res://Factory/Machine/Crane/Terminal" + dir_letter + ".png"
-			terminal.texture = load(texture_path)
-			terminal.position = start_loc
-			
-			add_child(terminal)
+			dir_letters.sort()
+			var texture_path = dir_letters[0] + dir_letters[1]
+			texture_path = "res://Factory/Machine/Crane/Track" + texture_path + ".png"
+				
+			if( FileAccess.file_exists(texture_path) ):
+				var terminal = Sprite2D.new()
+				terminal.texture = load(texture_path)
+				terminal.position = start_loc
+				
+				add_child(terminal)
 			
 	
 	
