@@ -134,6 +134,9 @@ func _physics_process(delta: float):
 		if cycle - last_cycle >= (1-cycle_fraction):
 			for assembly: Assembly in assemblies:
 				assembly.snap_to_grid()
+			for machine: Machine in machines:
+				if machine is Crane:
+					machine.snap_to_grid()
 				
 			
 		last_cycle = cycle

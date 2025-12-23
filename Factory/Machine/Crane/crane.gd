@@ -121,6 +121,17 @@ func set_initial_index(ind: int):
 func teleport_to(pos: Vector2):
 	position = pos
 	
+	
+# Puts position at the middle of a grid square if it's close enough
+func snap_to_grid():
+	
+	var center_position = Util.floor_map_to_local( Util.floor_local_to_map(position))
+	if abs(position.x - center_position.x) < Consts.GRID_SIZE/16:
+		position.x = center_position.x
+	
+	if abs(position.y - center_position.y) < Consts.GRID_SIZE/16:
+		position.y = center_position.y
+	
 
 #endregion
 

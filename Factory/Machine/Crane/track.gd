@@ -117,6 +117,7 @@ func _on_crane_reset(track_index: int, crane: Crane):
 	var new_pos: Vector2 = Util.floor_map_to_local(points[track_index])
 	crane.teleport_to(new_pos)
 	cranes[crane] = track_index
+	
 
 #endregion
 		
