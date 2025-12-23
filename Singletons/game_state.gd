@@ -22,7 +22,7 @@ func _ready():
 	var upgrade_to_get: Upgrade = null
 	for upgrade:Upgrade in upgrade_nodes:
 		if upgrade is NewMachine:
-			print(upgrade.machine_type)
+			#print(upgrade.machine_type)
 			if upgrade.machine_type == "res://Factory/Machine/Dispenser/dispenser_prototype.gd":
 				upgrade_to_get = upgrade
 	
@@ -65,7 +65,7 @@ func improve_machine(improvement: MachineImprovement):
 func save_to_disk() -> void:
 	var save_dict: Dictionary = {}
 	var current_scene_name: String = get_tree().current_scene.get_script().get_global_name()
-	print(current_scene_name)
+	#print(current_scene_name)
 	save_dict["scene_index"] = Consts.SCENE_FROM_CLASS[current_scene_name]
 	
 	var save_string: String = JSON.stringify(save_dict)
