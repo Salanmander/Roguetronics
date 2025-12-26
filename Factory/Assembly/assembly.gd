@@ -84,12 +84,10 @@ func can_move(delta: Vector2, ignore_nudges: bool = false) -> bool:
 		# happened.
 		
 		var forced_delta: Vector2 = new_pos - position
-		print(delta)
+		#print(delta)
 		var x_okay: bool = is_equal_approx(delta.x, 0) or forced_delta.x/delta.x > 0.99
 		var y_okay: bool = is_equal_approx(delta.y, 0) or forced_delta.y/delta.y > 0.99
 		
-		var temp1 = is_equal_approx(delta.x, 0)
-		var temp2 = forced_delta.x/delta.x > 0.99
 		
 		if not(x_okay and y_okay):
 			return false

@@ -87,8 +87,14 @@ func overlaps_can_move(ignore_nudges: bool = false) -> bool:
 		elif area is Widget:
 			
 			var other_assembly = area.parent_assembly
-			if not other_assembly.can_move(contacts[0] - contacts[1], ignore_nudges):
-				return false
+			
+			if (contacts[0]-contacts[1]).length() > 0.05:
+				# Only check that the other thing can move if it needs to go more
+				# than 0.05 pixels. There's some problems with long chains
+				# of widgets needing to check backwards eventually, possibly
+				# due to floating-point imprecision?
+				if not other_assembly.can_move(contacts[0] - contacts[1], ignore_nudges):
+					return false
 			pass
 	
 	return true
