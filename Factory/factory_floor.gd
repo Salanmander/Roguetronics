@@ -247,9 +247,8 @@ func _unhandled_input(event: InputEvent):
 			if not blocked:
 				for track: Track in tracks:
 					if track.exists_at(grid_loc):
-						var new_crane: Crane = make_crane(grid_loc)
+						var new_crane: Crane = make_crane(grid_loc, track)
 						
-						track.add_crane(new_crane)
 						break
 			
 			
@@ -265,10 +264,7 @@ func _unhandled_input(event: InputEvent):
 
 			
 			if current_track == null:
-				current_track = track_packed.instantiate()
-				current_track.set_parameters(grid_loc)
-				tracks.append(current_track)
-				add_child(current_track)
+				current_track = make_track(grid_loc)
 				
 			pass
 		pass
@@ -358,14 +354,22 @@ func make_combiner(grid_position: Vector2i, offset_dir:Vector2i):
 	new_combiner.set_parameters(Vector2(combiner_position) + offset_dir*Consts.GRID_SIZE/2, direction)
 	add_child(new_combiner)
 	machines.append(new_combiner)
+	
+func make_track(grid_position: Vector2i) -> Track:
+	var new_track: Track = track_packed.instantiate()
+	new_track.set_parameters(grid_position)
+	tracks.append(new_track)
+	add_child(new_track)
+	return new_track
 
-func make_crane(grid_position: Vector2i) -> Crane:
+func make_crane(grid_position: Vector2i, parent: Track) -> Crane:
 	
 	var crane_position: Vector2 = map_to_local(grid_position)
 	var new_crane = crane_packed.instantiate()
 	new_crane.set_parameters(crane_position)
 	machines.append(new_crane)
 	new_crane.crashed.connect(crash)
+	parent.add_crane(new_crane)
 	
 	return new_crane
 	
@@ -381,6 +385,7 @@ func make_random_goal():
 	var new_goal = PuzzleManager.get_random_goal()
 	new_goal.set_goal_position(map_to_local(Vector2i(10, 2)))
 	add_goal( new_goal)
+	
 	
 	
 #endregion
