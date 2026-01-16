@@ -3,8 +3,9 @@ class_name NewMachine
 
 var machine_type: String
 
-func _init(machine_type: String = "", icon_path: String = ""):
+func _init(ID: int, machine_type: String = "", icon_path: String = ""):
 	self.machine_type = machine_type
+	self.ID = ID
 	
 	button = ButtonPrototype.new()
 	button.set_callback("_on_new_machine_upgrade_pressed", [self])

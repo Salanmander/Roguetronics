@@ -64,7 +64,7 @@ func test_crane_repeat():
 	
 	await wait_seconds(25)
 	
-	assert(not factory.floor.crashed)
+	assert_eq(factory.floor.crashed, false)
 
 	remove_child(factory)
 	factory.queue_free()

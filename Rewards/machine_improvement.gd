@@ -4,9 +4,11 @@ class_name MachineImprovement
 var machine_affected: String
 var machine_callback: String
 
-func _init(machine_type: String = "", callback: String = "", icon_path: String = ""):
+func _init(ID: int, machine_type: String = "", callback: String = "", icon_path: String = ""):
 	machine_affected = machine_type
 	machine_callback = callback
+	
+	self.ID = ID
 	
 	button = ButtonPrototype.new()
 	button.set_callback("_on_machine_improvement_upgrade_pressed", [self])

@@ -8,10 +8,6 @@ class_name Factory
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	
-	# TODO: Need to decide when to auto-save.
-	# Can't do it every time this is made, or tests can't be run
-	# without saving.
-	#GameState.save_to_disk.call_deferred()
 	
 	
 	floor.element_selected.connect(_on_element_selected)
@@ -35,6 +31,14 @@ func _ready():
 			button.expand_icon = true
 			buttonContainer.add_child(button)
 	pass # Replace with function body.
+	
+func _unhandled_input(event: InputEvent):
+	var exact_match: bool = true
+	if event.is_action_pressed("save", exact_match):
+		GameState.save_to_disk.call_deferred()
+	if event.is_action_pressed("load", exact_match):
+		GameState.load_from_disk.call_deferred()
+		
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

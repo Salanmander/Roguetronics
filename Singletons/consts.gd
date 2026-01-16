@@ -49,6 +49,9 @@ const POW_CRANE = 1
 # TODO: When save system becomes more robust, this should go away probably
 const SAVE_FILENAME = "default.sav"
 
+
+const UPGRADES_FILENAME = "res://Rewards/upgrades.json"
+
 func _init():
 	COMMAND_IMAGES.resize(NUM_CRANE_COMMANDS)
 	COMMAND_IMAGES[NO_COMMAND] = null

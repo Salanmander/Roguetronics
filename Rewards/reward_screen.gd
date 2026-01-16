@@ -4,8 +4,6 @@ class_name RewardScreen
 
 func _ready():
 	
-	# TEMP
-	GameState.save_to_disk.call_deferred()
 	
 	# Create buttons for available upgrades
 	var upgradeContainer: GridContainer = $SelectionPanel
@@ -25,6 +23,14 @@ func _ready():
 
 func _process(delta):
 	pass
+	
+	
+func _unhandled_input(event: InputEvent):
+	var exact_match: bool = true
+	if event.is_action_pressed("save", exact_match):
+		GameState.save_to_disk.call_deferred()
+	if event.is_action_pressed("load", exact_match):
+		GameState.load_from_disk.call_deferred()
 	
 	
 func _on_new_machine_upgrade_pressed(machine_upgrade: NewMachine):

@@ -24,6 +24,7 @@ func set_text(tex: String):
 	text = tex
 
 
+# Returns a button that is connected to the given callback of the input object
 func get_button(connect_to: Object) -> Button:
 	var ret: Button = Button.new()
 	ret.size = Vector2i(100, 100)

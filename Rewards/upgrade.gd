@@ -2,7 +2,8 @@ extends Resource
 class_name Upgrade
 
 
-var requires: Array[Upgrade]
+var requires: Array[int]
+var ID: int
 
 
 var button: ButtonPrototype
@@ -11,11 +12,12 @@ var button: ButtonPrototype
 func get_button_prototype() -> ButtonPrototype:
 	return button
 	
-func add_requirement(upgrade: Upgrade) -> void:
+func add_requirement(upgrade: int) -> void:
 	requires.append(upgrade)
 	
 	
-func get_requirements() -> Array[Upgrade]:
+	
+func get_requirements() -> Array[int]:
 	return requires
 	
 # Checks to see if they're the same upgrade. Must be overridden by sublcasses

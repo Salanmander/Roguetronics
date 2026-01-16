@@ -1,0 +1,30 @@
+{
+	"0":
+		{
+		"type":"new",
+		"machine":"res://Factory/Machine/Combiner/combiner_prototype.gd",
+		"icon":"res://Factory/Machine/Combiner/combiner_H.png"
+		},
+	"1":
+		{
+		"type":"new",
+		"machine":"res://Factory/Machine/Crane/crane_prototype.gd",
+		"icon":"res://Factory/Machine/Crane/Track2x.png"
+		},
+	"2":
+		{
+		"type":"new",
+		"machine":"res://Factory/Machine/Dispenser/dispenser_prototype.gd",
+		"icon":"res://Factory/Machine/Dispenser/dispenser_widget.png"
+		},
+	"3":
+		{
+		"requires":[2],
+		"type":"improvement",
+		"machine":"DispenserPrototype",
+		"callback":"enable_very_widget",
+		"icon":"res://Factory/Machine/Dispenser/dispenser_verywidget.png"
+		},
+		
+	
+}
