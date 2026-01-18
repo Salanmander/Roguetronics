@@ -25,6 +25,11 @@ func _ready():
 	# Filter to make the goal transparent
 	modulate = Color(1, 1, 1, 0.5)
 	
+# Called when the factory resets.
+func reset() -> void:
+	copies_made = 0
+	
+	
 func set_goal_position(new_position: Vector2):
 	plan.set_plan_position(new_position)
 	

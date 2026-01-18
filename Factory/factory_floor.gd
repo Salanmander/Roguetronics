@@ -436,6 +436,8 @@ func reset_to_start_of_run():
 		
 	for machine:Machine in machines:
 		machine.reset()
+		
+	goal.reset()
 	
 	_on_pause_pressed()
 
