@@ -31,6 +31,18 @@ func _unhandled_input(event: InputEvent):
 		GameState.save_to_disk.call_deferred()
 	if event.is_action_pressed("load", exact_match):
 		GameState.load_from_disk.call_deferred()
+		
+#region saveAndLoad
+
+# No information needs to be saved for this scene yet, but these must
+# be implemented for all scene top-level nodes
+func get_save_dict() -> Dictionary:
+	return {}
+	
+func load_from_save_dict(save_dict: Dictionary) -> void:
+	pass
+
+#endregion
 	
 	
 func _on_new_machine_upgrade_pressed(machine_upgrade: NewMachine):

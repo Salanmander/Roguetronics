@@ -463,6 +463,70 @@ func delete_widgets():
 
 #endregion
 
+
+#region saveAndLoad
+
+# Save dictionary structure:
+#   "pos": position
+#   "aff_mach": affected_by_machines
+#   "monit": monitorable
+#   "widgets": array of widget save dictionaries
+#   "links": array of link save dictionaries, each containing:
+#         "p1": position of one point
+#         "p2": position of other point
+func get_save_dict() -> Dictionary:
+	var save_dict: Dictionary = {}
+	
+	save_dict["pos"] = var_to_str(position)
+	
+	var widget_save: Array[Dictionary] = []
+	for widget: Widget in widgets:
+		widget_save.append(widget.get_save_dict())
+	save_dict["widgets"] = widget_save
+	
+	var link_save: Array[Dictionary] = []
+	for link: Line2D in links:
+		link_save.append(get_link_save(link))
+	save_dict["links"] = link_save
+	return save_dict
+
+func get_link_save(link: Line2D) -> Dictionary:
+	var save_dict: Dictionary = {}
+	save_dict["p1"] = var_to_str(link.position)
+	
+	var p2: Vector2 = link.points[1] + link.position
+	save_dict["p2"] = var_to_str(p2)
+	return save_dict
+
+# Takes the entire save dictionary
+func set_parameters_from_save_dict(save_dict: Dictionary) -> void:
+	position = str_to_var(save_dict["pos"])
+	
+	var widget_save: Array = save_dict["widgets"]
+	for widget_dict: Dictionary in widget_save:
+		add_widget_from_save_dict(widget_dict)
+	
+	var link_save: Array = save_dict["links"]
+	for link_dict: Dictionary in link_save:
+		add_link_from_save_dict(link_dict)
+	
+	
+# Takes the save dictionary for a single Widget
+func add_widget_from_save_dict(save_dict: Dictionary) -> void:
+	var new_widget: Widget = widget_packed.instantiate()
+	new_widget.set_parameters_from_save_dict(save_dict)
+	add_widget_object(new_widget)
+	pass
+	
+# Takes the save directory for a single link
+func add_link_from_save_dict(save_dict: Dictionary) -> void:
+	var p1: Vector2 = str_to_var(save_dict["p1"])
+	var p2: Vector2 = str_to_var(save_dict["p2"])
+	add_link(p1, p2)
+	
+
+#endregion
+
 func clone() -> Assembly:
 	var copy = assembly_packed.instantiate()
 	copy.position = position;

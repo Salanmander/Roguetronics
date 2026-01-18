@@ -1,1 +1,1 @@
-{"scene_index":2,"upgrade_tree":{"obtained":[2,1],"unobtained":[0,3]}}
+{"scene_data":{"goal":{"needed":3,"plan":{"aff_mach":false,"links":[{"p1":"Vector2(0, 0)","p2":"Vector2(128, 0)"}],"monit":false,"pos":"Vector2(1344, 320)","widgets":[{"pos":"Vector2(0, 0)","type":1},{"pos":"Vector2(128, 0)","type":1}]}}},"scene_index":1,"upgrade_tree":{"obtained":"Array[int]([2, 0])","unobtained":"Array[int]([1, 3])"}}

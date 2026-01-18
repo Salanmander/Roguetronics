@@ -29,6 +29,24 @@ func _ready():
 func reset() -> void:
 	copies_made = 0
 	
+#region saveAndLoad
+
+func get_save_dict() -> Dictionary:
+	var save_dict: Dictionary = {}
+	save_dict["needed"] = copies_needed
+	save_dict["plan"] = plan.get_save_dict()
+	return save_dict
+	
+
+func set_parameters_from_save_dict(save_dict: Dictionary):
+	plan = assembly_packed.instantiate()
+	plan.set_parameters_from_save_dict(save_dict["plan"])
+	plan.affected_by_machines = false
+	plan.set_monitorable(false)
+	add_child(plan)
+	plan.perfect_overlap.connect(_on_perfect_overlap)
+
+#endregion
 	
 func set_goal_position(new_position: Vector2):
 	plan.set_plan_position(new_position)

@@ -2,6 +2,13 @@ extends Node
 
 var goal_packed: PackedScene = load("res://Factory/Goal/goal.tscn")
 
+func get_goal_from_save_dict(save_dict: Dictionary) -> Goal:
+	var goal: Goal
+	goal = goal_packed.instantiate()
+	goal.set_parameters_from_save_dict(save_dict)
+	return goal
+	
+
 func get_random_goal()-> Goal:
 	
 	# Check to see if combiner exists

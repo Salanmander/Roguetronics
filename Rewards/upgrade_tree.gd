@@ -71,8 +71,8 @@ func mark_upgrade_obtained(upgrade: Upgrade) -> void:
 
 func get_save_dict() -> Dictionary:
 	var save_dict: Dictionary = {}
-	save_dict["obtained"] = upgrades_obtained.duplicate()
-	save_dict["unobtained"] = upgrades_unobtained.duplicate()
+	save_dict["obtained"] = var_to_str(upgrades_obtained)
+	save_dict["unobtained"] = var_to_str(upgrades_unobtained)
 	
 	return save_dict
 	
@@ -80,8 +80,8 @@ func load_from_dict(save_dict: Dictionary) -> void:
 	
 	# The Array constructor is used to convert the untyped array
 	# loaded from JSON into a typed array
-	upgrades_obtained = Array(save_dict["obtained"], TYPE_INT, "", null)
-	upgrades_unobtained = Array(save_dict["unobtained"], TYPE_INT, "", null)
+	upgrades_obtained = str_to_var(save_dict["obtained"])
+	upgrades_unobtained = str_to_var(save_dict["unobtained"])
 	return
 	
 

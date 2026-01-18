@@ -53,6 +53,17 @@ func hide_all_controls():
 func show_control(UIElement: Control):
 	UIElement.visible = true
 	
+	
+#region saveAndLoad
+
+func get_save_dict() -> Dictionary:
+	return floor.get_save_dict()
+	
+func load_from_save_dict(save_dict: Dictionary):
+	floor.load_from_save_dict(save_dict)
+
+#endregion
+	
 func _on_element_selected(element):
 	var control_to_show: Control = null
 	if element is Dispenser:

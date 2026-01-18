@@ -62,15 +62,19 @@ func improve_machine(improvement: MachineImprovement, mark_in_tree: bool = true)
 # Structure of dictionary that gets saved:
 # "scene_index": index of scene into Consts.SCENE_FILES.
 #                Used as input to SceneManger.switch_scene
+# "scene_data": dictionary given by the top-level scene node. Data will
+#               vary with current scene
 # "upgrade_tree": dictionary given by the upgrade tree when asked
 #                 to save itself. Will be passed back to restore
 	
 func save_to_disk() -> void:
 	var save_dict: Dictionary = {}
-	var current_scene_name: String = get_tree().current_scene.get_script().get_global_name()
+	var current_scene: Node = get_tree().current_scene
+	var current_scene_name: String = current_scene.get_script().get_global_name()
 	#print(current_scene_name)
 	save_dict["scene_index"] = Consts.SCENE_FROM_CLASS[current_scene_name]
-	save_dict["upgrade_tree"] = upgrades.get_save_dict();
+	save_dict["scene_data"] = current_scene.get_save_dict()
+	save_dict["upgrade_tree"] = upgrades.get_save_dict()
 	
 	var save_string: String = JSON.stringify(save_dict)
 	var save_file: FileAccess = FileAccess.open(Consts.SAVE_FILENAME, FileAccess.WRITE)
@@ -98,6 +102,8 @@ func load_from_disk() -> void:
 	
 	
 	SceneManager.switch_scene(save_dict["scene_index"])
+	var current_scene: Node = get_tree().current_scene
+	current_scene.load_from_save_dict(save_dict["scene_data"])
 	
 	pass
 	

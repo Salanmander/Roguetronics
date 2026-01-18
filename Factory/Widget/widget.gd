@@ -34,6 +34,7 @@ func set_parameters(init_position: Vector2, widget_type: int):
 	position = init_position
 	set_type(widget_type)
 
+
 	
 func record_parent(new_parent: Assembly):
 	parent_assembly = new_parent
@@ -180,7 +181,21 @@ func reparent_custom(new_parent: Assembly, keep_global_transform:bool ):
 func shift_by(shift: Vector2):
 	position += shift
 	
+#region saveAndLoad
 
+func get_save_dict() -> Dictionary:
+	var save_dict: Dictionary = {}
+	save_dict["pos"] = var_to_str(position)
+	save_dict["type"] = type
+	return save_dict
+	
+
+func set_parameters_from_save_dict(save_dict: Dictionary):
+	position = str_to_var(save_dict["pos"])
+	set_type(save_dict["type"])
+	pass
+
+#endregion
 
 func _on_area_entered(entering: Area2D):
 	if entering is Wall:

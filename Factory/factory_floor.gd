@@ -382,7 +382,7 @@ func add_goal(new_goal: Goal):
 	
 func make_random_goal():
 	
-	var new_goal = PuzzleManager.get_random_goal()
+	var new_goal: Goal = PuzzleManager.get_random_goal()
 	new_goal.set_goal_position(map_to_local(Vector2i(10, 2)))
 	add_goal( new_goal)
 	
@@ -487,6 +487,27 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_PREDELETE:
 		for assembly:Assembly in starting_assemblies:
 			assembly.queue_free()
+
+
+#region saveAndLoad
+
+# Saves data necessary to re-build the factory floor state.
+# Want to preserve everything that stays when you stop the simulation:
+#   machines, goal, walls, tracks
+
+func get_save_dict() -> Dictionary:
+	var save_dict: Dictionary = {}
+	save_dict["goal"] = goal.get_save_dict()
+	return save_dict
+	
+func load_from_save_dict(save_dict: Dictionary):
+	
+	var new_goal: Goal = PuzzleManager.get_goal_from_save_dict(save_dict["goal"])
+	#new_goal.set_goal_position(map_to_local(Vector2i(10, 2)))
+	add_goal(new_goal)
+	pass
+
+#endregion
 
 #region button callbacks and signal connectors
 
