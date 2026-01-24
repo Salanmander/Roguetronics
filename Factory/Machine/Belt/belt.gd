@@ -5,6 +5,7 @@ class_name Belt
 #  nearby_widgets:Array[Widget]
 #  last_cycle:float
 
+static var belt_packed: PackedScene = load("res://Factory/Machine/Belt/belt.tscn")
 
 # Could be refactored at some point so that it doesn't need to load these
 # textures multiple times. (Does that already get optimized out?)
@@ -25,6 +26,14 @@ var grabber_display: Sprite2D
 
 const LAYER:int = 0
 
+
+#region constructors
+
+static func create(init_position: Vector2, init_direction: float) -> Belt:
+	var new_belt = belt_packed.instantiate()
+	new_belt.set_parameters(init_position, init_direction)
+	return new_belt
+	
 
 func set_parameters(init_position: Vector2, init_direction: float):
 	set_machine_parameters(init_position, LAYER)
@@ -60,6 +69,7 @@ func _ready():
 	
 	pass # Replace with function body.
 
+#endregion
 
 func run_to(cycle: float):
 	var cycle_fraction = fmod(cycle, 1)

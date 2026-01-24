@@ -16,7 +16,6 @@ var last_cycle: float
 
 const LAYER = 1
 
-var assembly_packed: PackedScene = load("res://Factory/Assembly/assembly.tscn")
 var widget_packed: PackedScene = load("res://Factory/Widget/widget.tscn")
 
 signal deleted(this_assembly: Assembly)
@@ -24,6 +23,8 @@ signal perfect_overlap(other_assembly: Assembly)
 signal blocked(direction: Vector2i)
 signal nudged(delta: Vector2)
 signal crashed()
+
+#region constructors
 
 func _init():
 	widgets = []
@@ -34,8 +35,18 @@ func _init():
 	monitorable = true
 	layer_change_this_update = -1
 	
-func set_parameters(init_position: Vector2):
-	position = init_position
+static func create(init_position: Vector2) -> Assembly:
+	var new_assembly: Assembly = Assembly.new()
+	new_assembly.position = init_position
+	return new_assembly
+	
+# see also: get_save_dict
+static func create_from_save(save_dict: Dictionary) -> Assembly:
+	var new_assembly: Assembly = Assembly.new()
+	new_assembly.load_save_dict(save_dict)
+	return new_assembly
+	
+#endregion
 	
 func set_monitorable(new_monitorable: bool):
 	monitorable = new_monitorable
@@ -194,8 +205,7 @@ func run_to(cycle: float):
 	pass
 
 func add_widget(relative_position: Vector2, widget_type: int):
-	var new_widget: Widget = widget_packed.instantiate()
-	new_widget.set_parameters(relative_position, widget_type)
+	var new_widget: Widget = Widget.create(relative_position, widget_type)
 	add_widget_object(new_widget)
 	pass
 
@@ -499,7 +509,7 @@ func get_link_save(link: Line2D) -> Dictionary:
 	return save_dict
 
 # Takes the entire save dictionary
-func set_parameters_from_save_dict(save_dict: Dictionary) -> void:
+func load_save_dict(save_dict: Dictionary) -> void:
 	position = str_to_var(save_dict["pos"])
 	
 	var widget_save: Array = save_dict["widgets"]
@@ -513,8 +523,7 @@ func set_parameters_from_save_dict(save_dict: Dictionary) -> void:
 	
 # Takes the save dictionary for a single Widget
 func add_widget_from_save_dict(save_dict: Dictionary) -> void:
-	var new_widget: Widget = widget_packed.instantiate()
-	new_widget.set_parameters_from_save_dict(save_dict)
+	var new_widget: Widget = Widget.create_from_save(save_dict)
 	add_widget_object(new_widget)
 	pass
 	
@@ -528,8 +537,7 @@ func add_link_from_save_dict(save_dict: Dictionary) -> void:
 #endregion
 
 func clone() -> Assembly:
-	var copy = assembly_packed.instantiate()
-	copy.position = position;
+	var copy = Assembly.create(position)
 	copy.monitorable = monitorable;
 	
 	for widget: Widget in widgets:

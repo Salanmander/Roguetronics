@@ -1,14 +1,5 @@
 extends Node
 
-var goal_packed: PackedScene = load("res://Factory/Goal/goal.tscn")
-
-func get_goal_from_save_dict(save_dict: Dictionary) -> Goal:
-	var goal: Goal
-	goal = goal_packed.instantiate()
-	goal.set_parameters_from_save_dict(save_dict)
-	return goal
-	
-
 func get_random_goal()-> Goal:
 	
 	# Check to see if combiner exists
@@ -40,16 +31,12 @@ func get_random_goal()-> Goal:
 	return get_full_random_goal(widget_types)
 
 func get_nocombine_goal(widget_types: Array[int]) -> Goal:
-	var goal: Goal
-	goal = goal_packed.instantiate()
-	goal.set_parameters(Vector2(0,0))
+	var goal: Goal = Goal.create(Vector2(0,0))
 	goal.add_widget(Vector2(0,0), widget_types.pick_random())
 	return goal
 	
 func get_belt_only_goal(widget_types: Array[int]) -> Goal:
-	var goal: Goal
-	goal = goal_packed.instantiate()
-	goal.set_parameters(Vector2(0,0))
+	var goal: Goal = Goal.create(Vector2(0,0))
 	
 	var primary: int = widget_types.pick_random()
 	var secondary: int = widget_types.pick_random()
@@ -91,9 +78,7 @@ func get_belt_only_goal(widget_types: Array[int]) -> Goal:
 	
 			
 func get_full_random_goal(widget_types: Array[int]) -> Goal:
-	var goal: Goal
-	goal = goal_packed.instantiate()
-	goal.set_parameters(Vector2(0,0))
+	var goal: Goal = Goal.create(Vector2(0,0))
 	
 	var num_widgets: int = randi_range(3,5)
 	

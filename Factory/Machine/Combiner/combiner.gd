@@ -7,9 +7,11 @@ class_name Combiner
 
 
 # Could be refactored at some point so that it doesn't need to load these
-# textures multiple times. (Does that already get optimized out?)
+# textures multiple times. (Does that already get optimized out? Try it out,
+# and try making them static)
 var h_texture = load("res://Factory/Machine/Combiner/combiner_H.png")
 var v_texture = load("res://Factory/Machine/Combiner/combiner_V.png")
+static var combiner_packed: PackedScene = load("res://Factory/Machine/Combiner/combiner.tscn")
 
 var direction:float
 
@@ -20,6 +22,12 @@ signal drop(combiner: Combiner)
 const LAYER = 3
 
 
+#region constructors
+
+static func create(init_position: Vector2, direction: float) -> Combiner:
+	var new_combiner: Combiner = combiner_packed.instantiate()
+	new_combiner.set_parameters(init_position, direction)
+	return new_combiner
 
 # Direction should be either 0 or PI/2
 func set_parameters(init_position: Vector2, direction: float):
@@ -45,6 +53,7 @@ func _ready():
 	
 	pass # Replace with function body.
 
+#endregion
 
 func run_to(cycle: float):
 	var cycle_fraction = fmod(cycle, 1)
@@ -72,4 +81,3 @@ func reset():
 	super.reset()
 	
 	
-

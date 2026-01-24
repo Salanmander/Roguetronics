@@ -12,16 +12,27 @@ var cranes: Dictionary = {}
 
 const LAYER:int = 5
 
+
+#region constructors
 # Called when the node enters the scene tree for the first time.
-func _ready():
-	z_index = LAYER
-	pass # Replace with function body.
+
+static func create(grid_loc: Vector2i) -> Track:
+	var new_track: Track = Track.new()
+	new_track.set_parameters(grid_loc)
+	return new_track
+
 	
 func set_parameters(grid_loc: Vector2i):
 	points.append(grid_loc)
 	make_lines()
+	
+
+func _ready():
+	z_index = LAYER
+	pass # Replace with function body.
 
 	
+#endregion
 
 #region mouse controls
 

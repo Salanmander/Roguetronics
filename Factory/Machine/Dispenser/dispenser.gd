@@ -5,6 +5,7 @@ class_name Dispenser
 #  nearby_widgets:Array[Widget]
 #  last_cycle:float
 
+static var dispenser_packed: PackedScene = load("res://Factory/Machine/Dispenser/dispenser.tscn")
 
 # Could be refactored at some point so that it doesn't need to load these
 # textures multiple times. (Does that already get optimized out?)
@@ -18,7 +19,13 @@ const LAYER = 3
 
 signal dispense(widget_position: Vector2, widget_type: int)
 
+#region constructors
 
+static func create(init_position: Vector2, widget_type: int) -> Dispenser:
+	var new_dispenser: Dispenser = dispenser_packed.instantiate()
+	new_dispenser.set_parameters(init_position, widget_type)
+	return new_dispenser
+	
 
 # Direction should be either 0 or PI/2
 func set_parameters(init_position: Vector2, widget_type: int):
@@ -46,6 +53,8 @@ func _ready():
 	
 	pass # Replace with function body.
 
+
+#endregion
 
 func run_to(cycle: float):
 	var cycle_fraction = fmod(cycle, 1)
@@ -82,5 +91,3 @@ func reset():
 
 func _on_delay_UI_change(new_spacing: int):
 	cycle_spacing = new_spacing
-
-

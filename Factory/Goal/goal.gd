@@ -1,7 +1,6 @@
 extends Node2D
 class_name Goal
 
-var assembly_packed = load("res://Factory/Assembly/assembly.tscn")
 var plan:Assembly
 
 var copies_made: int = 0
@@ -10,13 +9,31 @@ signal completed()
 
 var LAYER = 0
 
-func set_parameters(init_position:Vector2):
-	plan = assembly_packed.instantiate()
-	plan.set_parameters(init_position)
+#region constructors
+static func create(init_position: Vector2) -> Goal:
+	var new_goal = Goal.new()
+	new_goal.set_parameters(init_position)
+	return new_goal
+	
+# See also: get_save_dict
+static func create_from_save(save_dict: Dictionary) -> Goal:
+	var new_goal: Goal = Goal.new()
+	new_goal.load_save_dict(save_dict)
+	return new_goal
+	
+func set_plan(new_plan: Assembly) -> void:
+	plan = new_plan
 	plan.affected_by_machines = false
 	plan.set_monitorable(false)
 	add_child(plan)
 	plan.perfect_overlap.connect(_on_perfect_overlap)
+	
+
+func set_parameters(init_position:Vector2):
+	var new_plan: Assembly = Assembly.create(init_position)
+	set_plan(new_plan)
+	
+#endregion
 
 
 
@@ -37,14 +54,13 @@ func get_save_dict() -> Dictionary:
 	save_dict["plan"] = plan.get_save_dict()
 	return save_dict
 	
+func load_save_dict(save_dict: Dictionary) -> void:
+	copies_needed = save_dict["needed"]
+	var plan: Assembly = Assembly.create_from_save(save_dict["plan"])
+	set_plan(plan)
+	
+	
 
-func set_parameters_from_save_dict(save_dict: Dictionary):
-	plan = assembly_packed.instantiate()
-	plan.set_parameters_from_save_dict(save_dict["plan"])
-	plan.affected_by_machines = false
-	plan.set_monitorable(false)
-	add_child(plan)
-	plan.perfect_overlap.connect(_on_perfect_overlap)
 
 #endregion
 	

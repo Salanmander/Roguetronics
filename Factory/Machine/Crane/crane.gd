@@ -2,6 +2,9 @@ extends Machine
 class_name Crane
 
 
+
+static var crane_packed: PackedScene = load("res://Factory/Machine/Crane/crane.tscn")
+
 const LAYER: int = -1
 
 var grabber_open: bool
@@ -22,6 +25,14 @@ var held_widgets: Array[Widget]
 var raising: bool
 var lowering: bool
 
+
+#region constructors
+
+static func create(init_position: Vector2) -> Crane:
+	var new_crane = crane_packed.instantiate()
+	new_crane.set_parameters(init_position)
+	return new_crane
+
 func set_parameters(init_position: Vector2):
 	set_machine_parameters(init_position, LAYER)
 	monitorable = true
@@ -34,6 +45,8 @@ func _ready():
 	held_widgets = []
 	raising = false
 	lowering = false
+	
+#endregion
 
 func run_to(cycle: float):
 	

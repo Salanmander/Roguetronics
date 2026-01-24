@@ -33,23 +33,15 @@ var selected_variant: int = CONVEYOR_UP_VARIANT
 var click_mode: int = NONE
 var widget_type: int = 0
 
-var wall_packed: PackedScene = load("res://Factory/Wall/wall.tscn")
 
-var widget_packed: PackedScene = load("res://Factory/Widget/widget.tscn")
-var assembly_packed: PackedScene = load("res://Factory/Assembly/assembly.tscn")
 var assemblies: Array[Assembly]
 
 
-var belt_packed: PackedScene = load("res://Factory/Machine/Belt/belt.tscn")
-var combiner_packed: PackedScene = load("res://Factory/Machine/Combiner/combiner.tscn")
-var dispenser_packed: PackedScene = load("res://Factory/Machine/Dispenser/dispenser.tscn")
 var machines: Array[Machine]
 var walls: Array[Wall]
 var conveyor_direction: float
 
 
-var track_packed: PackedScene = load("res://Factory/Machine/Crane/track.tscn")
-var crane_packed: PackedScene = load("res://Factory/Machine/Crane/crane.tscn")
 var dragging_track: bool = false
 var current_track: Track
 var track_start_square: Vector2i
@@ -57,7 +49,6 @@ var tracks: Array[Track]
 
 var starting_assemblies: Array[Assembly]
 
-var goal_packed: PackedScene = load("res://Factory/Goal/goal.tscn")
 var goal: Goal
 
 var run: bool = false
@@ -80,6 +71,8 @@ func _ready():
 	current_track = null
 
 	make_random_goal()
+	
+	
 	
 	
 	pass # Replace with function body.
@@ -306,8 +299,7 @@ func highlight(machine: Machine):
 
 func make_widget(grid_position: Vector2i, init_widget_type: int) -> Assembly:
 	var widget_position: Vector2 = map_to_local(grid_position)
-	var new_assembly:Assembly = assembly_packed.instantiate()
-	new_assembly.set_parameters(widget_position)
+	var new_assembly:Assembly = Assembly.create(widget_position)
 	new_assembly.add_widget(Vector2(0, 0), init_widget_type) 
 	add_child(new_assembly)
 	assemblies.append(new_assembly)
@@ -318,22 +310,19 @@ func make_widget(grid_position: Vector2i, init_widget_type: int) -> Assembly:
 	
 func make_wall(grid_position: Vector2i):
 	var wall_position: Vector2 = map_to_local(grid_position)
-	var new_wall:Wall = wall_packed.instantiate()
-	new_wall.set_parameters(wall_position)
+	var new_wall:Wall = Wall.create(wall_position)
 	add_child(new_wall)
 	walls.append(new_wall)
 	
 func make_belt(grid_position: Vector2i, direction: float):
 	var belt_position: Vector2 = map_to_local(grid_position)
-	var new_machine:Belt = belt_packed.instantiate()
-	new_machine.set_parameters(belt_position, direction)
+	var new_machine:Belt = Belt.create(belt_position, direction)
 	machines.append(new_machine)
 	add_child(new_machine)
 	
 func make_dispenser(grid_position: Vector2i, dispense_type: int):
 	var dispenser_position: Vector2 = map_to_local(grid_position)
-	var new_dispenser:Dispenser = dispenser_packed.instantiate()
-	new_dispenser.set_parameters(dispenser_position, dispense_type)
+	var new_dispenser:Dispenser = Dispenser.create(dispenser_position, dispense_type)
 	add_child(new_dispenser)
 	machines.append(new_dispenser)
 	new_dispenser.dispense.connect(_on_dispense)
@@ -347,17 +336,15 @@ func make_dispenser(grid_position: Vector2i, dispense_type: int):
 func make_combiner(grid_position: Vector2i, offset_dir:Vector2i):
 	
 	var combiner_position: Vector2 = map_to_local(grid_position)
-	var new_combiner = combiner_packed.instantiate()
 	var direction = 0
 	if(offset_dir.y == 0):
 		direction = PI/2
-	new_combiner.set_parameters(Vector2(combiner_position) + offset_dir*Consts.GRID_SIZE/2, direction)
+	var new_combiner = Combiner.create(Vector2(combiner_position) + offset_dir*Consts.GRID_SIZE/2, direction)
 	add_child(new_combiner)
 	machines.append(new_combiner)
 	
 func make_track(grid_position: Vector2i) -> Track:
-	var new_track: Track = track_packed.instantiate()
-	new_track.set_parameters(grid_position)
+	var new_track: Track = Track.create(grid_position)
 	tracks.append(new_track)
 	add_child(new_track)
 	return new_track
@@ -365,8 +352,7 @@ func make_track(grid_position: Vector2i) -> Track:
 func make_crane(grid_position: Vector2i, parent: Track) -> Crane:
 	
 	var crane_position: Vector2 = map_to_local(grid_position)
-	var new_crane = crane_packed.instantiate()
-	new_crane.set_parameters(crane_position)
+	var new_crane: Crane = Crane.create(crane_position)
 	machines.append(new_crane)
 	new_crane.crashed.connect(crash)
 	parent.add_crane(new_crane)
@@ -502,8 +488,7 @@ func get_save_dict() -> Dictionary:
 	
 func load_from_save_dict(save_dict: Dictionary):
 	
-	var new_goal: Goal = PuzzleManager.get_goal_from_save_dict(save_dict["goal"])
-	#new_goal.set_goal_position(map_to_local(Vector2i(10, 2)))
+	var new_goal: Goal = Goal.create_from_save(save_dict["goal"])
 	add_goal(new_goal)
 	pass
 
@@ -609,8 +594,7 @@ func _on_save_pressed() -> void:
 
 func setup_debug_objects():
 	
-	goal = goal_packed.instantiate()
-	goal.set_parameters(map_to_local(Vector2i(10,2)))
+	goal = Goal.create(map_to_local(Vector2i(10,2)))
 	goal.add_widget(Vector2(0,0), 2)
 	goal.add_widget(Vector2(Consts.GRID_SIZE,0), 1)
 	goal.add_widget(Vector2(2*Consts.GRID_SIZE,0), 2)

@@ -1,6 +1,10 @@
 extends Area2D
 class_name Widget
 
+
+static var widget_packed: PackedScene = load("res://Factory/Widget/widget.tscn")
+
+
 var tex: Texture
 var type: int = -1
 
@@ -25,14 +29,28 @@ signal layer_changed(new_layer: int)
 # assembly.
 var mobility:Array[Array]
 
+#region constructors
+
 func _init():
 	mobility = [[0, 0, 0],
 				[0, 0, 0],
 				[0, 0, 0]]
 
+static func create(init_position: Vector2, widget_type: int) -> Widget:
+	var new_widget: Widget = widget_packed.instantiate()
+	new_widget.set_parameters(init_position, widget_type)
+	return new_widget
+	
+static func create_from_save(save_dict: Dictionary) -> Widget:
+	var new_widget: Widget = widget_packed.instantiate()
+	new_widget.load_save_dict(save_dict)
+	return new_widget
+
 func set_parameters(init_position: Vector2, widget_type: int):
 	position = init_position
 	set_type(widget_type)
+	
+#endregion
 
 
 	
@@ -51,7 +69,7 @@ func _ready():
 		$Sprite2D.texture = tex
 	pass # Replace with function body.
 	
-
+#endregion
 
 
 func set_type(widget_type: int):
@@ -189,11 +207,10 @@ func get_save_dict() -> Dictionary:
 	save_dict["type"] = type
 	return save_dict
 	
-
-func set_parameters_from_save_dict(save_dict: Dictionary):
+func load_save_dict(save_dict: Dictionary) -> void:
 	position = str_to_var(save_dict["pos"])
 	set_type(save_dict["type"])
-	pass
+
 
 #endregion
 
