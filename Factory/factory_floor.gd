@@ -308,9 +308,12 @@ func make_widget(grid_position: Vector2i, init_widget_type: int) -> Assembly:
 	
 	return new_assembly
 	
-func make_wall(grid_position: Vector2i):
+func make_wall(grid_position: Vector2i) -> void:
 	var wall_position: Vector2 = map_to_local(grid_position)
 	var new_wall:Wall = Wall.create(wall_position)
+	add_wall(new_wall)
+	
+func add_wall(new_wall: Wall) -> void:
 	add_child(new_wall)
 	walls.append(new_wall)
 	
@@ -484,12 +487,24 @@ func _notification(what: int) -> void:
 func get_save_dict() -> Dictionary:
 	var save_dict: Dictionary = {}
 	save_dict["goal"] = goal.get_save_dict()
+	
+	var wall_dicts: Array = []
+	for wall: Wall in walls:
+		wall_dicts.append(wall.get_save_dict())
+	save_dict["walls"] = wall_dicts
+		
 	return save_dict
 	
 func load_from_save_dict(save_dict: Dictionary):
 	
 	var new_goal: Goal = Goal.create_from_save(save_dict["goal"])
 	add_goal(new_goal)
+	
+	for wall_dict: Dictionary in save_dict["walls"]:
+		var new_wall: Wall = Wall.create_from_save(wall_dict)
+		add_wall(new_wall)
+	
+	
 	pass
 
 #endregion
@@ -537,7 +552,6 @@ func _on_place_wall_pressed():
 	click_mode = PLACE_WALL
 	
 	
-
 func _on_place_track_pressed():
 	click_mode = PLACE_TRACK
 
