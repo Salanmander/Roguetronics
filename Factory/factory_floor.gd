@@ -323,9 +323,12 @@ func make_belt(grid_position: Vector2i, direction: float):
 	machines.append(new_machine)
 	add_child(new_machine)
 	
-func make_dispenser(grid_position: Vector2i, dispense_type: int):
+func make_dispenser(grid_position: Vector2i, dispense_type: int) -> void:
 	var dispenser_position: Vector2 = map_to_local(grid_position)
 	var new_dispenser:Dispenser = Dispenser.create(dispenser_position, dispense_type)
+	add_dispenser(new_dispenser)
+	
+func add_dispenser(new_dispenser: Dispenser) -> void:
 	add_child(new_dispenser)
 	machines.append(new_dispenser)
 	new_dispenser.dispense.connect(_on_dispense)
@@ -335,6 +338,7 @@ func make_dispenser(grid_position: Vector2i, dispense_type: int):
 	unhighlight_all()
 	highlight(new_dispenser)
 	element_selected.emit(new_dispenser)
+	
 	
 func make_combiner(grid_position: Vector2i, offset_dir:Vector2i):
 	
@@ -492,6 +496,12 @@ func get_save_dict() -> Dictionary:
 	for wall: Wall in walls:
 		wall_dicts.append(wall.get_save_dict())
 	save_dict["walls"] = wall_dicts
+	
+	var disp_dicts: Array = []
+	for machine: Machine in machines:
+		if machine is Dispenser:
+			disp_dicts.append(machine.get_save_dict())
+	save_dict["disps"] = disp_dicts
 		
 	return save_dict
 	
@@ -503,6 +513,10 @@ func load_from_save_dict(save_dict: Dictionary):
 	for wall_dict: Dictionary in save_dict["walls"]:
 		var new_wall: Wall = Wall.create_from_save(wall_dict)
 		add_wall(new_wall)
+		
+	for disp_dict: Dictionary in save_dict["disps"]:
+		var new_dispenser: Dispenser = Dispenser.create_from_save(disp_dict)
+		add_dispenser(new_dispenser)
 	
 	
 	pass

@@ -9,14 +9,14 @@ func get_random_goal()-> Goal:
 	var can_combine: bool = false
 	var has_crane: bool = false
 	for machine: MachinePrototype in machines:
-		var name: String = machine.get_script().get_global_name()
-		if name == "CranePrototype":
+		var machine_name: String = machine.get_script().get_global_name()
+		if machine_name == "CranePrototype":
 			has_crane = true
 	
-		if name == "CombinerPrototype":
+		if machine_name == "CombinerPrototype":
 			can_combine = true
 		
-		if name == "DispenserPrototype":
+		if machine_name == "DispenserPrototype":
 			widget_types = machine.get_widget_types()
 	
 	if widget_types.size() == 0:

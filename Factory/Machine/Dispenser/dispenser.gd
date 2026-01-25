@@ -26,8 +26,13 @@ static func create(init_position: Vector2, widget_type: int) -> Dispenser:
 	new_dispenser.set_parameters(init_position, widget_type)
 	return new_dispenser
 	
+	
+static func create_from_save(save_dict: Dictionary) -> Dispenser:
+	var new_dispenser: Dispenser = dispenser_packed.instantiate()
+	new_dispenser.load_save_dict(save_dict)
+	return new_dispenser
 
-# Direction should be either 0 or PI/2
+
 func set_parameters(init_position: Vector2, widget_type: int):
 	set_machine_parameters(init_position, LAYER)
 	type = widget_type
@@ -87,6 +92,19 @@ func get_delay():
 func reset():
 	super.reset()
 	last_spawn_cycle = 0
+	
+#region saveAndLoad
+
+func get_save_dict() -> Dictionary:
+	var save_dict: Dictionary = {}
+	save_dict["pos"] = var_to_str(position)
+	save_dict["type"] = type
+	return save_dict
+	
+func load_save_dict(save_dict: Dictionary) -> void:
+	set_parameters(str_to_var(save_dict["pos"]), save_dict["type"])
+
+#endregion
 	
 
 func _on_delay_UI_change(new_spacing: int):
