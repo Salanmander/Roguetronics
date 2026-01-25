@@ -20,9 +20,11 @@ var widget_packed: PackedScene = load("res://Factory/Widget/widget.tscn")
 
 signal deleted(this_assembly: Assembly)
 signal perfect_overlap(other_assembly: Assembly)
-signal blocked(direction: Vector2i)
 signal nudged(delta: Vector2)
 signal crashed()
+
+# I believe this is an unused signal. Jan 24 '26
+# signal blocked(direction: Vector2i)
 
 #region constructors
 
@@ -141,7 +143,7 @@ func clear_moves():
 
 #endregion
 	
-func run_to(cycle: float):
+func run_to(_cycle: float):
 	
 	var forced:bool = forced_positions.size() > 0
 	

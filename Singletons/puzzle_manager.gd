@@ -42,7 +42,6 @@ func get_belt_only_goal(widget_types: Array[int]) -> Goal:
 	var secondary: int = widget_types.pick_random()
 	
 	var unit_size: int = randi_range(2, 4)
-	var unit_repeats: int = randi_range(1, 2)
 	
 	var secondary_loc: int = randi_range(0, unit_size)
 	
@@ -54,7 +53,6 @@ func get_belt_only_goal(widget_types: Array[int]) -> Goal:
 		 Vector2(0, Consts.GRID_SIZE)]
 	
 	var dir1 = directions.pick_random()
-	var dir2 = directions.pick_random()
 		
 	
 	for i in range(unit_size):

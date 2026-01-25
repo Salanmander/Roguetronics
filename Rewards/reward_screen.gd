@@ -21,7 +21,7 @@ func _ready():
 	pass # Replace with function body.
 
 
-func _process(delta):
+func _process(_delta):
 	pass
 	
 	
@@ -39,7 +39,7 @@ func _unhandled_input(event: InputEvent):
 func get_save_dict() -> Dictionary:
 	return {}
 	
-func load_from_save_dict(save_dict: Dictionary) -> void:
+func load_from_save_dict(_save_dict: Dictionary) -> void:
 	pass
 
 #endregion

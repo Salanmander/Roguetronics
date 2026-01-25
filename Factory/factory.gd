@@ -1,7 +1,7 @@
 extends Node2D
 class_name Factory
 
-@onready var floor: FactoryFloor = $FactoryLayer/FactoryFloor
+@onready var factory_floor: FactoryFloor = $FactoryLayer/FactoryFloor
 @onready var dispenser_control: DispenserControl = $UILayer/MachineControls/DispenserControl
 @onready var crane_control: CraneControl = $UILayer/MachineControls/CraneControl
 
@@ -10,9 +10,9 @@ func _ready():
 	
 	
 	
-	floor.element_selected.connect(_on_element_selected)
-	floor.simulation_started.connect(_on_simulation_started)
-	floor.won.connect(_on_puzzle_completed)
+	factory_floor.element_selected.connect(_on_element_selected)
+	factory_floor.simulation_started.connect(_on_simulation_started)
+	factory_floor.won.connect(_on_puzzle_completed)
 	
 	
 	# Create buttons for available machines
@@ -42,7 +42,7 @@ func _unhandled_input(event: InputEvent):
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	pass
 	
 	
@@ -57,15 +57,14 @@ func show_control(UIElement: Control):
 #region saveAndLoad
 
 func get_save_dict() -> Dictionary:
-	return floor.get_save_dict()
+	return factory_floor.get_save_dict()
 	
 func load_from_save_dict(save_dict: Dictionary):
-	floor.load_from_save_dict(save_dict)
+	factory_floor.load_from_save_dict(save_dict)
 
 #endregion
 	
 func _on_element_selected(element):
-	var control_to_show: Control = null
 	if element is Dispenser:
 		dispenser_control.connect_to(element)
 		hide_all_controls()

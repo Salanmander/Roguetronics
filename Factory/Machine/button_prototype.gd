@@ -13,8 +13,8 @@ func _init():
 	icon = null
 	text = ""
 
-func set_callback(call: String, inputs: Array = []):
-	callback = call
+func set_callback(new_call: String, inputs: Array = []):
+	callback = new_call
 	callback_inputs = inputs
 	
 func set_icon(ico: CompressedTexture2D):

@@ -21,7 +21,7 @@ func get_requirements() -> Array[int]:
 	return requires
 	
 # Checks to see if they're the same upgrade. Must be overridden by sublcasses
-func matches(other: Upgrade) -> bool:
+func matches(_other: Upgrade) -> bool:
 	assert(false, "An upgrade class didn't override matches()")
 	return false
 	

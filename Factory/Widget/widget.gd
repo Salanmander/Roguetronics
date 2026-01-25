@@ -14,13 +14,13 @@ var parent_assembly: Assembly
 # Contains nearby areas that are *not* part of the same Assembly
 var nearby_areas: Array[Area2D]
 
-
-
 signal nudged(delta: Vector2)
 signal combined(this_widget:Widget, combined_by:Combiner)
-signal deleted(this_widget:Widget)
 signal forced_to(assembly_pos: Vector2)
 signal layer_changed(new_layer: int)
+
+@warning_ignore("unused_signal") #delted signal emitted through Assembly
+signal deleted(this_widget:Widget)
 
 
 # 3x3 array. Contains 1 if the widget can move in that direction this cycle,

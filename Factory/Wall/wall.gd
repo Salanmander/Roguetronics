@@ -33,10 +33,6 @@ func can_move(_dir: Vector2i):
 	return false
 	
 	
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
-	
 #region saveAndLoad
 
 func get_save_dict() -> Dictionary:

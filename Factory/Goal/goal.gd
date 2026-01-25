@@ -90,5 +90,5 @@ func _on_perfect_overlap(other:Assembly):
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta) -> void:
 	pass

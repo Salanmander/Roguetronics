@@ -240,7 +240,7 @@ func _unhandled_input(event: InputEvent):
 			if not blocked:
 				for track: Track in tracks:
 					if track.exists_at(grid_loc):
-						var new_crane: Crane = make_crane(grid_loc, track)
+						make_crane(grid_loc, track)
 						
 						break
 			
@@ -532,7 +532,7 @@ func _on_assembly_delete(deleted: Assembly):
 # TODO: do I want this to also have a way to note the goal object?
 # should the goal object keep track of how many things it needs?
 # Should it still send the number completed?
-func _on_goal_completed(goal: Goal):
+func _on_goal_completed(_goal: Goal):
 	won.emit()
 	
 func _on_dispense(loc: Vector2, init_widget_type: int):
