@@ -317,11 +317,15 @@ func add_wall(new_wall: Wall) -> void:
 	add_child(new_wall)
 	walls.append(new_wall)
 	
-func make_belt(grid_position: Vector2i, direction: float):
+func make_belt(grid_position: Vector2i, direction: float) -> void:
 	var belt_position: Vector2 = map_to_local(grid_position)
-	var new_machine:Belt = Belt.create(belt_position, direction)
-	machines.append(new_machine)
-	add_child(new_machine)
+	var new_belt:Belt = Belt.create(belt_position, direction)
+	add_belt(new_belt)
+	
+func add_belt(new_belt: Belt) -> void:
+	machines.append(new_belt)
+	add_child(new_belt)
+	
 	
 func make_dispenser(grid_position: Vector2i, dispense_type: int) -> void:
 	var dispenser_position: Vector2 = map_to_local(grid_position)
@@ -503,13 +507,17 @@ func get_save_dict() -> Dictionary:
 	
 	var disp_dicts: Array = []
 	var combine_dicts: Array = []
+	var belt_dicts: Array = []
 	for machine: Machine in machines:
 		if machine is Dispenser:
 			disp_dicts.append(machine.get_save_dict())
 		if machine is Combiner:
 			combine_dicts.append(machine.get_save_dict())
+		if machine is Belt:
+			belt_dicts.append(machine.get_save_dict())
 	save_dict["disps"] = disp_dicts
 	save_dict["combiners"] = combine_dicts
+	save_dict["belts"] = belt_dicts
 	
 		
 	return save_dict
@@ -531,6 +539,11 @@ func load_from_save_dict(save_dict: Dictionary):
 	for combine_dict: Dictionary in save_dict["combiners"]:
 		var new_combiner: Combiner = Combiner.create_from_save(combine_dict)
 		add_combiner(new_combiner)
+		
+		
+	for belt_dict: Dictionary in save_dict["belts"]:
+		var new_belt: Belt = Belt.create_from_save(belt_dict)
+		add_belt(new_belt)
 	
 	
 	pass

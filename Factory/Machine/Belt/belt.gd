@@ -34,8 +34,13 @@ static func create(init_position: Vector2, init_direction: float) -> Belt:
 	new_belt.set_parameters(init_position, init_direction)
 	return new_belt
 	
+static func create_from_save(save_dict: Dictionary) -> Belt:
+	var new_belt = belt_packed.instantiate()
+	new_belt.load_from_save(save_dict)
+	return new_belt
+	
 
-func set_parameters(init_position: Vector2, init_direction: float):
+func set_parameters(init_position: Vector2, init_direction: float) -> void:
 	set_machine_parameters(init_position, LAYER)
 	direction = init_direction
 	arm_offset = Vector2(0,0)
@@ -48,11 +53,11 @@ func _ready():
 	super()
 	
 	var child: Sprite2D = $Sprite2D
-	if(direction == 0):
+	if is_equal_approx(direction, 0):
 		child.texture = up_texture
-	elif direction == PI/2:
+	elif is_equal_approx(direction, PI/2):
 		child.texture = right_texture
-	elif direction == PI:
+	elif is_equal_approx(direction, PI):
 		child.texture = down_texture
 	else:
 		child.texture = left_texture
@@ -111,6 +116,19 @@ func grab():
 		for widget: Widget in held_widgets:
 			widget.deleted.connect(_on_widget_deleted)
 	pass
+	
+#region saveAndLoad
+
+func get_save_dict() -> Dictionary:
+	var save_dict: Dictionary = {}
+	save_dict["pos"] = var_to_str(position)
+	save_dict["dir"] = direction
+	return save_dict
+	
+func load_from_save(save_dict: Dictionary) -> void:
+	set_parameters(str_to_var(save_dict["pos"]), save_dict["dir"])
+
+#endregion
 	
 func _on_widget_deleted(widget: Widget):
 	held_widgets.erase(widget)
