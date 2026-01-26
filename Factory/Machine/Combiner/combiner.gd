@@ -28,6 +28,11 @@ static func create(init_position: Vector2, direction: float) -> Combiner:
 	var new_combiner: Combiner = combiner_packed.instantiate()
 	new_combiner.set_parameters(init_position, direction)
 	return new_combiner
+	
+static func create_from_save(save_dict: Dictionary) -> Combiner:
+	var new_combiner: Combiner = combiner_packed.instantiate()
+	new_combiner.load_from_save(save_dict)
+	return new_combiner
 
 # Direction should be either 0 or PI/2
 func set_parameters(init_position: Vector2, direction: float):
@@ -76,6 +81,19 @@ func run_to(cycle: float):
 		
 	
 	pass
+	
+#region saveAndLoad
+
+func get_save_dict() -> Dictionary:
+	var save_dict: Dictionary = {}
+	save_dict["pos"] = var_to_str(position)
+	save_dict["dir"] = direction
+	return save_dict
+	
+func load_from_save(save_dict: Dictionary) -> void:
+	set_parameters(str_to_var(save_dict["pos"]), save_dict["dir"])
+
+#endregion
 	
 func reset():
 	super.reset()

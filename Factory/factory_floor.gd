@@ -340,15 +340,19 @@ func add_dispenser(new_dispenser: Dispenser) -> void:
 	element_selected.emit(new_dispenser)
 	
 	
-func make_combiner(grid_position: Vector2i, offset_dir:Vector2i):
+func make_combiner(grid_position: Vector2i, offset_dir:Vector2i) -> void:
 	
 	var combiner_position: Vector2 = map_to_local(grid_position)
 	var direction = 0
 	if(offset_dir.y == 0):
 		direction = PI/2
 	var new_combiner = Combiner.create(Vector2(combiner_position) + offset_dir*Consts.GRID_SIZE/2, direction)
+	add_combiner(new_combiner)
+	
+func add_combiner(new_combiner: Combiner) -> void:
 	add_child(new_combiner)
 	machines.append(new_combiner)
+	
 	
 func make_track(grid_position: Vector2i) -> Track:
 	var new_track: Track = Track.create(grid_position)
@@ -498,10 +502,15 @@ func get_save_dict() -> Dictionary:
 	save_dict["walls"] = wall_dicts
 	
 	var disp_dicts: Array = []
+	var combine_dicts: Array = []
 	for machine: Machine in machines:
 		if machine is Dispenser:
 			disp_dicts.append(machine.get_save_dict())
+		if machine is Combiner:
+			combine_dicts.append(machine.get_save_dict())
 	save_dict["disps"] = disp_dicts
+	save_dict["combiners"] = combine_dicts
+	
 		
 	return save_dict
 	
@@ -517,6 +526,11 @@ func load_from_save_dict(save_dict: Dictionary):
 	for disp_dict: Dictionary in save_dict["disps"]:
 		var new_dispenser: Dispenser = Dispenser.create_from_save(disp_dict)
 		add_dispenser(new_dispenser)
+		
+		
+	for combine_dict: Dictionary in save_dict["combiners"]:
+		var new_combiner: Combiner = Combiner.create_from_save(combine_dict)
+		add_combiner(new_combiner)
 	
 	
 	pass
