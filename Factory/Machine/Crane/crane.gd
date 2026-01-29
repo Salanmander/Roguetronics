@@ -13,6 +13,7 @@ var last_pos: Vector2
 var target_pos: Vector2
 
 var initial_track_index: int
+var initial_position: Vector2
 
 signal move_triggered(offset: int)
 signal reset_triggered(start_index: int)
@@ -32,21 +33,28 @@ static func create(init_position: Vector2) -> Crane:
 	var new_crane = crane_packed.instantiate()
 	new_crane.set_parameters(init_position)
 	return new_crane
-
+	
+static func create_from_save(save_dict: Dictionary) -> Crane:
+	var new_crane = crane_packed.instantiate()
+	new_crane.load_from_save(save_dict)
+	return new_crane
+	
 func set_parameters(init_position: Vector2):
 	set_machine_parameters(init_position, LAYER)
+	program = []
+	initial_position = init_position
 	monitorable = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	super()
 	open()
-	program = []
 	held_widgets = []
 	raising = false
 	lowering = false
 	
 #endregion
+
 
 func run_to(cycle: float):
 	
@@ -187,6 +195,20 @@ func close():
 
 func is_open():
 	return grabber_open
+
+#endregion
+
+#region saveAndLoad
+
+func get_save_dict() -> Dictionary:
+	var save_dict: Dictionary = {}
+	save_dict["pos"] = var_to_str(initial_position)
+	save_dict["program"] = var_to_str(program)
+	return save_dict
+	
+func load_from_save(save_dict: Dictionary) -> void:
+	set_parameters(str_to_var(save_dict["pos"]))
+	program = str_to_var(save_dict["program"])
 
 #endregion
 

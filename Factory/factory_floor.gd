@@ -45,7 +45,6 @@ var conveyor_direction: float
 var dragging_track: bool = false
 var current_track: Track
 var track_start_square: Vector2i
-var tracks: Array[Track]
 
 var starting_assemblies: Array[Assembly]
 
@@ -67,7 +66,6 @@ func _ready():
 	assemblies = []
 	machines = []
 	walls = []
-	tracks = []
 	current_track = null
 
 	make_random_goal()
@@ -153,14 +151,28 @@ func _unhandled_input(event: InputEvent):
 		
 		if event.button_index == MOUSE_BUTTON_RIGHT:
 			# Check to see if there's a clickable thing there
+			var highlighted: Machine = null
 			for machine: Machine in machines:
-				if not (machine is Dispenser or machine is Crane):
-					continue
+				if machine is Dispenser:
+					if (event.position - machine.position).length() < 64:
+						highlighted = highlight(machine, grid_loc)
+						
+				if machine is Track:
+					if machine.exists_at(grid_loc):
+						highlighted = highlight(machine, grid_loc)
+					pass
+					
+			
+			if highlighted != null:
+				unhighlight_all()
 				
-				if (event.position - machine.position).length() < 64:
-					unhighlight_all()
-					highlight(machine)
-					element_selected.emit(machine)
+				# This is a little hacky, because it involves us calling
+				# highlight on the same object twice. But calling highlight
+				# is how we know whether anything got highlighted, and
+				# we need to only do the unhighlight of something got
+				# highlighted.
+				highlight(highlighted, grid_loc)
+				element_selected.emit(highlighted)
 					
 				
 				
@@ -233,13 +245,13 @@ func _unhandled_input(event: InputEvent):
 			pass
 		elif(click_mode == PLACE_CRANE):
 			var blocked: bool = false
-			for track: Track in tracks:
-				if track.has_crane_at(grid_loc):
+			for track: Machine in machines:
+				if track is Track and track.has_crane_at(grid_loc):
 					blocked = true
 			
 			if not blocked:
-				for track: Track in tracks:
-					if track.exists_at(grid_loc):
+				for track: Machine in machines:
+					if track is Track and track.exists_at(grid_loc):
 						make_crane(grid_loc, track)
 						
 						break
@@ -251,8 +263,8 @@ func _unhandled_input(event: InputEvent):
 			
 			dragging_track = true
 			
-			for track: Track in tracks:
-				if track.can_grab_at(grid_loc):
+			for track: Machine in machines:
+				if track is Track and track.can_grab_at(grid_loc):
 					current_track = track
 
 			
@@ -290,8 +302,11 @@ func unhighlight_all():
 	for machine: Machine in machines:
 		machine.unhighlight()
 		
-func highlight(machine: Machine):
-	machine.highlight()
+# The grid location is used by some machines but not others to figure out what to
+# highlight. If it's not given, assumed to be useless.
+func highlight(machine: Machine, grid_loc: Vector2i = Vector2i(0,0)) -> Machine:
+	var highlighted: Machine = machine.highlight(grid_loc)
+	return highlighted
 	
 #endregion
 	
@@ -314,8 +329,8 @@ func make_wall(grid_position: Vector2i) -> void:
 	add_wall(new_wall)
 	
 func add_wall(new_wall: Wall) -> void:
-	add_child(new_wall)
 	walls.append(new_wall)
+	add_child(new_wall)
 	
 func make_belt(grid_position: Vector2i, direction: float) -> void:
 	var belt_position: Vector2 = map_to_local(grid_position)
@@ -354,25 +369,27 @@ func make_combiner(grid_position: Vector2i, offset_dir:Vector2i) -> void:
 	add_combiner(new_combiner)
 	
 func add_combiner(new_combiner: Combiner) -> void:
-	add_child(new_combiner)
 	machines.append(new_combiner)
+	add_child(new_combiner)
 	
 	
 func make_track(grid_position: Vector2i) -> Track:
 	var new_track: Track = Track.create(grid_position)
-	tracks.append(new_track)
-	add_child(new_track)
+	new_track.crashed.connect(crash)
+	add_track(new_track)
 	return new_track
-
+	
+func add_track(new_track: Track) -> void:
+	machines.append(new_track)
+	add_child(new_track)
+	
 func make_crane(grid_position: Vector2i, parent: Track) -> Crane:
 	
 	var crane_position: Vector2 = map_to_local(grid_position)
 	var new_crane: Crane = Crane.create(crane_position)
-	machines.append(new_crane)
-	new_crane.crashed.connect(crash)
 	parent.add_crane(new_crane)
-	
 	return new_crane
+	
 	
 func add_goal(new_goal: Goal):
 	if(goal):
@@ -465,11 +482,6 @@ func delete_walls():
 		if child is Wall:
 			child.queue_free()
 			
-func delete_tracks():
-	for track: Track in tracks:
-		track.queue_free()
-	
-	tracks = []
 	
 		
 func remove_dispenser_type(widget_type: int):
@@ -508,6 +520,7 @@ func get_save_dict() -> Dictionary:
 	var disp_dicts: Array = []
 	var combine_dicts: Array = []
 	var belt_dicts: Array = []
+	var track_dicts: Array = []
 	for machine: Machine in machines:
 		if machine is Dispenser:
 			disp_dicts.append(machine.get_save_dict())
@@ -515,9 +528,12 @@ func get_save_dict() -> Dictionary:
 			combine_dicts.append(machine.get_save_dict())
 		if machine is Belt:
 			belt_dicts.append(machine.get_save_dict())
+		if machine is Track:
+			track_dicts.append(machine.get_save_dict())
 	save_dict["disps"] = disp_dicts
 	save_dict["combiners"] = combine_dicts
 	save_dict["belts"] = belt_dicts
+	save_dict["tracks"] = track_dicts
 	
 		
 	return save_dict
@@ -544,6 +560,10 @@ func load_from_save_dict(save_dict: Dictionary):
 	for belt_dict: Dictionary in save_dict["belts"]:
 		var new_belt: Belt = Belt.create_from_save(belt_dict)
 		add_belt(new_belt)
+		
+	for track_dict: Dictionary in save_dict["tracks"]:
+		var new_track: Track = Track.create_from_save(track_dict)
+		add_track(new_track)
 	
 	
 	pass
@@ -630,7 +650,6 @@ func _on_clear_pressed():
 	delete_assemblies()
 	delete_machines()
 	delete_walls()
-	delete_tracks()
 	reset_to_start_of_run()
 	
 func _on_new_puzzle_pressed():

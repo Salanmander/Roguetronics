@@ -47,9 +47,13 @@ func run_to(_cycle: float):
 	
 func reset():
 	last_cycle = 0
-	
-func highlight():
+
+
+# Some machines override this to use the grid location, and may return false.
+# Those are included here to be able to override with the same input/output types.
+func highlight(_grid_loc: Vector2i) -> Machine:
 	highlight_line.visible = true
+	return self
 	
 func unhighlight():
 	highlight_line.visible = false

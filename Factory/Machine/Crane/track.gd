@@ -1,5 +1,9 @@
-extends Node2D
+extends Machine
 class_name Track
+
+# This makes a Track be a kind of Area2D, and it really doesn't need that
+# functionality. We're okay with it, though, because this lets Tracks
+# be tracked as a kind of Machine by the FactoryFloor.
 
 const track_color = Color(0.5, 0.5, 0.5)
 const arrow_color = Color(0.9, 0.9, 0)
@@ -13,12 +17,20 @@ var cranes: Dictionary = {}
 const LAYER:int = 5
 
 
+signal crashed()
+
+
 #region constructors
 # Called when the node enters the scene tree for the first time.
 
 static func create(grid_loc: Vector2i) -> Track:
 	var new_track: Track = Track.new()
 	new_track.set_parameters(grid_loc)
+	return new_track
+	
+static func create_from_save(save_dict: Dictionary) -> Track:
+	var new_track: Track = Track.new()
+	new_track.load_from_save(save_dict)
 	return new_track
 
 	
@@ -32,6 +44,36 @@ func _ready():
 	pass # Replace with function body.
 
 	
+#endregion
+
+
+#region overriddenMachineMethods
+
+		
+func highlight(grid_loc: Vector2i) -> Machine:
+	var ind: int = points.find(grid_loc)
+	
+	# Check index of each crane by getting it from the dictionary,
+	# and then checking the value stored at that key.
+	for crane: Crane in cranes:
+		if cranes[crane] == ind:
+			crane.highlight(grid_loc)
+			return crane
+	
+	return null
+
+func unhighlight() -> void:
+	for crane: Crane in cranes:
+		crane.unhighlight()
+		
+func run_to(cycle: float) -> void:
+	for crane: Crane in cranes:
+		crane.run_to(cycle)
+	
+func reset() -> void:
+	for crane: Crane in cranes:
+		crane.reset()
+
 #endregion
 
 #region mouse controls
@@ -76,6 +118,9 @@ func drag_to(grid_loc: Vector2i):
 
 #endregion
 
+
+
+
 #region Crane handling
 
 # Adds a crane. It should already have been positioned, and that
@@ -86,6 +131,7 @@ func add_crane(crane: Crane):
 	# Connect signals from the crane to this
 	crane.move_triggered.connect(_on_crane_move.bind(crane))
 	crane.reset_triggered.connect(_on_crane_reset.bind(crane))
+	crane.crashed.connect(_on_crane_crashed.bind(crane))
 	
 	# Set the index of the initial location of the crane
 	var grid_loc: Vector2i = Util.floor_local_to_map(crane.position)
@@ -129,8 +175,13 @@ func _on_crane_reset(track_index: int, crane: Crane):
 	crane.teleport_to(new_pos)
 	cranes[crane] = track_index
 	
+func _on_crane_crashed(crane: Crane):
+	crashed.emit()
+	
 
 #endregion
+
+
 		
 		
 func make_lines():
@@ -229,6 +280,30 @@ func make_lines():
 				add_child(terminal)
 			
 	
+#region saveAndLoad
+
+func get_save_dict() -> Dictionary:
+	var save_dict: Dictionary = {} 
+	save_dict["points"] = var_to_str(points)
+	save_dict["looped"] = looped
+	
+	var crane_dicts: Array = []
+	for crane: Crane in cranes:
+		crane_dicts.append(crane.get_save_dict())
+	save_dict["cranes"] = crane_dicts
+	return save_dict
+	
+func load_from_save(save_dict: Dictionary) -> void:
+	points = str_to_var(save_dict["points"])
+	looped = save_dict["looped"]
+	
+	for crane_dict: Dictionary in save_dict["cranes"]:
+		var new_crane: Crane = Crane.create_from_save(crane_dict)
+		add_crane(new_crane)
+		
+	make_lines()
+
+#endregion
 	
 	
 	
