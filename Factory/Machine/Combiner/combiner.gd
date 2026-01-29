@@ -86,6 +86,7 @@ func run_to(cycle: float):
 
 func get_save_dict() -> Dictionary:
 	var save_dict: Dictionary = {}
+	save_dict["type"] = "combiner"
 	save_dict["pos"] = var_to_str(position)
 	save_dict["dir"] = direction
 	return save_dict

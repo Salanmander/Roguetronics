@@ -97,12 +97,13 @@ func reset():
 
 func get_save_dict() -> Dictionary:
 	var save_dict: Dictionary = {}
+	save_dict["type"] = "dispenser"
 	save_dict["pos"] = var_to_str(position)
-	save_dict["type"] = type
+	save_dict["dispenser_type"] = type
 	return save_dict
 	
 func load_save_dict(save_dict: Dictionary) -> void:
-	set_parameters(str_to_var(save_dict["pos"]), save_dict["type"])
+	set_parameters(str_to_var(save_dict["pos"]), save_dict["dispenser_type"])
 
 #endregion
 	

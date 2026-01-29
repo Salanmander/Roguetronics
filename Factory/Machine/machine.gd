@@ -10,7 +10,21 @@ var nearby_widgets: Array[Widget]
 var highlight_line: Line2D
 
 
-
+static func create_from_save(save_dict: Dictionary) -> Machine:
+	var type = save_dict["type"]
+	if type == "belt":
+		return Belt.create_from_save(save_dict)
+	if type == "dispenser":
+		return Dispenser.create_from_save(save_dict)
+	if type == "combiner":
+		return Combiner.create_from_save(save_dict)
+	if type == "track":
+		return Track.create_from_save(save_dict)
+	if type == "crane":
+		return Crane.create_from_save(save_dict)
+	
+	assert(false, "tried to load machine with invalid type")
+	return null
 
 func set_machine_parameters(init_position: Vector2, init_layer: int):
 	position = init_position

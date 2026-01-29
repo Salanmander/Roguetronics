@@ -284,6 +284,7 @@ func make_lines():
 
 func get_save_dict() -> Dictionary:
 	var save_dict: Dictionary = {} 
+	save_dict["type"] = "track"
 	save_dict["points"] = var_to_str(points)
 	save_dict["looped"] = looped
 	

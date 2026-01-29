@@ -375,11 +375,11 @@ func add_combiner(new_combiner: Combiner) -> void:
 	
 func make_track(grid_position: Vector2i) -> Track:
 	var new_track: Track = Track.create(grid_position)
-	new_track.crashed.connect(crash)
 	add_track(new_track)
 	return new_track
 	
 func add_track(new_track: Track) -> void:
+	new_track.crashed.connect(crash)
 	machines.append(new_track)
 	add_child(new_track)
 	
@@ -389,6 +389,19 @@ func make_crane(grid_position: Vector2i, parent: Track) -> Crane:
 	var new_crane: Crane = Crane.create(crane_position)
 	parent.add_crane(new_crane)
 	return new_crane
+	
+
+func add_machine(new_machine: Machine) -> void:
+	if new_machine is Belt:
+		add_belt(new_machine)
+	elif new_machine is Dispenser:
+		add_dispenser(new_machine)
+	elif new_machine is Combiner:
+		add_combiner(new_machine)
+	elif new_machine is Track:
+		add_track(new_machine)
+	else:
+		assert(false, "Tried to add machine that shouldn't be added")
 	
 	
 func add_goal(new_goal: Goal):
@@ -517,23 +530,10 @@ func get_save_dict() -> Dictionary:
 		wall_dicts.append(wall.get_save_dict())
 	save_dict["walls"] = wall_dicts
 	
-	var disp_dicts: Array = []
-	var combine_dicts: Array = []
-	var belt_dicts: Array = []
-	var track_dicts: Array = []
+	var machine_dicts: Array = []
 	for machine: Machine in machines:
-		if machine is Dispenser:
-			disp_dicts.append(machine.get_save_dict())
-		if machine is Combiner:
-			combine_dicts.append(machine.get_save_dict())
-		if machine is Belt:
-			belt_dicts.append(machine.get_save_dict())
-		if machine is Track:
-			track_dicts.append(machine.get_save_dict())
-	save_dict["disps"] = disp_dicts
-	save_dict["combiners"] = combine_dicts
-	save_dict["belts"] = belt_dicts
-	save_dict["tracks"] = track_dicts
+		machine_dicts.append(machine.get_save_dict())
+	save_dict["machines"] = machine_dicts
 	
 		
 	return save_dict
@@ -547,23 +547,12 @@ func load_from_save_dict(save_dict: Dictionary):
 		var new_wall: Wall = Wall.create_from_save(wall_dict)
 		add_wall(new_wall)
 		
-	for disp_dict: Dictionary in save_dict["disps"]:
-		var new_dispenser: Dispenser = Dispenser.create_from_save(disp_dict)
-		add_dispenser(new_dispenser)
+		
+	for machine_dict: Dictionary in save_dict["machines"]:
+		var new_machine: Machine = Machine.create_from_save(machine_dict)
+		add_machine(new_machine)
 		
 		
-	for combine_dict: Dictionary in save_dict["combiners"]:
-		var new_combiner: Combiner = Combiner.create_from_save(combine_dict)
-		add_combiner(new_combiner)
-		
-		
-	for belt_dict: Dictionary in save_dict["belts"]:
-		var new_belt: Belt = Belt.create_from_save(belt_dict)
-		add_belt(new_belt)
-		
-	for track_dict: Dictionary in save_dict["tracks"]:
-		var new_track: Track = Track.create_from_save(track_dict)
-		add_track(new_track)
 	
 	
 	pass

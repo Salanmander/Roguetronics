@@ -202,6 +202,7 @@ func is_open():
 
 func get_save_dict() -> Dictionary:
 	var save_dict: Dictionary = {}
+	save_dict["type"] = "crane"
 	save_dict["pos"] = var_to_str(initial_position)
 	save_dict["program"] = var_to_str(program)
 	return save_dict
