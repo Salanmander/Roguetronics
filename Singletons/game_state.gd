@@ -4,6 +4,8 @@ extends Node
 var machines_available: Array[MachinePrototype]
 var upgrades: UpgradeTree
 
+const save_version: String = "0.1.1"
+
 
 
 func _ready():
@@ -75,6 +77,7 @@ func save_to_disk() -> void:
 	save_dict["scene_index"] = Consts.SCENE_FROM_CLASS[current_scene_name]
 	save_dict["scene_data"] = current_scene.get_save_dict()
 	save_dict["upgrade_tree"] = upgrades.get_save_dict()
+	save_dict["version"] = save_version
 	
 	var save_string: String = JSON.stringify(save_dict)
 	var save_file: FileAccess = FileAccess.open(Consts.SAVE_FILENAME, FileAccess.WRITE)
