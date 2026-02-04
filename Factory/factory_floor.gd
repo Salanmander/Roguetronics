@@ -98,7 +98,7 @@ func _physics_process(delta: float):
 		
 		cycle += delta / cycle_time
 		
-		
+
 		# Need to combine before checking mobility
 		for machine: Machine in machines:
 			if machine is Combiner:
@@ -128,11 +128,12 @@ func _physics_process(delta: float):
 			for machine: Machine in machines:
 				if machine is Crane:
 					machine.snap_to_grid()
-				
+			
 			
 		last_cycle = cycle
 		
 	pass
+	
 
 #endregion
 
@@ -618,10 +619,22 @@ func _on_delete_pressed():
 
 func _on_run_pressed() -> void:
 	if not crashed:
+		#cycle_time = default_cycle_time
+		Engine.set_time_scale(1)
+		Engine.physics_ticks_per_second = 60
+		Engine.max_physics_steps_per_frame = 8
 		simulation_started.emit()
 		unhighlight_all()
 		run = true
 
+func _on_fast_pressed(speedup: int) -> void:
+	if not crashed:
+		Engine.set_time_scale(speedup)
+		Engine.physics_ticks_per_second = speedup*60
+		Engine.max_physics_steps_per_frame = speedup*8
+		simulation_started.emit()
+		unhighlight_all()
+		run = true
 
 
 func _on_pause_pressed() -> void:

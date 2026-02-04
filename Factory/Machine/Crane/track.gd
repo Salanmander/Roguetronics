@@ -175,7 +175,7 @@ func _on_crane_reset(track_index: int, crane: Crane):
 	crane.teleport_to(new_pos)
 	cranes[crane] = track_index
 	
-func _on_crane_crashed(crane: Crane):
+func _on_crane_crashed(_crane: Crane):
 	crashed.emit()
 	
 
