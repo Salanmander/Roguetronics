@@ -4,12 +4,23 @@ extends Node
 var machines_available: Array[MachinePrototype]
 var upgrades: UpgradeTree
 
-const save_version: String = "0.1.1"
+# A start to run-long game mechanics.
+var money: int
+const starting_money: int = 100
+var scenario: Scenario
+
+
+
+var save_version: String
 
 
 
 func _ready():
+	save_version = str(Consts.VERSION_MAJOR)
+	save_version += "." + str(Consts.VERSION_MINOR)
+	save_version += "." + str(Consts.VERSION_BUILD)
 	
+	money = starting_money
 	upgrades = UpgradeTree.new()
 	
 	reset_machines()
@@ -26,11 +37,15 @@ func _ready():
 	if(upgrade_to_get):
 		add_machine(upgrade_to_get)
 		
+	generate_scenario()
+		
 func reset_machines() -> void:
 	machines_available = []
 	machines_available.append(BeltPrototype.new())
 				
-	
+
+#region rewards
+
 func get_upgrades_available() -> Array[Upgrade]:
 	return upgrades.get_upgrades_available()
 	
@@ -60,7 +75,25 @@ func improve_machine(improvement: MachineImprovement, mark_in_tree: bool = true)
 	
 	if mark_in_tree:
 		upgrades.mark_upgrade_obtained(improvement)
-	
+
+#endregion
+
+#region scenarios
+
+func get_scenario() -> Scenario:
+	return scenario
+
+func generate_scenario() -> void:
+	var goal: Goal = PuzzleManager.get_random_goal()
+	scenario = Scenario.create(goal)
+	var cost_per_cycle: Effect = MoneyChange.create(-3)
+	var reward: Effect = MoneyChange.create(100)
+	scenario.add_cycle_effect(cost_per_cycle)
+	scenario.add_win_effect(reward)
+
+#endregion
+
+#region saveAndLoad
 # Structure of dictionary that gets saved:
 # "scene_index": index of scene into Consts.SCENE_FILES.
 #                Used as input to SceneManger.switch_scene
@@ -110,5 +143,5 @@ func load_from_disk() -> void:
 	
 	pass
 	
-
+#endregion
 		

@@ -4,6 +4,13 @@ class_name Factory
 @onready var factory_floor: FactoryFloor = $FactoryLayer/FactoryFloor
 @onready var dispenser_control: DispenserControl = $UILayer/MachineControls/DispenserControl
 @onready var crane_control: CraneControl = $UILayer/MachineControls/CraneControl
+@onready var money_display: Label = $UILayer/MoneyDisplay
+@onready var result_screen: ResultScreen = $UILayer/ResultScreen
+
+
+var projected_money: int
+var reward: int
+var run_cost: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -12,7 +19,13 @@ func _ready():
 	
 	factory_floor.element_selected.connect(_on_element_selected)
 	factory_floor.simulation_started.connect(_on_simulation_started)
+	factory_floor.first_cycle_started.connect(_on_first_cycle_started)
+	factory_floor.simulation_cycle_end.connect(_on_simulation_cycle_end)
+	factory_floor.simulation_reset.connect(_on_simulation_reset)
 	factory_floor.won.connect(_on_puzzle_completed)
+	
+	result_screen.result_accepted.connect(_on_result_accepted)
+	result_screen.result_rejected.connect(_on_result_rejected)
 	
 	
 	# Create buttons for available machines
@@ -30,6 +43,9 @@ func _ready():
 			button.custom_minimum_size = Vector2(width, height)
 			button.expand_icon = true
 			buttonContainer.add_child(button)
+			
+	
+	money_display.text = "$" + str(GameState.money)
 	pass # Replace with function body.
 	
 func _unhandled_input(event: InputEvent):
@@ -44,6 +60,12 @@ func _unhandled_input(event: InputEvent):
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	pass
+
+
+
+func change_projected_money(delta: int) -> void:
+	projected_money += delta
+	money_display.text = "$" + str(projected_money)
 	
 	
 func hide_all_controls():
@@ -74,9 +96,21 @@ func _on_element_selected(element):
 		crane_control.connect_to(element)
 		hide_all_controls()
 		show_control(crane_control)
+		
+func _on_first_cycle_started() -> void:
+	projected_money = GameState.money
+	
 	
 func _on_simulation_started():
 	hide_all_controls()
+	
+func _on_simulation_cycle_end() -> void:
+	GameState.get_scenario().on_new_cycle(self)
+	
+	
+func _on_simulation_reset() -> void:
+	money_display.text = "$" + str(GameState.money)
+	
 	
 
 
@@ -88,7 +122,26 @@ func _on_tutorial_closed():
 	
 	
 func _on_puzzle_completed():
+	result_screen.set_before(GameState.money)
+	result_screen.set_cost(GameState.money - projected_money)
+	
+	var money_before_reward: int = projected_money
+	GameState.get_scenario().on_win(self)
+	result_screen.set_reward(projected_money - money_before_reward)
+	
+	result_screen.set_after(projected_money)
+	result_screen.visible = true
+	
+func _on_result_accepted() ->  void:
+	GameState.money = projected_money
 	SceneManager.switch_scene(Consts.REWARD)
+	
+	pass
+	
+func _on_result_rejected() -> void:
+	result_screen.visible = false
+	factory_floor.reset_to_start_of_run()
+	pass
 
 
 

@@ -47,8 +47,10 @@ func load_from_save_dict(_save_dict: Dictionary) -> void:
 	
 func _on_new_machine_upgrade_pressed(machine_upgrade: NewMachine):
 	GameState.add_machine(machine_upgrade)
+	GameState.generate_scenario()
 	SceneManager.switch_scene(Consts.FACTORY)
 	
 func _on_machine_improvement_upgrade_pressed(upgrade: MachineImprovement):
 	GameState.improve_machine(upgrade)
+	GameState.generate_scenario()
 	SceneManager.switch_scene(Consts.FACTORY)

@@ -21,6 +21,10 @@ static func create_from_save(save_dict: Dictionary) -> Goal:
 	new_goal.load_save_dict(save_dict)
 	return new_goal
 	
+func copy() -> Goal:
+	var save_dict: Dictionary = get_save_dict()
+	return Goal.create_from_save(save_dict)
+	
 func set_plan(new_plan: Assembly) -> void:
 	plan = new_plan
 	plan.affected_by_machines = false

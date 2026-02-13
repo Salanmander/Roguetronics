@@ -23,8 +23,11 @@ const PLACE_TRACK = 6
 const PLACE_CRANE = 7
 const DELETE = 8
 
-signal element_selected(selected)
+signal element_selected(selected: Machine)
+signal simulation_reset()
+signal simulation_cycle_end()
 signal simulation_started()
+signal first_cycle_started()
 signal won()
 
 var selected: int = FLOOR_TILE
@@ -48,6 +51,7 @@ var track_start_square: Vector2i
 
 var starting_assemblies: Array[Assembly]
 
+
 var goal: Goal
 
 var run: bool = false
@@ -68,9 +72,7 @@ func _ready():
 	walls = []
 	current_track = null
 
-	make_random_goal()
-	
-	
+	add_goals_from_scenario()
 	
 	
 	pass # Replace with function body.
@@ -86,6 +88,7 @@ func _physics_process(delta: float):
 		
 		# Initial frame. Do first dispense and save initial state
 		if cycle == -1:
+			
 			for assembly: Assembly in assemblies:
 				starting_assemblies.append(assembly.clone())
 			
@@ -94,6 +97,7 @@ func _physics_process(delta: float):
 					machine.do_dispense()
 				
 			cycle = 0
+			first_cycle_started.emit()
 			return
 		
 		cycle += delta / cycle_time
@@ -104,6 +108,7 @@ func _physics_process(delta: float):
 			if machine is Combiner:
 				machine.run_to(cycle)
 		
+		# This runs if it's the first update of the cycle
 		var cycle_fraction = fmod(cycle, 1)
 		if cycle - last_cycle >= cycle_fraction:
 			goal.check_against(assemblies)
@@ -123,6 +128,7 @@ func _physics_process(delta: float):
 		# This runs if it's the *last* update before the end
 		# of the cycle
 		if cycle - last_cycle >= (1-cycle_fraction):
+			simulation_cycle_end.emit()
 			for assembly: Assembly in assemblies:
 				assembly.snap_to_grid()
 			for machine: Machine in machines:
@@ -133,6 +139,7 @@ func _physics_process(delta: float):
 		last_cycle = cycle
 		
 	pass
+	
 	
 
 #endregion
@@ -405,14 +412,20 @@ func add_machine(new_machine: Machine) -> void:
 		assert(false, "Tried to add machine that shouldn't be added")
 	
 	
-func add_goal(new_goal: Goal):
+func add_goal(new_goal: Goal) -> void:
 	if(goal):
 		goal.queue_free()
 	goal = new_goal
 	add_child(goal)
 	goal.completed.connect(_on_goal_completed.bind(goal))
 	
-func make_random_goal():
+func add_goals_from_scenario() -> void:
+	var goals: Array[Goal] = GameState.get_scenario().get_goals()
+	for new_goal: Goal in goals:
+		new_goal.set_goal_position(map_to_local(Vector2i(10, 2)))
+		add_goal(new_goal)
+	
+func make_random_goal() -> void:
 	
 	var new_goal: Goal = PuzzleManager.get_random_goal()
 	new_goal.set_goal_position(map_to_local(Vector2i(10, 2)))
@@ -442,15 +455,20 @@ func remove_machines(machine_position: Vector2, machine_layer: int):
 	
 #region Resetting
 
-func win():
+func win() -> void:
+	pause()
 	won.emit()
+	
 
 # TODO: improve the crash, give visual indicator of the thing that caused
 # the crash
-func crash():
+func crash() -> void:
 	run = false
 	crashed = true
 	modulate = Color(1, 0.6, 0.6, 1)
+	
+func pause() -> void:
+	run = false
 
 func reset_to_start_of_run():
 	delete_assemblies()
@@ -470,8 +488,9 @@ func reset_to_start_of_run():
 		machine.reset()
 		
 	goal.reset()
+	simulation_reset.emit()
 	
-	_on_pause_pressed()
+	pause()
 
 
 func delete_assemblies():
@@ -570,7 +589,7 @@ func _on_assembly_delete(deleted: Assembly):
 # should the goal object keep track of how many things it needs?
 # Should it still send the number completed?
 func _on_goal_completed(_goal: Goal):
-	won.emit()
+	win()
 	
 func _on_dispense(loc: Vector2, init_widget_type: int):
 	make_widget(local_to_map(loc), init_widget_type)
@@ -638,7 +657,7 @@ func _on_fast_pressed(speedup: int) -> void:
 
 
 func _on_pause_pressed() -> void:
-	run = false
+	pause()
 
 	
 
@@ -655,7 +674,8 @@ func _on_clear_pressed():
 	reset_to_start_of_run()
 	
 func _on_new_puzzle_pressed():
-	make_random_goal()
+	GameState.generate_scenario()
+	add_goals_from_scenario()
 	
 	
 func _on_save_pressed() -> void:

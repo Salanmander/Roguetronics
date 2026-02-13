@@ -4,6 +4,10 @@ const MAIN_MENU: int = 0
 const FACTORY: int = 1
 const REWARD: int = 2
 
+const VERSION_MAJOR = 0
+const VERSION_MINOR = 1
+const VERSION_BUILD = 1
+
 
 const SCENE_FILES: Dictionary = {
 	Consts.MAIN_MENU: "res://Menu/main_menu.tscn",

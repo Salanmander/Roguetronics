@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://dksdy6hagfrlo"]
+[gd_scene load_steps=19 format=3 uid="uid://dksdy6hagfrlo"]
 
 [ext_resource type="Script" path="res://Factory/factory.gd" id="1_ajpdm"]
 [ext_resource type="Texture2D" uid="uid://c75ii64xae637" path="res://Factory/icon.png" id="1_uqvcs"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://bqsb5r8n4oaa" path="res://Factory/floor.png" id="3_dkgit"]
 [ext_resource type="Script" path="res://Factory/factory_floor.gd" id="3_ulfng"]
 [ext_resource type="Texture2D" uid="uid://dpvqigf2ldir8" path="res://icon.svg" id="4_fq6om"]
+[ext_resource type="PackedScene" uid="uid://ceos3wf8l8y6l" path="res://Factory/ResultScreen/result_screen.tscn" id="7_ixyht"]
 [ext_resource type="Script" path="res://Factory/UI/dispenser_controls.gd" id="9_p24vu"]
 [ext_resource type="Script" path="res://Factory/UI/crane_controls.gd" id="10_5vdjy"]
 [ext_resource type="Script" path="res://Factory/UI/crane_program.gd" id="11_wqryl"]
@@ -20,6 +21,9 @@ border_width_right = 10
 border_width_bottom = 10
 border_color = Color(0.129412, 0.129412, 0.129412, 1)
 border_blend = true
+
+[sub_resource type="LabelSettings" id="LabelSettings_k65vi"]
+font_size = 33
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fyd2g"]
 texture = ExtResource("3_dkgit")
@@ -266,6 +270,17 @@ offset_right = 165.0
 offset_bottom = 523.0
 theme_override_constants/separation = 0
 script = ExtResource("12_vgtn5")
+
+[node name="ResultScreen" parent="UILayer" instance=ExtResource("7_ixyht")]
+visible = false
+
+[node name="MoneyDisplay" type="Label" parent="UILayer"]
+offset_left = 23.0
+offset_top = 18.0
+offset_right = 149.0
+offset_bottom = 71.0
+text = "$100"
+label_settings = SubResource("LabelSettings_k65vi")
 
 [node name="FactoryLayer" type="CanvasLayer" parent="."]
 layer = -2

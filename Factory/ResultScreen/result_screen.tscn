@@ -1,0 +1,97 @@
+[gd_scene load_steps=3 format=3 uid="uid://ceos3wf8l8y6l"]
+
+[ext_resource type="Script" path="res://Factory/ResultScreen/result_screen.gd" id="1_icbno"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pgxeq"]
+bg_color = Color(0.169245, 0.169245, 0.169245, 1)
+
+[node name="ResultScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_icbno")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 273.0
+offset_top = 136.0
+offset_right = -389.0
+offset_bottom = -354.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pgxeq")
+
+[node name="BeforeLabel" type="Label" parent="Panel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 272.0
+offset_top = 62.0
+offset_right = -286.0
+offset_bottom = 123.0
+grow_horizontal = 2
+text = "Money before run: "
+
+[node name="CostLabel" type="Label" parent="Panel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 271.0
+offset_top = 114.0
+offset_right = -271.0
+offset_bottom = 175.0
+grow_horizontal = 2
+text = "Cost of run:"
+
+[node name="RewardLabel" type="Label" parent="Panel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 269.0
+offset_top = 172.0
+offset_right = -289.0
+offset_bottom = 233.0
+grow_horizontal = 2
+text = "Reward money:"
+
+[node name="AfterLabel" type="Label" parent="Panel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 269.0
+offset_top = 225.0
+offset_right = -289.0
+offset_bottom = 286.0
+grow_horizontal = 2
+text = "Money after run:"
+
+[node name="AcceptButton" type="Button" parent="Panel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 310.0
+offset_top = 275.0
+offset_right = -515.0
+offset_bottom = 306.0
+grow_horizontal = 2
+text = "Accept"
+
+[node name="TryAgainButton" type="Button" parent="Panel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 451.0
+offset_top = 273.0
+offset_right = -335.0
+offset_bottom = 304.0
+grow_horizontal = 2
+text = "Keep Trying"
+
+[connection signal="pressed" from="Panel/AcceptButton" to="." method="_on_accept_button_pressed"]
+[connection signal="pressed" from="Panel/TryAgainButton" to="." method="_on_try_again_button_pressed"]
