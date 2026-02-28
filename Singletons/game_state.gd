@@ -8,6 +8,7 @@ var upgrades: UpgradeTree
 var money: int
 const starting_money: int = 100
 var scenario: Scenario
+var scenario_number: int
 
 
 
@@ -36,7 +37,8 @@ func _ready():
 	
 	if(upgrade_to_get):
 		add_machine(upgrade_to_get)
-		
+	
+	scenario_number = 1
 	generate_scenario()
 		
 func reset_machines() -> void:
@@ -78,7 +80,13 @@ func improve_machine(improvement: MachineImprovement, mark_in_tree: bool = true)
 
 #endregion
 
+func set_money(new_money: int) -> void:
+	money = new_money
+
 #region scenarios
+
+func increment_scenario() -> void:
+	scenario_number += 1
 
 func get_scenario() -> Scenario:
 	return scenario
@@ -86,8 +94,8 @@ func get_scenario() -> Scenario:
 func generate_scenario() -> void:
 	var goal: Goal = PuzzleManager.get_random_goal()
 	scenario = Scenario.create(goal)
-	var cost_per_cycle: Effect = MoneyChange.create(-3)
-	var reward: Effect = MoneyChange.create(100)
+	var cost_per_cycle: Effect = MoneyChange.create(-3 * scenario_number)
+	var reward: Effect = MoneyChange.create(100 * goal.get_value())
 	scenario.add_cycle_effect(cost_per_cycle)
 	scenario.add_win_effect(reward)
 

@@ -133,7 +133,8 @@ func _on_puzzle_completed():
 	result_screen.visible = true
 	
 func _on_result_accepted() ->  void:
-	GameState.money = projected_money
+	GameState.set_money(projected_money)
+	GameState.increment_scenario()
 	SceneManager.switch_scene(Consts.REWARD)
 	
 	pass
@@ -147,4 +148,5 @@ func _on_result_rejected() -> void:
 
 
 func _on_win_pressed():
-	SceneManager.switch_scene(Consts.REWARD)
+	_on_first_cycle_started()
+	_on_puzzle_completed()

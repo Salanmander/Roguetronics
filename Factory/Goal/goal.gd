@@ -7,6 +7,9 @@ var copies_made: int = 0
 var copies_needed: int = 3
 signal completed()
 
+# A money value related to the complexity of the goal.
+var base_value: int
+
 var LAYER = 0
 
 #region constructors
@@ -31,6 +34,7 @@ func set_plan(new_plan: Assembly) -> void:
 	plan.set_monitorable(false)
 	add_child(plan)
 	plan.perfect_overlap.connect(_on_perfect_overlap)
+	calculate_value()
 	
 
 func set_parameters(init_position:Vector2):
@@ -68,18 +72,36 @@ func load_save_dict(save_dict: Dictionary) -> void:
 
 #endregion
 	
+func calculate_value() -> void:
+	var widgets: Array[Widget] = plan.get_widgets()
+	
+	var widget_types: Array[int] = []
+	for widget: Widget in widgets:
+		if not widget.get_type() in widget_types:
+			widget_types.append(widget.get_type())
+	
+	base_value = widgets.size() * widget_types.size()
+	
+func get_value() -> int:
+	return base_value
+	
+	
+
 func set_goal_position(new_position: Vector2):
 	plan.set_plan_position(new_position)
 	
 	
 func add_widget(init_position:Vector2, widget_type:int):
 	plan.add_widget(init_position, widget_type)
+	calculate_value()
 
 func add_widget_object(new_widget:Widget):
 	plan.add_widget_object(new_widget)
+	calculate_value()
 	
 func add_link(p1: Vector2, p2: Vector2):
 	plan.add_link(p1, p2)
+	calculate_value()
 	
 func check_against(others: Array[Assembly]):
 	plan.check_for_overlap_with(others)
