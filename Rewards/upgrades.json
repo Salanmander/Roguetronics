@@ -25,6 +25,12 @@
 		"callback":"enable_very_widget",
 		"icon":"res://Factory/Machine/Dispenser/dispenser_verywidget.png"
 		},
+	"4":
+		{
+		"type":"new",
+		"machine":"res://Factory/Machine/StarMaker/star_maker_prototype.gd",
+		"icon":"res://Factory/Machine/StarMaker/StarMaker.png"
+		},
 		
 	
 }

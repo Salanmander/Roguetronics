@@ -6,6 +6,7 @@ var plan:Assembly
 var copies_made: int = 0
 var copies_needed: int = 3
 signal completed()
+signal assembly_sent(sent: Assembly)
 
 # A money value related to the complexity of the goal.
 var base_value: int
@@ -73,18 +74,11 @@ func load_save_dict(save_dict: Dictionary) -> void:
 #endregion
 	
 func calculate_value() -> void:
-	var widgets: Array[Widget] = plan.get_widgets()
 	
-	var widget_types: Array[int] = []
-	for widget: Widget in widgets:
-		if not widget.get_type() in widget_types:
-			widget_types.append(widget.get_type())
-	
-	base_value = widgets.size() * widget_types.size()
+	base_value = plan.get_value()
 	
 func get_value() -> int:
 	return base_value
-	
 	
 
 func set_goal_position(new_position: Vector2):
@@ -107,6 +101,7 @@ func check_against(others: Array[Assembly]):
 	plan.check_for_overlap_with(others)
 	
 func _on_perfect_overlap(other:Assembly):
+	assembly_sent.emit(other)
 	other.delete_widgets()
 	other.delete()
 	copies_made += 1

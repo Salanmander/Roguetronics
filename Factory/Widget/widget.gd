@@ -10,6 +10,8 @@ var type: int = -1
 
 var parent_assembly: Assembly
 
+# variables about how widgets have been modified
+var starred: bool = false
 
 # Contains nearby areas that are *not* part of the same Assembly
 var nearby_areas: Array[Area2D]
@@ -23,18 +25,10 @@ signal layer_changed(new_layer: int)
 signal deleted(this_widget:Widget)
 
 
-# 3x3 array. Contains 1 if the widget can move in that direction this cycle,
-# -1 if not, 0 if not certain. This is set by
-# the assembly, and includes information from the whole
-# assembly.
-var mobility:Array[Array]
-
 #region constructors
 
 func _init():
-	mobility = [[0, 0, 0],
-				[0, 0, 0],
-				[0, 0, 0]]
+	pass
 
 static func create(init_position: Vector2, widget_type: int) -> Widget:
 	var new_widget: Widget = widget_packed.instantiate()
@@ -84,6 +78,17 @@ func set_type(widget_type: int):
 	
 func get_type() -> int:
 	return type
+
+
+func get_value() -> int:
+	return 1
+	
+func is_starred() -> bool:
+	return starred
+	
+func add_star() -> void:
+	starred = true
+	$StarSprite.visible = true
 	
 	
 #region Mobility

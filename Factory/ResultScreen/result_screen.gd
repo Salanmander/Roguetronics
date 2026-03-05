@@ -3,6 +3,7 @@ class_name ResultScreen
 
 @onready var before_label = $Panel/BeforeLabel
 @onready var cost_label = $Panel/CostLabel
+@onready var income_label = $Panel/IncomeLabel
 @onready var reward_label = $Panel/RewardLabel
 @onready var after_label = $Panel/AfterLabel
 
@@ -24,6 +25,10 @@ func set_before(value: int) -> void:
 func set_cost(value: int) -> void:
 	var prefix: String = "Cost of run: $"
 	cost_label.text = prefix + str(value)
+	
+func set_income(value: int) -> void:
+	var prefix: String = "Income during run: $"
+	income_label.text = prefix + str(value)
 	
 func set_reward(value: int) -> void:
 	var prefix: String = "Reward: $"

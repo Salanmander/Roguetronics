@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://drps8ck7os7j6"]
+[gd_scene load_steps=4 format=3 uid="uid://drps8ck7os7j6"]
 
 [ext_resource type="Script" path="res://Factory/Widget/widget.gd" id="1_rtf7s"]
+[ext_resource type="Texture2D" uid="uid://57g4aegit86f" path="res://Factory/Machine/StarMaker/StarMakerActivated.png" id="2_1tv12"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5pqkx"]
 size = Vector2(128, 128)
@@ -13,3 +14,9 @@ script = ExtResource("1_rtf7s")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_5pqkx")
+
+[node name="StarSprite" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(-40.5, -40.5)
+scale = Vector2(0.367188, 0.367188)
+texture = ExtResource("2_1tv12")

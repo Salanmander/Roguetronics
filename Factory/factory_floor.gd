@@ -21,13 +21,15 @@ const PLACE_DISPENSER = 4
 const PLACE_WALL = 5
 const PLACE_TRACK = 6
 const PLACE_CRANE = 7
-const DELETE = 8
+const PLACE_STAR_MAKER = 8
+const DELETE = -1
 
 signal element_selected(selected: Machine)
 signal simulation_reset()
 signal simulation_cycle_end()
 signal simulation_started()
 signal first_cycle_started()
+signal assembly_sent(sent: Assembly)
 signal won()
 
 var selected: int = FLOOR_TILE
@@ -247,6 +249,10 @@ func _unhandled_input(event: InputEvent):
 			make_dispenser(grid_loc, widget_type)
 			
 			pass
+		elif(click_mode == PLACE_STAR_MAKER):
+			make_star_maker(grid_loc)
+			
+			pass
 		elif(click_mode == PLACE_WALL):
 			make_wall(grid_loc)
 			
@@ -349,6 +355,14 @@ func add_belt(new_belt: Belt) -> void:
 	machines.append(new_belt)
 	add_child(new_belt)
 	
+func make_star_maker(grid_position: Vector2i) -> void:
+	var star_maker_position: Vector2 = map_to_local(grid_position)
+	var new_star_maker: StarMaker = StarMaker.create(star_maker_position)
+	add_star_maker(new_star_maker)
+	
+func add_star_maker(new_star_maker: StarMaker) -> void:
+	add_child(new_star_maker)
+	machines.append(new_star_maker)
 	
 func make_dispenser(grid_position: Vector2i, dispense_type: int) -> void:
 	var dispenser_position: Vector2 = map_to_local(grid_position)
@@ -418,6 +432,7 @@ func add_goal(new_goal: Goal) -> void:
 	goal = new_goal
 	add_child(goal)
 	goal.completed.connect(_on_goal_completed.bind(goal))
+	goal.assembly_sent.connect(_on_assembly_sent)
 	
 func add_goals_from_scenario() -> void:
 	var goals: Array[Goal] = GameState.get_scenario().get_goals()
@@ -590,6 +605,9 @@ func _on_assembly_delete(deleted: Assembly):
 # Should it still send the number completed?
 func _on_goal_completed(_goal: Goal):
 	win()
+
+func _on_assembly_sent(sent: Assembly) -> void:
+	assembly_sent.emit(sent)
 	
 func _on_dispense(loc: Vector2, init_widget_type: int):
 	make_widget(local_to_map(loc), init_widget_type)
@@ -614,6 +632,8 @@ func _on_place_dispenser_pressed(type: int):
 	widget_type = type
 	pass # Replace with function body.
 
+func _on_place_star_pressed():
+	click_mode = PLACE_STAR_MAKER
 	
 func _on_place_combiner_pressed():
 	click_mode = PLACE_COMBINER

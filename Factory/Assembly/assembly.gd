@@ -380,7 +380,19 @@ func matches(other: Assembly):
 
 #endregion
 			
-		
+
+func get_value() -> int:
+	var widget_total: int = 0
+	var widget_types: Array[int] = []
+	var star_multiplier: int = 1
+	for widget: Widget in widgets:
+		widget_total += widget.get_value()
+		if widget.is_starred():
+			star_multiplier *= 2
+		if not widget.get_type() in widget_types:
+			widget_types.append(widget.get_type())
+	
+	return widget_total * widget_types.size() * star_multiplier
 	
 func _on_nudged_toward_direction(dir: Vector2, delta: Vector2):
 	var angle_between = delta.angle_to(dir)

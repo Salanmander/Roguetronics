@@ -32,9 +32,9 @@ layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_left = 272.0
-offset_top = 62.0
+offset_top = 10.0
 offset_right = -286.0
-offset_bottom = 123.0
+offset_bottom = 71.0
 grow_horizontal = 2
 text = "Money before run: "
 
@@ -43,20 +43,31 @@ layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_left = 271.0
-offset_top = 114.0
+offset_top = 62.0
 offset_right = -271.0
-offset_bottom = 175.0
+offset_bottom = 123.0
 grow_horizontal = 2
 text = "Cost of run:"
+
+[node name="IncomeLabel" type="Label" parent="Panel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 268.0
+offset_top = 117.0
+offset_right = -193.0
+offset_bottom = 178.0
+grow_horizontal = 2
+text = "Income during run:"
 
 [node name="RewardLabel" type="Label" parent="Panel"]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_left = 269.0
-offset_top = 172.0
+offset_top = 169.0
 offset_right = -289.0
-offset_bottom = 233.0
+offset_bottom = 230.0
 grow_horizontal = 2
 text = "Reward money:"
 
@@ -65,9 +76,9 @@ layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_left = 269.0
-offset_top = 225.0
+offset_top = 222.0
 offset_right = -289.0
-offset_bottom = 286.0
+offset_bottom = 283.0
 grow_horizontal = 2
 text = "Money after run:"
 

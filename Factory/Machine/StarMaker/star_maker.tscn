@@ -1,0 +1,20 @@
+[gd_scene load_steps=5 format=3 uid="uid://duygjgakup5k0"]
+
+[ext_resource type="Script" path="res://Factory/Machine/StarMaker/star_maker.gd" id="1_kses4"]
+[ext_resource type="Texture2D" uid="uid://desv3r88vvp3h" path="res://Factory/Machine/StarMaker/StarMaker.png" id="2_kg05k"]
+[ext_resource type="Texture2D" uid="uid://57g4aegit86f" path="res://Factory/Machine/StarMaker/StarMakerActivated.png" id="3_0si4w"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hbb86"]
+
+[node name="StarMaker" type="Area2D"]
+script = ExtResource("1_kses4")
+
+[node name="DormantSprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_kg05k")
+
+[node name="ActivatedSprite" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("3_0si4w")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_hbb86")

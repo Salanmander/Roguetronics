@@ -10,7 +10,8 @@ class_name Factory
 
 var projected_money: int
 var reward: int
-var run_cost: int
+var during_run_costs: int
+var during_run_income: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -22,6 +23,7 @@ func _ready():
 	factory_floor.first_cycle_started.connect(_on_first_cycle_started)
 	factory_floor.simulation_cycle_end.connect(_on_simulation_cycle_end)
 	factory_floor.simulation_reset.connect(_on_simulation_reset)
+	factory_floor.assembly_sent.connect(_on_assembly_sent)
 	factory_floor.won.connect(_on_puzzle_completed)
 	
 	result_screen.result_accepted.connect(_on_result_accepted)
@@ -66,6 +68,10 @@ func _process(_delta):
 func change_projected_money(delta: int) -> void:
 	projected_money += delta
 	money_display.text = "$" + str(projected_money)
+	if delta < 0:
+		during_run_costs -= delta
+	else:
+		during_run_income += delta
 	
 	
 func hide_all_controls():
@@ -99,6 +105,8 @@ func _on_element_selected(element):
 		
 func _on_first_cycle_started() -> void:
 	projected_money = GameState.money
+	during_run_costs = 0
+	during_run_income = 0
 	
 	
 func _on_simulation_started():
@@ -120,13 +128,19 @@ func _on_tutorial_button_pressed():
 func _on_tutorial_closed():
 	$TutorialPanel.visible = false
 	
+# TODO: do I want to handle this with a scenario effect rather
+# than hard-coding it?
+func _on_assembly_sent(sent: Assembly) -> void:
+	change_projected_money(sent.get_value())
+	
 	
 func _on_puzzle_completed():
 	result_screen.set_before(GameState.money)
-	result_screen.set_cost(GameState.money - projected_money)
+	result_screen.set_cost(during_run_costs)
+	result_screen.set_income(during_run_income)
 	
 	var money_before_reward: int = projected_money
-	GameState.get_scenario().on_win(self)
+	GameState.get_scenario().on_win(self) 
 	result_screen.set_reward(projected_money - money_before_reward)
 	
 	result_screen.set_after(projected_money)
