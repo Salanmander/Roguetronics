@@ -1,5 +1,7 @@
 
 
+# Display
+* Each element is displayed on a certain layer. [[List of Factory Element Layers]]
 
 # Resetting to pre-run
 * Copies of assemblies are stored in `starting_assemblies`, and reset to that.
