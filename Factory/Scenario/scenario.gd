@@ -44,6 +44,16 @@ func on_new_cycle(factory: Factory) -> void:
 func on_win(factory: Factory) -> void:
 	for effect: Effect in win_effects:
 		effect.apply(factory)
+		
+		
+func get_cycle_delta() -> int:
+	var cycle_delta: int = 0
+	for effect: Effect in cycle_effects:
+		if effect is MoneyChange:
+			cycle_delta += effect.money_delta
+	
+	return cycle_delta
+			
 	
 
 	

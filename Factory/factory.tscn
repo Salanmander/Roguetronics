@@ -282,6 +282,14 @@ offset_bottom = 71.0
 text = "$100"
 label_settings = SubResource("LabelSettings_k65vi")
 
+[node name="CycleCostDisplay" type="Label" parent="UILayer"]
+offset_left = 24.0
+offset_top = 65.0
+offset_right = 150.0
+offset_bottom = 118.0
+text = "-$100 per cycle"
+label_settings = SubResource("LabelSettings_k65vi")
+
 [node name="FactoryLayer" type="CanvasLayer" parent="."]
 layer = -2
 scale = Vector2(0.4, 0.4)

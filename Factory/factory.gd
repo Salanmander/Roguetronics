@@ -5,6 +5,7 @@ class_name Factory
 @onready var dispenser_control: DispenserControl = $UILayer/MachineControls/DispenserControl
 @onready var crane_control: CraneControl = $UILayer/MachineControls/CraneControl
 @onready var money_display: Label = $UILayer/MoneyDisplay
+@onready var cycle_cost_display: Label = $UILayer/CycleCostDisplay
 @onready var result_screen: ResultScreen = $UILayer/ResultScreen
 
 
@@ -48,6 +49,15 @@ func _ready():
 			
 	
 	money_display.text = "$" + str(GameState.money)
+	
+	
+	var cycle_delta: int = GameState.get_scenario().get_cycle_delta()
+	var sign_str: String = "-"
+	if cycle_delta > 0:
+		sign_str = "+"
+	elif cycle_delta == 0:
+		sign_str = ""
+	cycle_cost_display.text = sign_str + "$" + str(abs(cycle_delta)) + " per cycle"
 	pass # Replace with function body.
 	
 func _unhandled_input(event: InputEvent):
@@ -72,6 +82,9 @@ func change_projected_money(delta: int) -> void:
 		during_run_costs -= delta
 	else:
 		during_run_income += delta
+		
+	if projected_money < 0:
+		factory_floor.crash()
 	
 	
 func hide_all_controls():
