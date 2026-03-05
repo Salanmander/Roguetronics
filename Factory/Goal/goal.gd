@@ -4,7 +4,7 @@ class_name Goal
 var plan:Assembly
 
 var copies_made: int = 0
-var copies_needed: int = 3
+var copies_needed: int = 10
 signal completed()
 signal assembly_sent(sent: Assembly)
 

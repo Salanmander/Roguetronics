@@ -94,8 +94,8 @@ func get_scenario() -> Scenario:
 func generate_scenario() -> void:
 	var goal: Goal = PuzzleManager.get_random_goal()
 	scenario = Scenario.create(goal)
-	var cost_per_cycle: Effect = MoneyChange.create(-3 * scenario_number)
-	var reward: Effect = MoneyChange.create(100 * goal.get_value())
+	var cost_per_cycle: Effect = MoneyChange.create(-3 * scenario_number**2)
+	var reward: Effect = MoneyChange.create(10 * goal.get_value())
 	scenario.add_cycle_effect(cost_per_cycle)
 	scenario.add_win_effect(reward)
 
