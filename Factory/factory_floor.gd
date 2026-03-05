@@ -188,8 +188,7 @@ func _unhandled_input(event: InputEvent):
 				
 			
 		elif(click_mode == PLACE_CONVEYOR):
-			# TODO: have framework for getting layer of thing to add
-			remove_machines(thing_position, 0)
+			remove_machines(thing_position, Belt.LAYER)
 			make_belt(grid_loc, conveyor_direction)
 			
 		elif(click_mode == PLACE_THING):
@@ -250,6 +249,8 @@ func _unhandled_input(event: InputEvent):
 			
 			pass
 		elif(click_mode == PLACE_STAR_MAKER):
+			remove_star_makers()
+			remove_machines(thing_position, StarMaker.LAYER)
 			make_star_maker(grid_loc)
 			
 			pass
@@ -532,14 +533,20 @@ func delete_walls():
 			
 	
 		
-func remove_dispenser_type(widget_type: int):
+func remove_dispenser_type(widget_type: int) -> void:
 	
 	for machine: Machine in machines.duplicate():
 		if machine is Dispenser and machine.get_type() == widget_type:
 			machines.erase(machine)
 			machine.queue_free()
 	
-	pass
+
+func remove_star_makers() -> void:
+	
+	for machine: Machine in machines.duplicate():
+		if machine is StarMaker:
+			machines.erase(machine)
+			machine.queue_free()
 
 #endregion
 
