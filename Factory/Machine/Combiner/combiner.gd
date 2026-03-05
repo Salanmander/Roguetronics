@@ -6,9 +6,7 @@ class_name Combiner
 #  last_cycle:float
 
 
-# Could be refactored at some point so that it doesn't need to load these
-# textures multiple times. (Does that already get optimized out? Try it out,
-# and try making them static)
+# Note: resources loaded multiple times don't take additional memory
 var h_texture = load("res://Factory/Machine/Combiner/combiner_H.png")
 var v_texture = load("res://Factory/Machine/Combiner/combiner_V.png")
 static var combiner_packed: PackedScene = load("res://Factory/Machine/Combiner/combiner.tscn")
