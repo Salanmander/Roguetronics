@@ -199,6 +199,9 @@ func _unhandled_input(event: InputEvent):
 			# Delete machines
 			var removed_machines: Array[Machine] = []
 			for machine: Machine in machines:
+				if(machine is Track and machine.has_crane_at(grid_loc)):
+					machine.delete_crane_at(grid_loc)
+					
 				if(machine.position.is_equal_approx(thing_position) or 
 				   machine.position.distance_squared_to(event.position) < (Consts.GRID_SIZE/2) ** 2):
 					remove_child(machine)

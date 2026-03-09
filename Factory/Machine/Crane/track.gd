@@ -11,7 +11,7 @@ const arrow_color = Color(0.9, 0.9, 0)
 var points: Array[Vector2i] = []
 var looped: bool = false
 
-# Keys are crane objects, values are indices
+# Keys are crane objects, values are indices into the track points
 var cranes: Dictionary = {}
 
 const LAYER:int = 5
@@ -169,6 +169,19 @@ func has_crane_at(loc: Vector2i) -> bool:
 			return true
 	
 	return false
+	
+func delete_crane_at(loc: Vector2i) -> void:
+	var to_delete: Array[Crane] = []
+	for crane: Crane in cranes:
+		if points[cranes[crane]] == loc:
+			to_delete.append(crane)
+			
+	for crane:Crane in to_delete:
+		cranes.erase(crane)
+		remove_child(crane)
+		crane.queue_free()
+			
+	pass
 	
 func _on_crane_reset(track_index: int, crane: Crane):
 	var new_pos: Vector2 = Util.floor_map_to_local(points[track_index])
