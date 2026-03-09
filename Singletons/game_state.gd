@@ -110,6 +110,9 @@ func generate_scenario() -> void:
 #               vary with current scene
 # "upgrade_tree": dictionary given by the upgrade tree when asked
 #                 to save itself. Will be passed back to restore
+# "scenario": dictionary given by scenario object. This isn't always
+#             in active use, but we sometimes need to track it 
+#             between scenes, so it should always exist.
 	
 func save_to_disk() -> void:
 	var save_dict: Dictionary = {}
@@ -119,6 +122,7 @@ func save_to_disk() -> void:
 	save_dict["scene_index"] = Consts.SCENE_FROM_CLASS[current_scene_name]
 	save_dict["scene_data"] = current_scene.get_save_dict()
 	save_dict["upgrade_tree"] = upgrades.get_save_dict()
+	save_dict["scenario"] = scenario.get_save_dict()
 	save_dict["version"] = save_version
 	
 	var save_string: String = JSON.stringify(save_dict)
@@ -131,6 +135,8 @@ func load_from_disk() -> void:
 	var save_file: FileAccess = FileAccess.open(Consts.SAVE_FILENAME, FileAccess.READ)
 	var save_string: String = save_file.get_as_text()
 	var save_dict = JSON.parse_string(save_string)
+	
+	scenario = Scenario.create_from_save(save_dict["scenario"])
 	
 	# Loading in the upgrade tree just marks what upgrades have been gotten or not,
 	# it doesn't actually apply them. Need to get the upgrades and apply them

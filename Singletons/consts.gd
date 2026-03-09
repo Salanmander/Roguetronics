@@ -6,7 +6,7 @@ const REWARD: int = 2
 
 const VERSION_MAJOR = 0
 const VERSION_MINOR = 1
-const VERSION_BUILD = 1
+const VERSION_BUILD = 2
 
 
 const SCENE_FILES: Dictionary = {

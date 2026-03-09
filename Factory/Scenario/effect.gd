@@ -5,9 +5,12 @@ class_name Effect
 func _init() -> void:
 	pass
 
-static func create_from_save(_save_dict: Dictionary) -> Scenario:
-	assert(false, "Effect must implement create_from_save")
-	return Scenario.new()
+static func create_from_save(save_dict: Dictionary) -> Effect:
+	if(save_dict["type"] == "moneyChange"):
+		return MoneyChange.create_from_save(save_dict)
+		
+	assert(false, "Attempted to load invalid type of effect")
+	return Effect.new()
 
 func apply(_factory: Factory) -> void:
 	pass
