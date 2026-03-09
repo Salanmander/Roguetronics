@@ -12,6 +12,13 @@ static func create(init_position: Vector2) -> StarMaker:
 	var new_star: StarMaker = star_packed.instantiate()
 	new_star.set_parameters(init_position)
 	return new_star
+	
+	
+static func create_from_save(save_dict: Dictionary) -> StarMaker:
+	var new_star: StarMaker = star_packed.instantiate()
+	new_star.load_from_save(save_dict)
+	return new_star
+
 
 func set_parameters(init_position: Vector2) -> void:
 	set_machine_parameters(init_position, LAYER)
@@ -45,3 +52,17 @@ func run_to(cycle: float) -> void:
 	
 		
 	last_cycle = cycle
+	
+	
+#region saveAndLoad
+
+func get_save_dict() -> Dictionary:
+	var save_dict: Dictionary = {}
+	save_dict["type"] = "star"
+	save_dict["pos"] = var_to_str(position)
+	return save_dict
+	
+func load_from_save(save_dict: Dictionary) -> void:
+	set_parameters(str_to_var(save_dict["pos"]))
+
+#endregion

@@ -423,6 +423,8 @@ func add_machine(new_machine: Machine) -> void:
 		add_combiner(new_machine)
 	elif new_machine is Track:
 		add_track(new_machine)
+	elif new_machine is StarMaker:
+		add_star_maker(new_machine)
 	else:
 		assert(false, "Tried to add machine that shouldn't be added")
 	
