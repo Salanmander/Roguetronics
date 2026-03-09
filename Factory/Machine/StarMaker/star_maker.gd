@@ -31,7 +31,7 @@ func run_to(cycle: float) -> void:
 	
 	# When this is the first move of every fifth cycle
 	if cycle - last_cycle >= cycle_fraction:
-		if int(cycle) % 5 == 0:
+		if int(cycle) % 5 == 1:
 			$ActivatedSprite.visible = true
 			$DormantSprite.visible = false
 			for widget: Widget in nearby_widgets:

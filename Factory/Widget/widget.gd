@@ -81,7 +81,12 @@ func get_type() -> int:
 
 
 func get_value() -> int:
-	return 1
+	if type == 1:
+		return 2
+	elif type == 2:
+		return 3
+	else:
+		return 1
 	
 func is_starred() -> bool:
 	return starred

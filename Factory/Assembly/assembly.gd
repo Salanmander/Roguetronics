@@ -392,7 +392,7 @@ func get_value() -> int:
 		if not widget.get_type() in widget_types:
 			widget_types.append(widget.get_type())
 	
-	return widget_total * widget_types.size() * star_multiplier
+	return int(widget_total * sqrt(widgets.size()) * widget_types.size() * star_multiplier)
 	
 func _on_nudged_toward_direction(dir: Vector2, delta: Vector2):
 	var angle_between = delta.angle_to(dir)

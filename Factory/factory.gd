@@ -6,6 +6,7 @@ class_name Factory
 @onready var crane_control: CraneControl = $UILayer/MachineControls/CraneControl
 @onready var money_display: Label = $UILayer/MoneyDisplay
 @onready var cycle_cost_display: Label = $UILayer/CycleCostDisplay
+@onready var base_value_display: Label = $UILayer/BaseValueDisplay
 @onready var result_screen: ResultScreen = $UILayer/ResultScreen
 
 
@@ -58,7 +59,10 @@ func _ready():
 	elif cycle_delta == 0:
 		sign_str = ""
 	cycle_cost_display.text = sign_str + "$" + str(abs(cycle_delta)) + " per cycle"
-	pass # Replace with function body.
+	
+	var value: int = GameState.get_scenario().get_goals()[0].get_value()
+	base_value_display.text = "Goal value: $" + str(value)
+	
 	
 func _unhandled_input(event: InputEvent):
 	var exact_match: bool = true
@@ -85,6 +89,7 @@ func change_projected_money(delta: int) -> void:
 		
 	if projected_money < 0:
 		factory_floor.crash()
+		pass
 	
 	
 func hide_all_controls():

@@ -114,18 +114,6 @@ text = "Erase
 All"
 expand_icon = true
 
-[node name="TestFunction" type="Button" parent="UILayer/ButtonPanel"]
-visible = false
-layout_mode = 0
-offset_left = 64.0
-offset_top = 115.0
-offset_right = 130.0
-offset_bottom = 181.0
-action_mode = 0
-text = "Do The
-Thing"
-expand_icon = true
-
 [node name="NewPuzzle" type="Button" parent="UILayer/ButtonPanel"]
 layout_mode = 0
 offset_left = 1240.0
@@ -288,6 +276,14 @@ offset_top = 65.0
 offset_right = 150.0
 offset_bottom = 118.0
 text = "-$100 per cycle"
+label_settings = SubResource("LabelSettings_k65vi")
+
+[node name="BaseValueDisplay" type="Label" parent="UILayer"]
+offset_left = 24.0
+offset_top = 113.0
+offset_right = 260.0
+offset_bottom = 166.0
+text = "Goal value: $100"
 label_settings = SubResource("LabelSettings_k65vi")
 
 [node name="FactoryLayer" type="CanvasLayer" parent="."]
