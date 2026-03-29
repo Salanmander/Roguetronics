@@ -1,5 +1,66 @@
 extends Node
 
+
+var patterns: Dictionary 
+
+func _init() -> void:
+	var patterns_file: FileAccess = FileAccess.open(Consts.PATTERNS_FILENAME, FileAccess.READ)
+	var patterns_text: String = patterns_file.get_as_text()
+	patterns = JSON.parse_string(patterns_text)
+
+
+func get_goal_from_tier(tier: int) -> Goal:
+	
+	# patterns JSON has numbered tiers as strings for keys
+	var possible_patterns: Array = patterns[str(tier)]
+	
+	var pattern: Dictionary = possible_patterns.pick_random()
+	
+	return get_goal_from_pattern(pattern)
+	
+
+func get_goal_from_pattern(pattern: Dictionary) -> Goal:
+	var goal: Goal = Goal.create(Vector2(0,0))
+	
+	
+	# The value for the "types" key is an array of arrays. 
+	# Each array represents a pattern of widget types. Only one
+	# pattern should be used.
+	# Each element of one of the inner arrays
+	# is an int, where the same int just means it should be the
+	# same type of widget
+	var widget_types: Array = pattern["types"].pick_random()
+	
+	# TODO: fancier way of picking types of widgets?
+	widget_types = widget_types.map(func(x): return x+1)
+	
+	# ADD WIDGETS
+	# The value for the "widgets" key is an array. Each
+	# element is a 2-value array of ints representing the position
+	# of a widget, in grid location
+	var widgets: Array = pattern["widgets"]
+	for i in range(widgets.size()):
+		var loc: Array = widgets[i]
+		var loc_vector = Vector2(loc[0],loc[1])*Consts.GRID_SIZE
+		goal.add_widget(loc_vector, widget_types[i])
+		
+	
+	# ADD LINKS
+	# the value for the "links" key is an array. Each
+	# element represents one link. It is represented by
+	# a 2-element array of 2-element arrays, giving the starting
+	# and ending locations
+	var links: Array = pattern["links"]
+	for link: Array in links:
+		var loc1 = Vector2(link[0][0], link[0][1])*Consts.GRID_SIZE
+		var loc2 = Vector2(link[1][0], link[1][1])*Consts.GRID_SIZE
+		goal.add_link(loc1, loc2)
+		
+		
+	
+	return goal
+	
+
 func get_random_goal()-> Goal:
 	
 	# Check to see if combiner exists

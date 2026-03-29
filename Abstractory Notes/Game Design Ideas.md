@@ -1,0 +1,37 @@
+
+- What does the difficulty come from?
+	- Idea: Need to maintain money/hit goals.
+		- Pros:
+			- Some threat to each puzzle.
+			- Possibly more design space for rewards/machines.
+			- More game balance knobs to tweak.
+		- Cons:
+			- May feel artificial
+			- Game balance may be harder?
+	- Idea: Whether or not you're capable of solving the puzzle.
+		- Pros:
+			- More similar to zachtronics game flow
+			- Maybe more natural to the genre.
+			- Can implement this and see how it feels and all the work will be relevant.
+		- Cons:
+			- Feelsbad when you decide to quit a run because you can't find a solution.
+			- A powerful run rewards you with boring puzzles, I guess? Dunno how it would feel.
+- Difficulty tiers of goals
+	- Start by getting an upgrade, so first level is not always the same
+	- Tier 1:
+		- A - B - A
+		- Three As in an L
+		- 
+	- Tier 2:
+		- L with one different
+		- Monochrome tetrominos (O may miss one link)
+		- T with 2-long
+	- Tier 3:
+		- Half-and-half tetrominos (including middle half)
+		- T with different base and cross
+		- H
+	- Tier 4:
+		- 3x3 all links made, middle one different
+	- Tier 5:
+		- 3x3 spiral links
+		- F

@@ -40,7 +40,7 @@ func _ready():
 		var prototypes: Array[ButtonPrototype] = available.get_button_prototypes()
 		
 		for proto: ButtonPrototype in prototypes:
-			var button: Button = proto.get_button($FactoryLayer/FactoryFloor)
+			var button: Button = proto.get_button(factory_floor)
 			
 			var width: float = buttonContainer.size.x / buttonContainer.columns
 			var height: float = buttonContainer.size.y / 2
@@ -63,7 +63,17 @@ func _ready():
 	var value: int = GameState.get_scenario().get_goals()[0].get_value()
 	base_value_display.text = "Goal value: $" + str(value)
 	
+	# Make factory floor scale its size appropriately.
+	# Get viewport x/y size
+	var floor_view_x: int = get_window().size.x
+	floor_view_x -= $UILayer/MachineControls.size.x
+	var floor_view_y: int = get_window().size.y
+	floor_view_y -= $UILayer/ButtonPanel.size.y
+	factory_floor.set_view_size(Vector2i(floor_view_x, floor_view_y))
+	factory_floor.rescale_grid()
 	
+	
+
 func _unhandled_input(event: InputEvent):
 	var exact_match: bool = true
 	if event.is_action_pressed("save", exact_match):

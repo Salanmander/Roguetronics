@@ -4,6 +4,11 @@ extends Node
 var machines_available: Array[MachinePrototype]
 var upgrades: UpgradeTree
 
+# 2D array of booleans: true if that space is open on the factory, false
+# if not. Size should always be the minimum bounding box needed to contain
+# all the open factory space.
+var factory_space: Array[Array]
+
 # A start to run-long game mechanics.
 var money: int
 const starting_money: int = 100
@@ -28,15 +33,37 @@ func _ready():
 	
 	var upgrade_nodes: Array[Upgrade] = upgrades.get_upgrades_available()
 	# TODO: more elegant way to set an initial upgrade
-	var upgrade_to_get: Upgrade = null
+	var upgrades_to_get: Array[Upgrade] = []
 	for upgrade:Upgrade in upgrade_nodes:
 		if upgrade is NewMachine:
 			#print(upgrade.machine_type)
 			if upgrade.machine_type == "res://Factory/Machine/Dispenser/dispenser_prototype.gd":
-				upgrade_to_get = upgrade
+				upgrades_to_get.append(upgrade)
+			if upgrade.machine_type == "res://Factory/Machine/Combiner/combiner_prototype.gd":
+				upgrades_to_get.append(upgrade)
 	
-	if(upgrade_to_get):
-		add_machine(upgrade_to_get)
+	for upgrade: Upgrade in upgrades_to_get:
+		add_machine(upgrade)
+	
+	
+	upgrade_nodes = upgrades.get_upgrades_available()
+	upgrades_to_get = []
+	for upgrade:Upgrade in upgrade_nodes:
+		if upgrade is MachineImprovement:
+			if upgrade.machine_affected == "DispenserPrototype":
+				upgrades_to_get.append(upgrade)
+	
+	for upgrade: Upgrade in upgrades_to_get:
+		improve_machine(upgrade)
+		
+	var init_factory_width: int = 10
+	var init_factory_height: int = 8
+	factory_space = []
+	factory_space.resize(init_factory_width)
+	for x in range(init_factory_width):
+		factory_space[x].resize(init_factory_height)
+		for y in range(init_factory_height):
+			factory_space[x][y] = true
 	
 	scenario_number = 1
 	generate_scenario()
@@ -92,7 +119,8 @@ func get_scenario() -> Scenario:
 	return scenario
 
 func generate_scenario() -> void:
-	var goal: Goal = PuzzleManager.get_random_goal()
+	var goal_tier: int = min((scenario_number+1)/2,2)
+	var goal: Goal = PuzzleManager.get_goal_from_tier(goal_tier)
 	scenario = Scenario.create(goal)
 	var cost: int = int(-1 * scenario_number**(1.7))
 	var cost_per_cycle: Effect = MoneyChange.create(cost)

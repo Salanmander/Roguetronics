@@ -3,6 +3,8 @@ class_name FactoryFloor
 # Might be worth refactoring this at some point so that the tilemap
 # isn't the thing holding all the behavior.
 
+
+
 const FLOOR_LAYER = 0
 
 const CONVEYOR_TILE = 4
@@ -12,6 +14,7 @@ const CONVEYOR_LEFT_VARIANT = 2
 const CONVEYOR_RIGHT_VARIANT = 3
 
 const FLOOR_TILE = 0
+const WALL_TILE = 5
 
 const NONE = 0
 const PLACE_CONVEYOR = 1
@@ -31,6 +34,9 @@ signal simulation_started()
 signal first_cycle_started()
 signal assembly_sent(sent: Assembly)
 signal won()
+
+
+var view_size: Vector2i
 
 var selected: int = FLOOR_TILE
 var selected_variant: int = CONVEYOR_UP_VARIANT
@@ -64,20 +70,65 @@ var crashed: bool = false
 
 
 # Called when the node enters the scene tree for the first time.
-func _ready():
-	for x in range(50):
-		for y in range(40):
-			set_cell(Vector2i(x, y), FLOOR_TILE, Vector2i(0,0))
+func _ready() -> void:
+	
+	set_tile_textures()
+			
+	# Create
+	walls = []
 	
 	assemblies = []
 	machines = []
-	walls = []
 	current_track = null
+	
+	# view_size should always get set, but the parent needs to be
+	# ready before that happens.
 
 	add_goals_from_scenario()
 	
 	
 	pass # Replace with function body.
+	
+func set_tile_textures() -> void:
+	
+	var floor_space: Array[Array] = GameState.factory_space
+	for x in range(-15,30):
+		for y in range(-10, 20):
+			if x < 0 or y < 0:
+				set_cell(Vector2i(x, y), WALL_TILE, Vector2i(0,0))
+			elif(x >= floor_space.size() or y >= floor_space[0].size()):
+				set_cell(Vector2i(x, y), WALL_TILE, Vector2i(0,0))
+			else:
+				if(floor_space[x][y]):
+					set_cell(Vector2i(x, y), FLOOR_TILE, Vector2i(0,0))
+				else:
+					set_cell(Vector2i(x, y), WALL_TILE, Vector2i(0,0))
+
+#region screen scaling
+
+func set_view_size(size: Vector2i) -> void:
+	view_size = size
+	
+func rescale_grid() -> void:
+	var x_tiles: int = GameState.factory_space.size()
+	var y_tiles: int = GameState.factory_space[0].size()
+	
+	var x_factory_pixels: int = int((x_tiles) * Consts.GRID_SIZE)
+	var y_factory_pixels: int = int((y_tiles) * Consts.GRID_SIZE)
+	var buffer_pixels: int = int(2*Consts.GRID_SIZE)
+	
+	var x_max_scale = view_size.x/float(x_factory_pixels + buffer_pixels)
+	var y_max_scale = view_size.y/float(y_factory_pixels + buffer_pixels)
+	
+	scale = Vector2(1, 1) * min(x_max_scale, y_max_scale)
+	
+	var extra_pixels_x: int = view_size.x - int(x_factory_pixels*scale.x)
+	var extra_pixels_y: int = view_size.y - int(y_factory_pixels*scale.y)
+	position.x = (extra_pixels_x)/2
+	position.y = (extra_pixels_y)/2
+	
+
+#endregion
 
 #region process updates
 
@@ -605,6 +656,8 @@ func load_from_save_dict(save_dict: Dictionary):
 	pass
 
 #endregion
+
+
 
 #region button callbacks and signal connectors
 

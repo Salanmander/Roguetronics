@@ -107,9 +107,37 @@
               "icon": "lucide-file",
               "title": "Factory Floor"
             }
+          },
+          {
+            "id": "0267b21d36dfe738",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Game Design Ideas.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Game Design Ideas"
+            }
+          },
+          {
+            "id": "b31f815c26a9f1f2",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Next steps.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Next steps"
+            }
           }
         ],
-        "currentTab": 2
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -257,12 +285,14 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "c3c0a2d6ff9b2905",
+  "active": "b31f815c26a9f1f2",
   "lastOpenFiles": [
+    "Game Design Ideas.md",
+    "Next steps.md",
+    "Factory Floor.md",
     "List of Factory Element Layers.md",
     "Upgrade.md",
     "Prototypes.md",
-    "Factory Floor.md",
     "Saving system.md",
     "UpgradeTree.md",
     "GUT.md",

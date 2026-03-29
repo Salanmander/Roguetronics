@@ -288,11 +288,10 @@ label_settings = SubResource("LabelSettings_k65vi")
 
 [node name="FactoryLayer" type="CanvasLayer" parent="."]
 layer = -2
-scale = Vector2(0.4, 0.4)
-transform = Transform2D(0.4, 0, 0, 0.4, 0, 0)
 
 [node name="FactoryFloor" type="TileMapLayer" parent="FactoryLayer"]
 use_parent_material = true
+scale = Vector2(0.4, 0.4)
 tile_set = SubResource("TileSet_a558r")
 script = ExtResource("3_ulfng")
 

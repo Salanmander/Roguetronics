@@ -55,6 +55,7 @@ const SAVE_FILENAME = "default.sav"
 
 
 const UPGRADES_FILENAME = "res://Rewards/upgrades.json"
+const PATTERNS_FILENAME = "res://Singletons/PuzzleManager/goalDefs.json"
 
 func _init():
 	COMMAND_IMAGES.resize(NUM_CRANE_COMMANDS)
