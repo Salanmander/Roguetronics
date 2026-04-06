@@ -98,6 +98,8 @@ func add_star() -> void:
 	
 #region Mobility
 
+#BUG: overlaps are now getting an incorrect value, since I changed the scaling from
+# the factory layer to FactoryFloor
 func overlaps_can_move(ignore_nudges: bool = false) -> bool:
 	var this_shape: Shape2D = shape_owner_get_shape(0,0)
 	var this_transform: Transform2D = get_global_transform()

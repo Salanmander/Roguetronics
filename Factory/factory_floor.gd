@@ -73,6 +73,7 @@ var crashed: bool = false
 func _ready() -> void:
 	
 	set_tile_textures()
+	create_outer_walls()
 			
 	# Create
 	walls = []
@@ -103,32 +104,17 @@ func set_tile_textures() -> void:
 					set_cell(Vector2i(x, y), FLOOR_TILE, Vector2i(0,0))
 				else:
 					set_cell(Vector2i(x, y), WALL_TILE, Vector2i(0,0))
+					
 
-#region screen scaling
+func create_outer_walls() -> void:
+	
+	var floor_space: Array[Array] = GameState.factory_space
+	var wall_array: Array = []
+	
+	wall_array.resize(floor_space.size() + 2)
+	for x in range(wall_array.size()):
+		print(wall_array[x])
 
-func set_view_size(size: Vector2i) -> void:
-	view_size = size
-	
-func rescale_grid() -> void:
-	var x_tiles: int = GameState.factory_space.size()
-	var y_tiles: int = GameState.factory_space[0].size()
-	
-	var x_factory_pixels: int = int((x_tiles) * Consts.GRID_SIZE)
-	var y_factory_pixels: int = int((y_tiles) * Consts.GRID_SIZE)
-	var buffer_pixels: int = int(2*Consts.GRID_SIZE)
-	
-	var x_max_scale = view_size.x/float(x_factory_pixels + buffer_pixels)
-	var y_max_scale = view_size.y/float(y_factory_pixels + buffer_pixels)
-	
-	scale = Vector2(1, 1) * min(x_max_scale, y_max_scale)
-	
-	var extra_pixels_x: int = view_size.x - int(x_factory_pixels*scale.x)
-	var extra_pixels_y: int = view_size.y - int(y_factory_pixels*scale.y)
-	position.x = (extra_pixels_x)/2
-	position.y = (extra_pixels_y)/2
-	
-
-#endregion
 
 #region process updates
 

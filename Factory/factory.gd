@@ -9,6 +9,7 @@ class_name Factory
 @onready var base_value_display: Label = $UILayer/BaseValueDisplay
 @onready var result_screen: ResultScreen = $UILayer/ResultScreen
 
+var factory_view_size: Vector2i
 
 var projected_money: int
 var reward: int
@@ -69,10 +70,36 @@ func _ready():
 	floor_view_x -= $UILayer/MachineControls.size.x
 	var floor_view_y: int = get_window().size.y
 	floor_view_y -= $UILayer/ButtonPanel.size.y
-	factory_floor.set_view_size(Vector2i(floor_view_x, floor_view_y))
-	factory_floor.rescale_grid()
+	set_factory_view_size(Vector2i(floor_view_x, floor_view_y))
+	rescale_factory()
 	
+
+
+#region screen scaling
+
+func set_factory_view_size(size: Vector2i) -> void:
+	factory_view_size = size
 	
+func rescale_factory() -> void:
+	var x_tiles: int = GameState.factory_space.size()
+	var y_tiles: int = GameState.factory_space[0].size()
+	
+	var x_factory_pixels: int = int((x_tiles) * Consts.GRID_SIZE)
+	var y_factory_pixels: int = int((y_tiles) * Consts.GRID_SIZE)
+	var buffer_pixels: int = int(2*Consts.GRID_SIZE)
+	
+	var x_max_scale = factory_view_size.x/float(x_factory_pixels + buffer_pixels)
+	var y_max_scale = factory_view_size.y/float(y_factory_pixels + buffer_pixels)
+	
+	$FactoryLayer.scale = Vector2(1, 1) * min(x_max_scale, y_max_scale)
+	
+	var extra_pixels_x: int = factory_view_size.x - int(x_factory_pixels*$FactoryLayer.scale.x)
+	var extra_pixels_y: int = factory_view_size.y - int(y_factory_pixels*$FactoryLayer.scale.y)
+	$FactoryLayer.offset.x = (extra_pixels_x)/2
+	$FactoryLayer.offset.y = (extra_pixels_y)/2
+	
+
+#endregion
 
 func _unhandled_input(event: InputEvent):
 	var exact_match: bool = true

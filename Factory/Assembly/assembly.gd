@@ -37,6 +37,7 @@ func _init():
 	monitorable = true
 	layer_change_this_update = -1
 	
+	
 static func create(init_position: Vector2) -> Assembly:
 	var new_assembly: Assembly = Assembly.new()
 	new_assembly.position = init_position

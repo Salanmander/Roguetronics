@@ -291,7 +291,6 @@ layer = -2
 
 [node name="FactoryFloor" type="TileMapLayer" parent="FactoryLayer"]
 use_parent_material = true
-scale = Vector2(0.4, 0.4)
 tile_set = SubResource("TileSet_a558r")
 script = ExtResource("3_ulfng")
 
