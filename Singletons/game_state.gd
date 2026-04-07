@@ -132,6 +132,8 @@ func generate_scenario() -> void:
 
 #region saveAndLoad
 # Structure of dictionary that gets saved:
+# "factory_space": String for 2D array representing floor tiles of factory
+#                  (from var_to_str)
 # "scene_index": index of scene into Consts.SCENE_FILES.
 #                Used as input to SceneManger.switch_scene
 # "scene_data": dictionary given by the top-level scene node. Data will
@@ -147,6 +149,7 @@ func save_to_disk() -> void:
 	var current_scene: Node = get_tree().current_scene
 	var current_scene_name: String = current_scene.get_script().get_global_name()
 	#print(current_scene_name)
+	save_dict["factory_space"] = var_to_str(factory_space)
 	save_dict["scene_index"] = Consts.SCENE_FROM_CLASS[current_scene_name]
 	save_dict["scene_data"] = current_scene.get_save_dict()
 	save_dict["upgrade_tree"] = upgrades.get_save_dict()
@@ -163,6 +166,8 @@ func load_from_disk() -> void:
 	var save_file: FileAccess = FileAccess.open(Consts.SAVE_FILENAME, FileAccess.READ)
 	var save_string: String = save_file.get_as_text()
 	var save_dict = JSON.parse_string(save_string)
+	
+	factory_space = str_to_var(save_dict["factory_space"])
 	
 	scenario = Scenario.create_from_save(save_dict["scenario"])
 	
