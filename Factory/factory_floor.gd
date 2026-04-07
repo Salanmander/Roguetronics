@@ -109,11 +109,48 @@ func set_tile_textures() -> void:
 func create_outer_walls() -> void:
 	
 	var floor_space: Array[Array] = GameState.factory_space
-	var wall_array: Array = []
+	var wall_array: Array[Array] = []
 	
 	wall_array.resize(floor_space.size() + 2)
 	for x in range(wall_array.size()):
-		print(wall_array[x])
+		wall_array[x].resize(floor_space[0].size() + 2)
+		for y in range(wall_array[x].size()):
+			wall_array[x][y] = true
+	
+	# Make the Walls array be the inverse of the floor space array
+	for x in range(floor_space.size()):
+		for y in range(floor_space[0].size()):
+			if(floor_space[x][y]):
+				wall_array[x+1][y+1] = false
+				
+	# Remove any walls that aren't touching floor space
+	for x in range(wall_array.size()):
+		for y in range(wall_array[0].size()):
+			var near_floor: bool = false
+			for dx in [-1, 0, 1]:
+				for dy in [-1, 0, 1]:
+					var floor_x = x + dx - 1
+					var floor_y = y + dy - 1
+					if(floor_x < 0 or floor_x >= floor_space.size()):
+						continue
+					if(floor_y < 0 or floor_y >= floor_space[0].size()):
+						continue
+					if(floor_space[floor_x][floor_y]):
+						near_floor = true
+			
+			if(not near_floor):
+				wall_array[x][y] = false
+		
+	# Actually create the walls
+	
+	for x in range(wall_array.size()):
+		for y in range(wall_array[0].size()):
+			if(wall_array[x][y]):
+				# (0,0) in the wall array is -1,-1 on the floor grid,
+				# since it's expanded by one in every direction from the
+				# factory floor
+				make_wall(Vector2i(x-1, y-1))
+					
 
 
 #region process updates
