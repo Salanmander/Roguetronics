@@ -122,10 +122,10 @@ func generate_scenario() -> void:
 	var goal_tier: int = min((scenario_number+1)/2,2)
 	var goal: Goal = PuzzleManager.get_goal_from_tier(goal_tier)
 	scenario = Scenario.create(goal)
-	var cost: int = int(-1 * scenario_number**(1.7))
-	var cost_per_cycle: Effect = MoneyChange.create(cost)
+	#var cost: int = int(-1 * scenario_number**(1.7))
+	#var cost_per_cycle: Effect = MoneyChange.create(cost)
+	#scenario.add_cycle_effect(cost_per_cycle)
 	var reward: Effect = MoneyChange.create(10 * goal.get_value())
-	scenario.add_cycle_effect(cost_per_cycle)
 	scenario.add_win_effect(reward)
 
 #endregion

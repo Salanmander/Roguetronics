@@ -15,7 +15,7 @@ const SCENE_FILES: Dictionary = {
 	Consts.REWARD: "res://Rewards/reward_screen.tscn"
 }
 
-const SCENE_FROM_CLASS: Dictionary = {
+const SCENE_FROM_CLASS: Dictionary = { 
 	"MainMenu": Consts.MAIN_MENU,
 	"Factory": Consts.FACTORY,
 	"RewardScreen": Consts.REWARD
