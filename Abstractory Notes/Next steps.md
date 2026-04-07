@@ -1,5 +1,4 @@
 - Remove time cost
-- Limited factory size
 - Better upgrade interface/style. Randomness? Cost? Both?
 - More upgrades
 - Cost for tooling

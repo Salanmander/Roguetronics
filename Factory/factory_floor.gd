@@ -517,7 +517,8 @@ func add_goal(new_goal: Goal) -> void:
 func add_goals_from_scenario() -> void:
 	var goals: Array[Goal] = GameState.get_scenario().get_goals()
 	for new_goal: Goal in goals:
-		new_goal.set_goal_position(map_to_local(Vector2i(10, 2)))
+		var center: int = GameState.factory_space.size()/2
+		new_goal.set_goal_position(map_to_local(Vector2i(center - 2, 1)))
 		add_goal(new_goal)
 	
 func make_random_goal() -> void:
