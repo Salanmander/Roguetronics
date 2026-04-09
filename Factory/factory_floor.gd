@@ -69,6 +69,13 @@ var last_cycle: float = 0 # Previous frame cycle count
 var crashed: bool = false
 
 
+#region constructors
+
+static func create() -> FactoryFloor:
+	var new_floor: FactoryFloor = FactoryFloor.new()
+	new_floor.tile_set = load("res://Factory/factory_floor_tileset.tres")
+	return new_floor
+	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	
@@ -151,6 +158,7 @@ func create_outer_walls() -> void:
 				# factory floor
 				make_wall(Vector2i(x-1, y-1))
 					
+#endregion
 
 
 #region process updates

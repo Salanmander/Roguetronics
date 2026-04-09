@@ -1,0 +1,34 @@
+[gd_resource type="TileSet" load_steps=7 format=3 uid="uid://dngwcypusgtn6"]
+
+[ext_resource type="Texture2D" uid="uid://bqsb5r8n4oaa" path="res://Factory/floor.png" id="1_h5wpn"]
+[ext_resource type="Texture2D" uid="uid://c75ii64xae637" path="res://Factory/icon.png" id="2_h4sed"]
+[ext_resource type="Texture2D" uid="uid://ntfyndnf1obk" path="res://Factory/box.png" id="3_5m8af"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fyd2g"]
+texture = ExtResource("1_h5wpn")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_icehi"]
+texture = ExtResource("2_h4sed")
+texture_region_size = Vector2i(133, 133)
+0:0/next_alternative_id = 4
+0:0/0 = 0
+0:0/1 = 1
+0:0/1/flip_v = true
+0:0/2 = 2
+0:0/2/transpose = true
+0:0/3 = 3
+0:0/3/flip_h = true
+0:0/3/transpose = true
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ganq4"]
+texture = ExtResource("3_5m8af")
+texture_region_size = Vector2i(133, 133)
+0:0/0 = 0
+
+[resource]
+tile_size = Vector2i(128, 128)
+sources/4 = SubResource("TileSetAtlasSource_icehi")
+sources/5 = SubResource("TileSetAtlasSource_ganq4")
+sources/0 = SubResource("TileSetAtlasSource_fyd2g")

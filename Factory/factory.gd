@@ -1,7 +1,6 @@
 extends Node2D
 class_name Factory
 
-@onready var factory_floor: FactoryFloor = $FactoryLayer/FactoryFloor
 @onready var dispenser_control: DispenserControl = $UILayer/MachineControls/DispenserControl
 @onready var crane_control: CraneControl = $UILayer/MachineControls/CraneControl
 @onready var money_display: Label = $UILayer/MoneyDisplay
@@ -9,6 +8,8 @@ class_name Factory
 @onready var base_value_display: Label = $UILayer/BaseValueDisplay
 @onready var result_screen: ResultScreen = $UILayer/ResultScreen
 
+var factory_floors: Array[FactoryFloor]
+var active_floor_ind: int
 var factory_view_size: Vector2i
 
 var projected_money: int
@@ -18,16 +19,15 @@ var during_run_income: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	factory_floors = []
 	
+	var active_floor: FactoryFloor = FactoryFloor.create()
+	factory_floors.append(active_floor)
+	active_floor_ind = 0
+	$FactoryLayer.add_child(active_floor)
 	
-	
-	factory_floor.element_selected.connect(_on_element_selected)
-	factory_floor.simulation_started.connect(_on_simulation_started)
-	factory_floor.first_cycle_started.connect(_on_first_cycle_started)
-	factory_floor.simulation_cycle_end.connect(_on_simulation_cycle_end)
-	factory_floor.simulation_reset.connect(_on_simulation_reset)
-	factory_floor.assembly_sent.connect(_on_assembly_sent)
-	factory_floor.won.connect(_on_puzzle_completed)
+	connect_floor_signals()
+	connect_buttons_to_floor()
 	
 	result_screen.result_accepted.connect(_on_result_accepted)
 	result_screen.result_rejected.connect(_on_result_rejected)
@@ -41,7 +41,7 @@ func _ready():
 		var prototypes: Array[ButtonPrototype] = available.get_button_prototypes()
 		
 		for proto: ButtonPrototype in prototypes:
-			var button: Button = proto.get_button(factory_floor)
+			var button: Button = proto.get_button(active_floor)
 			
 			var width: float = buttonContainer.size.x / buttonContainer.columns
 			var height: float = buttonContainer.size.y / 2
@@ -70,9 +70,33 @@ func _ready():
 	floor_view_x -= $UILayer/MachineControls.size.x
 	var floor_view_y: int = get_window().size.y
 	floor_view_y -= $UILayer/ButtonPanel.size.y
+	floor_view_y -= $UILayer/FloorSelectorPanel.size.y
 	set_factory_view_size(Vector2i(floor_view_x, floor_view_y))
 	rescale_factory()
+
+func connect_floor_signals() -> void:
+	var active_floor: FactoryFloor = factory_floors[active_floor_ind]
 	
+	active_floor.element_selected.connect(_on_element_selected)
+	active_floor.simulation_started.connect(_on_simulation_started)
+	active_floor.first_cycle_started.connect(_on_first_cycle_started)
+	active_floor.simulation_cycle_end.connect(_on_simulation_cycle_end)
+	active_floor.simulation_reset.connect(_on_simulation_reset)
+	active_floor.assembly_sent.connect(_on_assembly_sent)
+	active_floor.won.connect(_on_puzzle_completed)
+
+func connect_buttons_to_floor() -> void:
+	var active_floor: FactoryFloor = factory_floors[active_floor_ind]
+	
+	var buttons: Panel = $UILayer/ButtonPanel
+	buttons.get_node("Run").pressed.connect(active_floor._on_run_pressed)
+	buttons.get_node("Pause").pressed.connect(active_floor._on_pause_pressed)
+	buttons.get_node("Reset").pressed.connect(active_floor._on_reset_pressed)
+	buttons.get_node("Clear").pressed.connect(active_floor._on_clear_pressed)
+	buttons.get_node("NewPuzzle").pressed.connect(active_floor._on_new_puzzle_pressed)
+	buttons.get_node("Delete").pressed.connect(active_floor._on_delete_pressed)
+	buttons.get_node("SpeedX2").pressed.connect(active_floor._on_fast_pressed.bind(2))
+	buttons.get_node("SpeedX10").pressed.connect(active_floor._on_fast_pressed.bind(10))
 
 
 #region screen scaling
@@ -125,7 +149,7 @@ func change_projected_money(delta: int) -> void:
 		during_run_income += delta
 		
 	if projected_money < 0:
-		factory_floor.crash()
+		factory_floors[active_floor_ind].crash()
 		pass
 	
 	
@@ -140,10 +164,10 @@ func show_control(UIElement: Control):
 #region saveAndLoad
 
 func get_save_dict() -> Dictionary:
-	return factory_floor.get_save_dict()
+	return factory_floors[active_floor_ind].get_save_dict()
 	
 func load_from_save_dict(save_dict: Dictionary):
-	factory_floor.load_from_save_dict(save_dict)
+	factory_floors[active_floor_ind].load_from_save_dict(save_dict)
 
 #endregion
 	
@@ -183,6 +207,7 @@ func _on_tutorial_button_pressed():
 func _on_tutorial_closed():
 	$TutorialPanel.visible = false
 	
+	
 # TODO: do I want to handle this with a scenario effect rather
 # than hard-coding it?
 func _on_assembly_sent(sent: Assembly) -> void:
@@ -210,10 +235,8 @@ func _on_result_accepted() ->  void:
 	
 func _on_result_rejected() -> void:
 	result_screen.visible = false
-	factory_floor.reset_to_start_of_run()
+	factory_floors[active_floor_ind].reset_to_start_of_run()
 	pass
-
-
 
 
 func _on_win_pressed():
