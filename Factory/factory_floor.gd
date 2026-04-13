@@ -564,16 +564,16 @@ func get_thumbnail(width: int, height: int) -> ImageTexture:
 	const CEL_PX: int = 5
 	const FLOOR_C: Color = Color(0.9, 0.8, 0.6)
 	const BELT_C: Color = Color(0.3, 0.3, 0.3)
-	const MACHINE_C: Color = Color(0.9, 0.9, 0.9)
+	#const MACHINE_C: Color = Color(0.9, 0.9, 0.9)
 	const DISP_Cs: Dictionary = {
 		1: Color(0.8, 0.4, 0.1), 
 		2: Color(0.1, 0.8, 0.2),
 		}
 	
 	var floor_space: Array[Array] = GameState.factory_space
-	var full_wid: int = floor_space.size() * CEL_PX
-	var full_hgt: int = floor_space[0].size() * CEL_PX
-	var thumb: Image = Image.create_empty(full_wid, full_hgt, false, Image.FORMAT_RGB8)
+	var thumb_wid: int = floor_space.size() * CEL_PX
+	var thumb_hgt: int = floor_space[0].size() * CEL_PX
+	var thumb: Image = Image.create_empty(thumb_wid, thumb_hgt, false, Image.FORMAT_RGB8)
 	
 	for x: int in range(floor_space.size()):
 		for y: int in range(floor_space[0].size()):
@@ -592,10 +592,27 @@ func get_thumbnail(width: int, height: int) -> ImageTexture:
 			var y: int = grid_loc.y
 			var color: Color = DISP_Cs[machine.type]
 			thumb.fill_rect(Rect2i(x*CEL_PX, y*CEL_PX, CEL_PX, CEL_PX), color)
-			
 	
-	var frame: Image = Image.create_empty(full_wid, full_hgt, false, Image.FORMAT_RGB8)
-	return ImageTexture.create_from_image(thumb)
+	var scale_factor: float = 1
+	if(thumb_wid >= thumb_hgt):
+		# Determine space available for actual thumbnail inside frame by
+		# the width. One CEL_PX on either side, then scaled down to the frame
+		var full_wid: int = thumb_wid + 2*CEL_PX
+		scale_factor = width/float(full_wid)
+	else:
+		var full_hgt: int = thumb_hgt + 2*CEL_PX
+		scale_factor = height/float(full_hgt)
+	
+	var new_wid: int = int(scale_factor * thumb_wid)
+	var new_hgt: int = int(scale_factor * thumb_hgt)
+	thumb.resize(new_wid, new_hgt, Image.INTERPOLATE_NEAREST)
+		
+	var dest: Vector2i = Vector2i((width - new_wid)/2, (height - new_hgt)/2)
+	var src: Rect2i = Rect2i(0, 0, new_wid, new_hgt)
+	var frame: Image = Image.create_empty(width, height, false, Image.FORMAT_RGB8)
+	
+	frame.blit_rect(thumb, src, dest)
+	return ImageTexture.create_from_image(frame)
 	
 func remove_machines(machine_position: Vector2, machine_layer: int):
 	var i:int = machines.size() - 1
@@ -739,7 +756,7 @@ func load_from_save_dict(save_dict: Dictionary):
 		var new_machine: Machine = Machine.create_from_save(machine_dict)
 		add_machine(new_machine)
 		
-		
+	floor_changed.emit()
 	
 	
 	pass

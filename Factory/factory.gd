@@ -105,12 +105,11 @@ func connect_buttons_to_floor() -> void:
 	buttons.get_node("SpeedX10").pressed.connect(active_floor._on_fast_pressed.bind(10))
 
 func update_floor_thumbnail(floor_ind: int) -> void:
-	var active_floor: FactoryFloor = factory_floors[floor_ind]
 	var button_height: int = $UILayer/FloorSelectorPanel.size.y - 30
 	
 	var changed_floor: FactoryFloor = factory_floors[floor_ind]
 	var select_buttons: Array[Node] = $UILayer/FloorSelectorPanel/HBoxContainer.get_children()
-	select_buttons[floor_ind].icon = active_floor.get_thumbnail(button_height, button_height)
+	select_buttons[floor_ind].icon = changed_floor.get_thumbnail(button_height, button_height)
 
 #region screen scaling
 
