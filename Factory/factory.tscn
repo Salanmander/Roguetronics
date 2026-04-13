@@ -229,10 +229,10 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_hjol2")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="UILayer/FloorSelectorPanel"]
 layout_mode = 0
-offset_left = 11.0
-offset_top = 15.0
+offset_left = 10.0
+offset_top = 9.0
 offset_right = 1148.0
-offset_bottom = 57.0
+offset_bottom = 64.0
 
 [node name="ResultScreen" parent="UILayer" instance=ExtResource("7_ixyht")]
 visible = false

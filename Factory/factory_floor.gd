@@ -27,6 +27,7 @@ const PLACE_CRANE = 7
 const PLACE_STAR_MAKER = 8
 const DELETE = -1
 
+signal floor_changed()
 signal element_selected(selected: Machine)
 signal simulation_reset()
 signal simulation_cycle_end()
@@ -161,6 +162,7 @@ func create_outer_walls() -> void:
 #endregion
 
 
+
 #region process updates
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -272,23 +274,28 @@ func _unhandled_input(event: InputEvent):
 		elif(click_mode == PLACE_CONVEYOR):
 			remove_machines(thing_position, Belt.LAYER)
 			make_belt(grid_loc, conveyor_direction)
+			floor_changed.emit()
 			
 		elif(click_mode == PLACE_THING):
 			make_widget(grid_loc, widget_type)
+			floor_changed.emit()
 			
 		
 		elif(click_mode == DELETE):
 			# Delete machines
+			var something_changed: bool = false
 			var removed_machines: Array[Machine] = []
 			for machine: Machine in machines:
 				if(machine is Track and machine.has_crane_at(grid_loc)):
 					machine.delete_crane_at(grid_loc)
+					something_changed = true
 					
 				if(machine.position.is_equal_approx(thing_position) or 
 				   machine.position.distance_squared_to(event.position) < (Consts.GRID_SIZE/2) ** 2):
 					remove_child(machine)
 					machine.queue_free()
 					removed_machines.append(machine)
+					something_changed = true
 			for machine: Machine in removed_machines:
 				machines.erase(machine)
 				
@@ -299,8 +306,13 @@ func _unhandled_input(event: InputEvent):
 					remove_child(wall)
 					wall.queue_free()
 					removed_walls.append(wall)
+					something_changed = true
 			for wall: Wall in removed_walls:
 				walls.erase(wall)
+			
+			if(something_changed):
+				floor_changed.emit()
+			
 			
 				
 		elif(click_mode == PLACE_COMBINER):
@@ -326,21 +338,25 @@ func _unhandled_input(event: InputEvent):
 			
 			if min_dist < Consts.GRID_SIZE/4: 
 				make_combiner(grid_loc, dir_of_min_dist)
+				floor_changed.emit()
 				
 			pass
 		elif(click_mode == PLACE_DISPENSER):
 			remove_dispenser_type(widget_type)
 			make_dispenser(grid_loc, widget_type)
+			floor_changed.emit()
 			
 			pass
 		elif(click_mode == PLACE_STAR_MAKER):
 			remove_star_makers()
 			remove_machines(thing_position, StarMaker.LAYER)
 			make_star_maker(grid_loc)
+			floor_changed.emit()
 			
 			pass
 		elif(click_mode == PLACE_WALL):
 			make_wall(grid_loc)
+			floor_changed.emit()
 			
 			pass
 		elif(click_mode == PLACE_CRANE):
@@ -353,6 +369,7 @@ func _unhandled_input(event: InputEvent):
 				for track: Machine in machines:
 					if track is Track and track.exists_at(grid_loc):
 						make_crane(grid_loc, track)
+						floor_changed.emit()
 						
 						break
 			
@@ -370,6 +387,7 @@ func _unhandled_input(event: InputEvent):
 			
 			if current_track == null:
 				current_track = make_track(grid_loc)
+				floor_changed.emit()
 				
 			pass
 		pass
@@ -384,6 +402,7 @@ func _unhandled_input(event: InputEvent):
 		var dist_sq = map_to_local(grid_loc).distance_squared_to(event.position)
 		if dist_sq <= pow(Consts.GRID_SIZE/2, 2):
 			current_track.drag_to(grid_loc)
+			floor_changed.emit()
 		
 		#if grid_loc != track_start_square:
 			#var new_line:Line2D = Line2D.new()
@@ -538,7 +557,45 @@ func make_random_goal() -> void:
 	
 	
 #endregion
+
+
+func get_thumbnail(width: int, height: int) -> ImageTexture:
 	
+	const CEL_PX: int = 5
+	const FLOOR_C: Color = Color(0.9, 0.8, 0.6)
+	const BELT_C: Color = Color(0.3, 0.3, 0.3)
+	const MACHINE_C: Color = Color(0.9, 0.9, 0.9)
+	const DISP_Cs: Dictionary = {
+		1: Color(0.8, 0.4, 0.1), 
+		2: Color(0.1, 0.8, 0.2),
+		}
+	
+	var floor_space: Array[Array] = GameState.factory_space
+	var full_wid: int = floor_space.size() * CEL_PX
+	var full_hgt: int = floor_space[0].size() * CEL_PX
+	var thumb: Image = Image.create_empty(full_wid, full_hgt, false, Image.FORMAT_RGB8)
+	
+	for x: int in range(floor_space.size()):
+		for y: int in range(floor_space[0].size()):
+			if(floor_space[x][y]):
+				thumb.fill_rect(Rect2i(x*CEL_PX, y*CEL_PX, CEL_PX, CEL_PX), FLOOR_C)
+				
+	for machine: Machine in machines:
+		if machine is Belt:
+			var grid_loc: Vector2i = local_to_map(machine.position)
+			var x: int = grid_loc.x
+			var y: int = grid_loc.y
+			thumb.fill_rect(Rect2i(x*CEL_PX, y*CEL_PX, CEL_PX, CEL_PX), BELT_C)
+		if machine is Dispenser:
+			var grid_loc: Vector2i = local_to_map(machine.position)
+			var x: int = grid_loc.x
+			var y: int = grid_loc.y
+			var color: Color = DISP_Cs[machine.type]
+			thumb.fill_rect(Rect2i(x*CEL_PX, y*CEL_PX, CEL_PX, CEL_PX), color)
+			
+	
+	var frame: Image = Image.create_empty(full_wid, full_hgt, false, Image.FORMAT_RGB8)
+	return ImageTexture.create_from_image(thumb)
 	
 func remove_machines(machine_position: Vector2, machine_layer: int):
 	var i:int = machines.size() - 1

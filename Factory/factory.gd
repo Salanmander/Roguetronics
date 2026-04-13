@@ -8,7 +8,7 @@ class_name Factory
 @onready var base_value_display: Label = $UILayer/BaseValueDisplay
 @onready var result_screen: ResultScreen = $UILayer/ResultScreen
 
-var factory_floors: Array[FactoryFloor]
+var factory_floors: Array[FactoryFloor] = []
 var active_floor_ind: int
 var factory_view_size: Vector2i
 
@@ -19,7 +19,6 @@ var during_run_income: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	factory_floors = []
 	
 	var active_floor: FactoryFloor = FactoryFloor.create()
 	factory_floors.append(active_floor)
@@ -28,6 +27,12 @@ func _ready():
 	
 	connect_floor_signals()
 	connect_buttons_to_floor()
+	
+	# Make button to select that floor
+	var floor_button: Button = Button.new()
+	$UILayer/FloorSelectorPanel/HBoxContainer.add_child(floor_button)
+	update_floor_thumbnail(active_floor_ind)
+	
 	
 	result_screen.result_accepted.connect(_on_result_accepted)
 	result_screen.result_rejected.connect(_on_result_rejected)
@@ -77,6 +82,7 @@ func _ready():
 func connect_floor_signals() -> void:
 	var active_floor: FactoryFloor = factory_floors[active_floor_ind]
 	
+	active_floor.floor_changed.connect(_on_floor_modified.bind(active_floor_ind))
 	active_floor.element_selected.connect(_on_element_selected)
 	active_floor.simulation_started.connect(_on_simulation_started)
 	active_floor.first_cycle_started.connect(_on_first_cycle_started)
@@ -98,6 +104,13 @@ func connect_buttons_to_floor() -> void:
 	buttons.get_node("SpeedX2").pressed.connect(active_floor._on_fast_pressed.bind(2))
 	buttons.get_node("SpeedX10").pressed.connect(active_floor._on_fast_pressed.bind(10))
 
+func update_floor_thumbnail(floor_ind: int) -> void:
+	var active_floor: FactoryFloor = factory_floors[floor_ind]
+	var button_height: int = $UILayer/FloorSelectorPanel.size.y - 30
+	
+	var changed_floor: FactoryFloor = factory_floors[floor_ind]
+	var select_buttons: Array[Node] = $UILayer/FloorSelectorPanel/HBoxContainer.get_children()
+	select_buttons[floor_ind].icon = active_floor.get_thumbnail(button_height, button_height)
 
 #region screen scaling
 
@@ -170,7 +183,12 @@ func load_from_save_dict(save_dict: Dictionary):
 	factory_floors[active_floor_ind].load_from_save_dict(save_dict)
 
 #endregion
+
+
+func _on_floor_modified(floor_ind: int) -> void:
+	update_floor_thumbnail(floor_ind)
 	
+
 func _on_element_selected(element):
 	if element is Dispenser:
 		dispenser_control.connect_to(element)
