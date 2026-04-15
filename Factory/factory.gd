@@ -8,9 +8,13 @@ class_name Factory
 @onready var base_value_display: Label = $UILayer/BaseValueDisplay
 @onready var result_screen: ResultScreen = $UILayer/ResultScreen
 
-var factory_floors: Array[FactoryFloor] = []
-var active_floor_ind: int
+var factory_layouts: Array[FactoryFloor] = []
+var active_layout_ind: int
 var factory_view_size: Vector2i
+
+var click_mode: int = Consts.NONE
+var conveyor_direction: float = 0
+var widget_type: int = 0
 
 var projected_money: int
 var reward: int
@@ -20,22 +24,12 @@ var during_run_income: int
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	
-	var active_floor: FactoryFloor = FactoryFloor.create()
-	factory_floors.append(active_floor)
-	active_floor_ind = 0
-	$FactoryLayer.add_child(active_floor)
-	
-	connect_floor_signals()
-	connect_buttons_to_floor()
-	
-	# Make button to select that floor
-	var floor_button: Button = Button.new()
-	$UILayer/FloorSelectorPanel/HBoxContainer.add_child(floor_button)
-	update_floor_thumbnail(active_floor_ind)
+	add_factory_layout()
 	
 	
 	result_screen.result_accepted.connect(_on_result_accepted)
 	result_screen.result_rejected.connect(_on_result_rejected)
+	
 	
 	
 	# Create buttons for available machines
@@ -46,7 +40,7 @@ func _ready():
 		var prototypes: Array[ButtonPrototype] = available.get_button_prototypes()
 		
 		for proto: ButtonPrototype in prototypes:
-			var button: Button = proto.get_button(active_floor)
+			var button: Button = proto.get_button(self)
 			
 			var width: float = buttonContainer.size.x / buttonContainer.columns
 			var height: float = buttonContainer.size.y / 2
@@ -79,37 +73,82 @@ func _ready():
 	set_factory_view_size(Vector2i(floor_view_x, floor_view_y))
 	rescale_factory()
 
-func connect_floor_signals() -> void:
-	var active_floor: FactoryFloor = factory_floors[active_floor_ind]
-	
-	active_floor.floor_changed.connect(_on_floor_modified.bind(active_floor_ind))
-	active_floor.element_selected.connect(_on_element_selected)
-	active_floor.simulation_started.connect(_on_simulation_started)
-	active_floor.first_cycle_started.connect(_on_first_cycle_started)
-	active_floor.simulation_cycle_end.connect(_on_simulation_cycle_end)
-	active_floor.simulation_reset.connect(_on_simulation_reset)
-	active_floor.assembly_sent.connect(_on_assembly_sent)
-	active_floor.won.connect(_on_puzzle_completed)
+#region floor layout managing
 
-func connect_buttons_to_floor() -> void:
-	var active_floor: FactoryFloor = factory_floors[active_floor_ind]
+func doop():
+	print("doop")
+
+func add_factory_layout() -> void:
+	var active_layout: FactoryFloor = FactoryFloor.create()
+	factory_layouts.append(active_layout)
+	$FactoryLayer.add_child(active_layout)
+	
+	var new_ind: int = factory_layouts.size() - 1
+	connect_floor_signals(new_ind)
+	
+	
+	# Make button to select that floor
+	var floor_button: Button = Button.new()
+	floor_button.action_mode =BaseButton.ACTION_MODE_BUTTON_PRESS
+	floor_button.pressed.connect(switch_to_layout.bind(new_ind))
+	var button_row = $UILayer/FloorSelectorPanel/HBoxContainer
+	button_row.add_child(floor_button)
+	var add_button = $UILayer/FloorSelectorPanel/HBoxContainer/AddFactoryLayout
+	button_row.move_child(add_button, -1)
+	update_floor_thumbnail(new_ind)
+	
+	
+	switch_to_layout(new_ind)
+
+func connect_floor_signals(index: int) -> void:
+	var layout: FactoryFloor = factory_layouts[index]
+	
+	layout.floor_changed.connect(_on_floor_modified.bind(index))
+	layout.element_selected.connect(_on_element_selected)
+	layout.simulation_started.connect(_on_simulation_started)
+	layout.first_cycle_started.connect(_on_first_cycle_started)
+	layout.simulation_cycle_end.connect(_on_simulation_cycle_end)
+	layout.simulation_reset.connect(_on_simulation_reset)
+	layout.assembly_sent.connect(_on_assembly_sent)
+	layout.won.connect(_on_puzzle_completed)
+
+func connect_buttons_to_floor(index: int) -> void:
+	var layout: FactoryFloor = factory_layouts[index]
 	
 	var buttons: Panel = $UILayer/ButtonPanel
-	buttons.get_node("Run").pressed.connect(active_floor._on_run_pressed)
-	buttons.get_node("Pause").pressed.connect(active_floor._on_pause_pressed)
-	buttons.get_node("Reset").pressed.connect(active_floor._on_reset_pressed)
-	buttons.get_node("Clear").pressed.connect(active_floor._on_clear_pressed)
-	buttons.get_node("NewPuzzle").pressed.connect(active_floor._on_new_puzzle_pressed)
-	buttons.get_node("Delete").pressed.connect(active_floor._on_delete_pressed)
-	buttons.get_node("SpeedX2").pressed.connect(active_floor._on_fast_pressed.bind(2))
-	buttons.get_node("SpeedX10").pressed.connect(active_floor._on_fast_pressed.bind(10))
+	buttons.get_node("Run").pressed.connect(layout._on_run_pressed)
+	buttons.get_node("Pause").pressed.connect(layout._on_pause_pressed)
+	buttons.get_node("Reset").pressed.connect(layout._on_reset_pressed)
+	buttons.get_node("Clear").pressed.connect(layout._on_clear_pressed)
+	buttons.get_node("NewPuzzle").pressed.connect(layout._on_new_puzzle_pressed)
+	buttons.get_node("SpeedX2").pressed.connect(layout._on_fast_pressed.bind(2))
+	buttons.get_node("SpeedX10").pressed.connect(layout._on_fast_pressed.bind(10))
 
 func update_floor_thumbnail(floor_ind: int) -> void:
 	var button_height: int = $UILayer/FloorSelectorPanel.size.y - 30
 	
-	var changed_floor: FactoryFloor = factory_floors[floor_ind]
+	var changed_floor: FactoryFloor = factory_layouts[floor_ind]
 	var select_buttons: Array[Node] = $UILayer/FloorSelectorPanel/HBoxContainer.get_children()
 	select_buttons[floor_ind].icon = changed_floor.get_thumbnail(button_height, button_height)
+
+func switch_to_layout(index: int) -> void:
+	active_layout_ind = index
+	for layout: FactoryFloor in factory_layouts:
+		layout.visible = false
+		layout.set_process_unhandled_input(false)
+		
+	factory_layouts[index].visible = true
+	factory_layouts[index].set_process_unhandled_input(true)
+	
+	update_factory_click_mode()
+	pass
+	
+func update_factory_click_mode() -> void:
+	factory_layouts[active_layout_ind].set_click_mode(click_mode)
+	factory_layouts[active_layout_ind].set_widget_type(widget_type)
+	factory_layouts[active_layout_ind].set_conveyor_direction(conveyor_direction)
+
+#endregion
 
 #region screen scaling
 
@@ -161,7 +200,7 @@ func change_projected_money(delta: int) -> void:
 		during_run_income += delta
 		
 	if projected_money < 0:
-		factory_floors[active_floor_ind].crash()
+		factory_layouts[active_layout_ind].crash()
 		pass
 	
 	
@@ -176,12 +215,76 @@ func show_control(UIElement: Control):
 #region saveAndLoad
 
 func get_save_dict() -> Dictionary:
-	return factory_floors[active_floor_ind].get_save_dict()
+	return factory_layouts[active_layout_ind].get_save_dict()
 	
 func load_from_save_dict(save_dict: Dictionary):
-	factory_floors[active_floor_ind].load_from_save_dict(save_dict)
+	factory_layouts[active_layout_ind].load_from_save_dict(save_dict)
 
 #endregion
+
+
+#region button callbacks
+
+
+func _on_conveyor_select_pressed(direction: float):
+	
+	conveyor_direction = direction
+	click_mode = Consts.PLACE_CONVEYOR
+	update_factory_click_mode()
+
+
+func _on_place_object_pressed():
+	click_mode = Consts.PLACE_THING
+	widget_type = 1
+	update_factory_click_mode()
+	
+	
+func _on_place_widget2_pressed():
+	click_mode = Consts.PLACE_THING
+	widget_type = 2
+	update_factory_click_mode()
+
+func _on_place_dispenser_pressed(type: int):
+	click_mode = Consts.PLACE_DISPENSER
+	widget_type = type
+	update_factory_click_mode()
+	pass # Replace with function body.
+
+func _on_place_star_pressed():
+	click_mode = Consts.PLACE_STAR_MAKER
+	update_factory_click_mode()
+	
+func _on_place_combiner_pressed():
+	click_mode = Consts.PLACE_COMBINER
+	update_factory_click_mode()
+
+func _on_place_wall_pressed():
+	click_mode = Consts.PLACE_WALL
+	update_factory_click_mode()
+	
+	
+func _on_place_track_pressed():
+	click_mode = Consts.PLACE_TRACK
+	update_factory_click_mode()
+
+
+func _on_place_crane_pressed():
+	click_mode = Consts.PLACE_CRANE
+	update_factory_click_mode()
+	
+	
+func _on_delete_pressed():
+	click_mode = Consts.DELETE
+	update_factory_click_mode()
+	
+	
+	
+func _on_add_factory_layout_pressed() -> void:
+	add_factory_layout()
+	
+#endregion
+
+
 
 
 func _on_floor_modified(floor_ind: int) -> void:
@@ -252,7 +355,7 @@ func _on_result_accepted() ->  void:
 	
 func _on_result_rejected() -> void:
 	result_screen.visible = false
-	factory_floors[active_floor_ind].reset_to_start_of_run()
+	factory_layouts[active_layout_ind].reset_to_start_of_run()
 	pass
 
 

@@ -234,6 +234,13 @@ offset_top = 9.0
 offset_right = 1148.0
 offset_bottom = 64.0
 
+[node name="AddFactoryLayout" type="Button" parent="UILayer/FloorSelectorPanel/HBoxContainer"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+action_mode = 0
+text = "+"
+
 [node name="ResultScreen" parent="UILayer" instance=ExtResource("7_ixyht")]
 visible = false
 
@@ -277,5 +284,7 @@ grow_horizontal = 1
 grow_vertical = 1
 
 [connection signal="pressed" from="UILayer/ButtonPanel/TutorialButton" to="." method="_on_tutorial_button_pressed"]
+[connection signal="pressed" from="UILayer/ButtonPanel/Delete" to="." method="_on_delete_pressed"]
 [connection signal="pressed" from="UILayer/ButtonPanel/Win" to="." method="_on_win_pressed"]
+[connection signal="pressed" from="UILayer/FloorSelectorPanel/HBoxContainer/AddFactoryLayout" to="." method="_on_add_factory_layout_pressed"]
 [connection signal="closed" from="TutorialPanel" to="." method="_on_tutorial_closed"]

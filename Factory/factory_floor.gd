@@ -16,16 +16,6 @@ const CONVEYOR_RIGHT_VARIANT = 3
 const FLOOR_TILE = 0
 const WALL_TILE = 5
 
-const NONE = 0
-const PLACE_CONVEYOR = 1
-const PLACE_THING = 2
-const PLACE_COMBINER = 3
-const PLACE_DISPENSER = 4
-const PLACE_WALL = 5
-const PLACE_TRACK = 6
-const PLACE_CRANE = 7
-const PLACE_STAR_MAKER = 8
-const DELETE = -1
 
 signal floor_changed()
 signal element_selected(selected: Machine)
@@ -42,7 +32,7 @@ var view_size: Vector2i
 var selected: int = FLOOR_TILE
 var selected_variant: int = CONVEYOR_UP_VARIANT
 
-var click_mode: int = NONE
+var click_mode: int = Consts.NONE
 var widget_type: int = 0
 
 
@@ -231,7 +221,16 @@ func _physics_process(delta: float):
 #endregion
 
 #region input
+func set_click_mode(mode: int) -> void:
+	click_mode = mode
 	
+func set_widget_type(type: int) -> void:
+	widget_type = type
+
+func set_conveyor_direction(dir: float) -> void:
+	conveyor_direction = dir
+
+
 func _unhandled_input(event: InputEvent):
 	# Only take input on the factory floor if it's not in the middle of
 	# the simulation.
@@ -271,17 +270,17 @@ func _unhandled_input(event: InputEvent):
 				
 				
 			
-		elif(click_mode == PLACE_CONVEYOR):
+		elif(click_mode == Consts.PLACE_CONVEYOR):
 			remove_machines(thing_position, Belt.LAYER)
 			make_belt(grid_loc, conveyor_direction)
 			floor_changed.emit()
 			
-		elif(click_mode == PLACE_THING):
+		elif(click_mode == Consts.PLACE_THING):
 			make_widget(grid_loc, widget_type)
 			floor_changed.emit()
 			
 		
-		elif(click_mode == DELETE):
+		elif(click_mode == Consts.DELETE):
 			# Delete machines
 			var something_changed: bool = false
 			var removed_machines: Array[Machine] = []
@@ -315,7 +314,7 @@ func _unhandled_input(event: InputEvent):
 			
 			
 				
-		elif(click_mode == PLACE_COMBINER):
+		elif(click_mode == Consts.PLACE_COMBINER):
 			var TOP = Vector2(0, -1)
 			var RIGHT = Vector2(1, 0)
 			var BOTTOM = Vector2(0, 1)
@@ -341,25 +340,25 @@ func _unhandled_input(event: InputEvent):
 				floor_changed.emit()
 				
 			pass
-		elif(click_mode == PLACE_DISPENSER):
+		elif(click_mode == Consts.PLACE_DISPENSER):
 			remove_dispenser_type(widget_type)
 			make_dispenser(grid_loc, widget_type)
 			floor_changed.emit()
 			
 			pass
-		elif(click_mode == PLACE_STAR_MAKER):
+		elif(click_mode == Consts.PLACE_STAR_MAKER):
 			remove_star_makers()
 			remove_machines(thing_position, StarMaker.LAYER)
 			make_star_maker(grid_loc)
 			floor_changed.emit()
 			
 			pass
-		elif(click_mode == PLACE_WALL):
+		elif(click_mode == Consts.PLACE_WALL):
 			make_wall(grid_loc)
 			floor_changed.emit()
 			
 			pass
-		elif(click_mode == PLACE_CRANE):
+		elif(click_mode == Consts.PLACE_CRANE):
 			var blocked: bool = false
 			for track: Machine in machines:
 				if track is Track and track.has_crane_at(grid_loc):
@@ -375,7 +374,7 @@ func _unhandled_input(event: InputEvent):
 			
 			
 			pass
-		elif click_mode == PLACE_TRACK:
+		elif click_mode == Consts.PLACE_TRACK:
 			current_track = null
 			
 			dragging_track = true
@@ -534,12 +533,15 @@ func add_machine(new_machine: Machine) -> void:
 	
 	
 func add_goal(new_goal: Goal) -> void:
-	if(goal):
-		goal.queue_free()
-	goal = new_goal
-	add_child(goal)
-	goal.completed.connect(_on_goal_completed.bind(goal))
-	goal.assembly_sent.connect(_on_assembly_sent)
+	# TODO: we'll need to go back to using this at some point.
+	# Right now, no goals while we work on making multiple factories.
+	#if(goal):
+		#goal.queue_free()
+	#goal = new_goal
+	#add_child(goal)
+	#goal.completed.connect(_on_goal_completed.bind(goal))
+	#goal.assembly_sent.connect(_on_assembly_sent)
+	pass
 	
 func add_goals_from_scenario() -> void:
 	var goals: Array[Goal] = GameState.get_scenario().get_goals()
@@ -784,45 +786,6 @@ func _on_dispense(loc: Vector2, init_widget_type: int):
 	make_widget(local_to_map(loc), init_widget_type)
 
 	
-func _on_conveyor_select_pressed(direction: float):
-	conveyor_direction = direction
-	click_mode = PLACE_CONVEYOR
-
-
-func _on_place_object_pressed():
-	click_mode = PLACE_THING
-	widget_type = 1
-	
-	
-func _on_place_widget2_pressed():
-	click_mode = PLACE_THING
-	widget_type = 2
-
-func _on_place_dispenser_pressed(type: int):
-	click_mode = PLACE_DISPENSER
-	widget_type = type
-	pass # Replace with function body.
-
-func _on_place_star_pressed():
-	click_mode = PLACE_STAR_MAKER
-	
-func _on_place_combiner_pressed():
-	click_mode = PLACE_COMBINER
-
-func _on_place_wall_pressed():
-	click_mode = PLACE_WALL
-	
-	
-func _on_place_track_pressed():
-	click_mode = PLACE_TRACK
-
-
-func _on_place_crane_pressed():
-	click_mode = PLACE_CRANE
-	
-	
-func _on_delete_pressed():
-	click_mode = DELETE
 
 
 

@@ -21,6 +21,17 @@ const SCENE_FROM_CLASS: Dictionary = {
 	"RewardScreen": Consts.REWARD
 }
 
+# values for click mode
+const NONE = 0
+const PLACE_CONVEYOR = 1
+const PLACE_THING = 2
+const PLACE_COMBINER = 3
+const PLACE_DISPENSER = 4
+const PLACE_WALL = 5
+const PLACE_TRACK = 6
+const PLACE_CRANE = 7
+const PLACE_STAR_MAKER = 8
+const DELETE = -1
 
 
 const FACTORY_CONVEYOR_ID: int = 4
