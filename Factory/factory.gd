@@ -16,6 +16,9 @@ var click_mode: int = Consts.NONE
 var conveyor_direction: float = 0
 var widget_type: int = 0
 
+var crashed: bool = false
+var single_layout_running: bool = false
+
 var projected_money: int
 var reward: int
 var during_run_costs: int
@@ -105,12 +108,11 @@ func connect_floor_signals(index: int) -> void:
 	
 	layout.floor_changed.connect(_on_floor_modified.bind(index))
 	layout.element_selected.connect(_on_element_selected)
-	layout.simulation_started.connect(_on_simulation_started)
-	layout.first_cycle_started.connect(_on_first_cycle_started)
 	layout.simulation_cycle_end.connect(_on_simulation_cycle_end)
 	layout.simulation_reset.connect(_on_simulation_reset)
 	layout.assembly_sent.connect(_on_assembly_sent)
 	layout.won.connect(_on_puzzle_completed)
+	layout.crash_event.connect(crash)
 
 func connect_buttons_to_floor(index: int) -> void:
 	var layout: FactoryFloor = factory_layouts[index]
@@ -211,6 +213,18 @@ func hide_all_controls():
 func show_control(UIElement: Control):
 	UIElement.visible = true
 	
+#region during run behaviors
+
+func initialize_run_money() -> void:
+		projected_money = GameState.money
+		during_run_costs = 0
+		during_run_income = 0
+		
+		
+func crash() -> void:
+	crashed = true
+
+#endregion
 	
 #region saveAndLoad
 
@@ -282,6 +296,36 @@ func _on_delete_pressed():
 func _on_add_factory_layout_pressed() -> void:
 	add_factory_layout()
 	
+	
+
+func _on_run_speed_pressed(speed: int) -> void:
+	if(not single_layout_running):
+		initialize_run_money()
+		
+	single_layout_running = true
+	hide_all_controls()
+	if not crashed:
+		factory_layouts[active_layout_ind].set_speed(speed)
+
+
+func _on_pause_pressed() -> void:
+	factory_layouts[active_layout_ind].pause()
+
+
+func _on_reset_pressed() -> void:
+	factory_layouts[active_layout_ind].reset_to_start_of_run()
+
+
+func _on_clear_pressed() -> void:
+	factory_layouts[active_layout_ind].clear_floor()
+
+
+func _on_new_puzzle_pressed() -> void:
+	# TODO: Re-implement goals
+	#GameState.generate_scenario()
+	pass
+
+	
 #endregion
 
 
@@ -302,14 +346,7 @@ func _on_element_selected(element):
 		hide_all_controls()
 		show_control(crane_control)
 		
-func _on_first_cycle_started() -> void:
-	projected_money = GameState.money
-	during_run_costs = 0
-	during_run_income = 0
 	
-	
-func _on_simulation_started():
-	hide_all_controls()
 	
 func _on_simulation_cycle_end() -> void:
 	GameState.get_scenario().on_new_cycle(self)
@@ -317,6 +354,7 @@ func _on_simulation_cycle_end() -> void:
 	
 func _on_simulation_reset() -> void:
 	money_display.text = "$" + str(GameState.money)
+	crashed = false
 	
 	
 
@@ -360,5 +398,5 @@ func _on_result_rejected() -> void:
 
 
 func _on_win_pressed():
-	_on_first_cycle_started()
+	initialize_run_money()
 	_on_puzzle_completed()

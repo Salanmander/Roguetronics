@@ -24,6 +24,7 @@ signal simulation_cycle_end()
 signal simulation_started()
 signal first_cycle_started()
 signal assembly_sent(sent: Assembly)
+signal crash_event()
 signal won()
 
 
@@ -51,9 +52,9 @@ var track_start_square: Vector2i
 var starting_assemblies: Array[Assembly]
 
 
-var goal: Goal
+var goals: Array[Goal]
 
-var run: bool = false
+var running: bool = false
 var cycle_time: float = 0.7 # Number of seconds for one cycle
 var cycle: float = -1 # Current cycle count
 var last_cycle: float = 0 # Previous frame cycle count
@@ -152,6 +153,24 @@ func create_outer_walls() -> void:
 #endregion
 
 
+func set_speed(speedup: int) -> void:
+	Engine.set_time_scale(speedup)
+	Engine.physics_ticks_per_second = speedup*60
+	Engine.max_physics_steps_per_frame = speedup*8
+	simulation_started.emit()
+	unhighlight_all()
+	running = true
+
+
+func clear_floor() -> void:
+	delete_assemblies()
+	delete_machines()
+	# Should only re-add this if walls are being voluntarily added.
+	# Currently walls are what prevents widgets from going outside the
+	# factory.
+	#delete_walls()
+	reset_to_start_of_run()
+
 
 #region process updates
 
@@ -160,7 +179,7 @@ func _process(_delta):
 	pass
 	
 func _physics_process(delta: float):
-	if run:
+	if running:
 		
 		# Initial frame. Do first dispense and save initial state
 		if cycle == -1:
@@ -187,7 +206,8 @@ func _physics_process(delta: float):
 		# This runs if it's the first update of the cycle
 		var cycle_fraction = fmod(cycle, 1)
 		if cycle - last_cycle >= cycle_fraction:
-			goal.check_against(assemblies)
+			for goal: Goal in goals:
+				goal.check_against(assemblies)
 				
 		for machine: Machine in machines:
 			if not (machine is Combiner):
@@ -298,16 +318,17 @@ func _unhandled_input(event: InputEvent):
 			for machine: Machine in removed_machines:
 				machines.erase(machine)
 				
-			# Delete walls
-			var removed_walls: Array[Wall] = []
-			for wall: Wall in walls:
-				if(wall.position.is_equal_approx(thing_position)):
-					remove_child(wall)
-					wall.queue_free()
-					removed_walls.append(wall)
-					something_changed = true
-			for wall: Wall in removed_walls:
-				walls.erase(wall)
+			# Delete walls (Should only re-add this if walls
+			# are being voluntarily added.)
+			#var removed_walls: Array[Wall] = []
+			#for wall: Wall in walls:
+				#if(wall.position.is_equal_approx(thing_position)):
+					#remove_child(wall)
+					#wall.queue_free()
+					#removed_walls.append(wall)
+					#something_changed = true
+			#for wall: Wall in removed_walls:
+				#walls.erase(wall)
 			
 			if(something_changed):
 				floor_changed.emit()
@@ -544,8 +565,8 @@ func add_goal(new_goal: Goal) -> void:
 	pass
 	
 func add_goals_from_scenario() -> void:
-	var goals: Array[Goal] = GameState.get_scenario().get_goals()
-	for new_goal: Goal in goals:
+	var scenario_goals: Array[Goal] = GameState.get_scenario().get_goals()
+	for new_goal: Goal in scenario_goals:
 		var center: int = GameState.factory_space.size()/2
 		new_goal.set_goal_position(map_to_local(Vector2i(center - 2, 1)))
 		add_goal(new_goal)
@@ -635,6 +656,7 @@ func remove_machines(machine_position: Vector2, machine_layer: int):
 	
 #region Resetting
 
+
 func win() -> void:
 	pause()
 	won.emit()
@@ -643,12 +665,13 @@ func win() -> void:
 # TODO: improve the crash, give visual indicator of the thing that caused
 # the crash
 func crash() -> void:
-	run = false
+	running = false
 	crashed = true
+	crash_event.emit()
 	modulate = Color(1, 0.6, 0.6, 1)
 	
 func pause() -> void:
-	run = false
+	running = false
 
 func reset_to_start_of_run():
 	delete_assemblies()
@@ -666,8 +689,10 @@ func reset_to_start_of_run():
 		
 	for machine:Machine in machines:
 		machine.reset()
-		
-	goal.reset()
+	
+	for goal: Goal in goals:
+		goal.reset()
+	
 	simulation_reset.emit()
 	
 	pause()
@@ -729,7 +754,11 @@ func _notification(what: int) -> void:
 
 func get_save_dict() -> Dictionary:
 	var save_dict: Dictionary = {}
-	save_dict["goal"] = goal.get_save_dict()
+	
+	var goal_dicts: Array = []
+	for goal: Goal in goals:
+		goal_dicts.append(goal.get_save_dict())
+	save_dict["goals"] = goal_dicts
 	
 	var wall_dicts: Array = []
 	for wall: Wall in walls:
@@ -746,8 +775,9 @@ func get_save_dict() -> Dictionary:
 	
 func load_from_save_dict(save_dict: Dictionary):
 	
-	var new_goal: Goal = Goal.create_from_save(save_dict["goal"])
-	add_goal(new_goal)
+	for goal_dict: Dictionary in save_dict["goals"]:
+		var new_goal: Goal = Goal.create_from_save(goal_dict)
+		add_goal(new_goal)
 	
 	for wall_dict: Dictionary in save_dict["walls"]:
 		var new_wall: Wall = Wall.create_from_save(wall_dict)
@@ -785,51 +815,7 @@ func _on_assembly_sent(sent: Assembly) -> void:
 func _on_dispense(loc: Vector2, init_widget_type: int):
 	make_widget(local_to_map(loc), init_widget_type)
 
-	
 
-
-
-
-func _on_run_pressed() -> void:
-	if not crashed:
-		#cycle_time = default_cycle_time
-		Engine.set_time_scale(1)
-		Engine.physics_ticks_per_second = 60
-		Engine.max_physics_steps_per_frame = 8
-		simulation_started.emit()
-		unhighlight_all()
-		run = true
-
-func _on_fast_pressed(speedup: int) -> void:
-	if not crashed:
-		Engine.set_time_scale(speedup)
-		Engine.physics_ticks_per_second = speedup*60
-		Engine.max_physics_steps_per_frame = speedup*8
-		simulation_started.emit()
-		unhighlight_all()
-		run = true
-
-
-func _on_pause_pressed() -> void:
-	pause()
-
-	
-
-func _on_reset_pressed():
-	
-	reset_to_start_of_run()
-		
-
-
-func _on_clear_pressed():
-	delete_assemblies()
-	delete_machines()
-	delete_walls()
-	reset_to_start_of_run()
-	
-func _on_new_puzzle_pressed():
-	GameState.generate_scenario()
-	add_goals_from_scenario()
 	
 	
 func _on_save_pressed() -> void:
@@ -844,7 +830,7 @@ func _on_save_pressed() -> void:
 
 func setup_debug_objects():
 	
-	goal = Goal.create(map_to_local(Vector2i(10,2)))
+	var goal = Goal.create(map_to_local(Vector2i(10,2)))
 	goal.add_widget(Vector2(0,0), 2)
 	goal.add_widget(Vector2(Consts.GRID_SIZE,0), 1)
 	goal.add_widget(Vector2(2*Consts.GRID_SIZE,0), 2)
