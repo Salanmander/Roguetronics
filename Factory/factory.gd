@@ -7,7 +7,7 @@ class_name Factory
 @onready var cycle_cost_display: Label = $UILayer/CycleCostDisplay
 @onready var base_value_display: Label = $UILayer/BaseValueDisplay
 @onready var result_screen: ResultScreen = $UILayer/ResultScreen
-@onready var button_row = $UILayer/FloorSelectorPanel/HBoxContainer
+@onready var layout_select_row = $UILayer/FloorSelectorPanel/HBoxContainer
 
 var factory_layouts: Array[FactoryFloor] = []
 var active_layout_ind: int
@@ -91,9 +91,6 @@ func _ready():
 
 #region floor layout managing
 
-func doop():
-	print("doop")
-
 func new_layout() -> void:
 	var new_layout: FactoryFloor = FactoryFloor.create()
 	var new_ind: int = add_layout(new_layout)
@@ -110,12 +107,15 @@ func add_layout(new_layout: FactoryFloor) -> int:
 	# Make button to select that floor
 	var floor_button: Button = Button.new()
 	floor_button.action_mode =BaseButton.ACTION_MODE_BUTTON_PRESS
-	floor_button.pressed.connect(switch_to_layout.bind(new_ind))
+	floor_button.pressed.connect(switch_to_layout_of_button.bind(floor_button))
 	
-	button_row.add_child(floor_button)
+	layout_select_row.add_child(floor_button)
 	var add_button = $UILayer/FloorSelectorPanel/HBoxContainer/AddFactoryLayout
-	button_row.move_child(add_button, -1)
+	layout_select_row.move_child(add_button, -1)
 	update_floor_thumbnail(new_ind)
+	
+	if(factory_layouts.size() > 1):
+		$UILayer/FloorSelectorPanel/DeleteLayout.set_disabled(false)
 	
 	return new_ind
 	
@@ -124,15 +124,24 @@ func remove_layout_at(index: int) -> void:
 	factory_layouts[index].queue_free()
 	factory_layouts.remove_at(index)
 	
-	var select_buttons: Array[Node] = button_row.get_children()
+	var select_buttons: Array[Node] = layout_select_row.get_children()
 	select_buttons[index].queue_free()
-	button_row.remove_child(select_buttons[index])
+	layout_select_row.remove_child(select_buttons[index])
+	
+	
+	if(index > 0):
+		switch_to_layout(index - 1)
+	else:
+		switch_to_layout(0)
+	
+	if(factory_layouts.size() <= 1):
+		$UILayer/FloorSelectorPanel/DeleteLayout.set_disabled(true)
 	
 
 func connect_floor_signals(index: int) -> void:
 	var layout: FactoryFloor = factory_layouts[index]
 	
-	layout.floor_changed.connect(_on_floor_modified.bind(index))
+	layout.floor_changed.connect(_on_floor_modified.bind(layout))
 	layout.element_selected.connect(_on_element_selected)
 	layout.simulation_cycle_end.connect(_on_simulation_cycle_end)
 	layout.simulation_reset.connect(_on_simulation_reset)
@@ -145,8 +154,14 @@ func update_floor_thumbnail(floor_ind: int) -> void:
 	var button_height: int = $UILayer/FloorSelectorPanel.size.y - 30
 	
 	var changed_floor: FactoryFloor = factory_layouts[floor_ind]
-	var select_buttons: Array[Node] = button_row.get_children()
+	var select_buttons: Array[Node] = layout_select_row.get_children()
 	select_buttons[floor_ind].icon = changed_floor.get_thumbnail(button_height, button_height)
+
+func switch_to_layout_of_button(button: Button) -> void:
+	var select_buttons: Array[Node] = layout_select_row.get_children()
+	var ind: int = select_buttons.find(button)
+	switch_to_layout(ind)
+	pass
 
 func switch_to_layout(index: int) -> void:
 	active_layout_ind = index
@@ -354,9 +369,14 @@ func _on_clear_pressed() -> void:
 	factory_layouts[active_layout_ind].clear_floor()
 
 
+func _on_delete_layout_pressed() -> void:
+	remove_layout_at(active_layout_ind)
+	pass # Replace with function body.
+
 func _on_new_puzzle_pressed() -> void:
-	# TODO: Re-implement goals
-	#GameState.generate_scenario()
+	GameState.generate_scenario()
+	for layout: FactoryFloor in factory_layouts:
+		layout.remove_goals()
 	pass
 
 	
@@ -365,7 +385,8 @@ func _on_new_puzzle_pressed() -> void:
 
 
 
-func _on_floor_modified(floor_ind: int) -> void:
+func _on_floor_modified(layout: FactoryFloor) -> void:
+	var floor_ind: int = factory_layouts.find(layout)
 	update_floor_thumbnail(floor_ind)
 	
 

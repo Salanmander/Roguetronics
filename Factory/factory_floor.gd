@@ -184,6 +184,7 @@ func set_speed(speedup: int) -> void:
 func clear_floor() -> void:
 	delete_assemblies()
 	delete_machines()
+	remove_goals()
 	floor_changed.emit()
 	# Should only re-add this if walls are being voluntarily added.
 	# Currently walls are what prevents widgets from going outside the
@@ -741,6 +742,14 @@ func delete_machines():
 		
 	machines = []
 
+
+func remove_goals():
+	# Loop backwards through goals array to remove all.
+	# Can't just queue-free, because the same Goal object may get re-added
+	# later.
+	for i in range(goals.size() - 1, -1, -1):
+		remove_goal(goals[i])
+		
 	
 func delete_walls():
 	var child_list: Array[Node] = get_children()

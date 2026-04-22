@@ -231,7 +231,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_hjol2")
 layout_mode = 0
 offset_left = 10.0
 offset_top = 9.0
-offset_right = 1148.0
+offset_right = 1067.0
 offset_bottom = 64.0
 
 [node name="AddFactoryLayout" type="Button" parent="UILayer/FloorSelectorPanel/HBoxContainer"]
@@ -240,6 +240,17 @@ layout_mode = 2
 size_flags_horizontal = 0
 action_mode = 0
 text = "+"
+
+[node name="DeleteLayout" type="Button" parent="UILayer/FloorSelectorPanel"]
+layout_mode = 0
+offset_left = 1052.0
+offset_top = 12.0
+offset_right = 1168.0
+offset_bottom = 61.0
+disabled = true
+action_mode = 0
+text = "Delete Layout"
+expand_icon = true
 
 [node name="ResultScreen" parent="UILayer" instance=ExtResource("7_ixyht")]
 visible = false
@@ -294,4 +305,5 @@ grow_vertical = 1
 [connection signal="pressed" from="UILayer/ButtonPanel/SpeedX2" to="." method="_on_run_speed_pressed" binds= [2]]
 [connection signal="pressed" from="UILayer/ButtonPanel/SpeedX10" to="." method="_on_run_speed_pressed" binds= [10]]
 [connection signal="pressed" from="UILayer/FloorSelectorPanel/HBoxContainer/AddFactoryLayout" to="." method="_on_add_factory_layout_pressed"]
+[connection signal="pressed" from="UILayer/FloorSelectorPanel/DeleteLayout" to="." method="_on_delete_layout_pressed"]
 [connection signal="closed" from="TutorialPanel" to="." method="_on_tutorial_closed"]
