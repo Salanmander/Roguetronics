@@ -35,6 +35,7 @@ var selected_variant: int = CONVEYOR_UP_VARIANT
 
 var click_mode: int = Consts.NONE
 var widget_type: int = 0
+var goal_index: int = 0
 
 
 var assemblies: Array[Assembly]
@@ -83,9 +84,6 @@ func _ready() -> void:
 	
 	# view_size should always get set, but the parent needs to be
 	# ready before that happens.
-
-	add_goals_from_scenario()
-	
 	
 	pass # Replace with function body.
 	
@@ -152,25 +150,41 @@ func create_outer_walls() -> void:
 					
 #endregion
 
+#region controls from Factory
+
+
+func set_click_mode(mode: int) -> void:
+	click_mode = mode
+	
+func set_widget_type(type: int) -> void:
+	widget_type = type
+
+func set_conveyor_direction(dir: float) -> void:
+	conveyor_direction = dir
+
+func set_goal_index(index: int) -> void:
+	goal_index = index
 
 func set_speed(speedup: int) -> void:
 	Engine.set_time_scale(speedup)
 	Engine.physics_ticks_per_second = speedup*60
 	Engine.max_physics_steps_per_frame = speedup*8
+	running = true
 	simulation_started.emit()
 	unhighlight_all()
-	running = true
 
 
 func clear_floor() -> void:
 	delete_assemblies()
 	delete_machines()
+	floor_changed.emit()
 	# Should only re-add this if walls are being voluntarily added.
 	# Currently walls are what prevents widgets from going outside the
 	# factory.
 	#delete_walls()
 	reset_to_start_of_run()
 
+#endregion
 
 #region process updates
 
@@ -241,14 +255,6 @@ func _physics_process(delta: float):
 #endregion
 
 #region input
-func set_click_mode(mode: int) -> void:
-	click_mode = mode
-	
-func set_widget_type(type: int) -> void:
-	widget_type = type
-
-func set_conveyor_direction(dir: float) -> void:
-	conveyor_direction = dir
 
 
 func _unhandled_input(event: InputEvent):
@@ -289,6 +295,15 @@ func _unhandled_input(event: InputEvent):
 					
 				
 				
+			
+		elif(click_mode == Consts.PLACE_GOAL):
+			
+			var scenario_goals: Array[Goal] = GameState.get_scenario().get_goals()
+			var goal_to_add: Goal = scenario_goals[goal_index]
+			goal_to_add.set_goal_position(thing_position)
+			
+			add_goal(goal_to_add)
+			floor_changed.emit()
 			
 		elif(click_mode == Consts.PLACE_CONVEYOR):
 			remove_machines(thing_position, Belt.LAYER)
@@ -553,23 +568,30 @@ func add_machine(new_machine: Machine) -> void:
 		assert(false, "Tried to add machine that shouldn't be added")
 	
 	
-func add_goal(new_goal: Goal) -> void:
-	# TODO: we'll need to go back to using this at some point.
-	# Right now, no goals while we work on making multiple factories.
-	#if(goal):
-		#goal.queue_free()
-	#goal = new_goal
-	#add_child(goal)
-	#goal.completed.connect(_on_goal_completed.bind(goal))
-	#goal.assembly_sent.connect(_on_assembly_sent)
+func add_goal(goal_to_add: Goal) -> void:
+	
+	var existing_parent: Node = goal_to_add.get_parent()
+	if(existing_parent):
+		existing_parent.remove_goal(goal_to_add)
+	goals.append(goal_to_add)
+	add_child(goal_to_add)
+	goal_to_add.completed.connect(_on_goal_completed.bind(goal_to_add))
+	goal_to_add.assembly_sent.connect(_on_assembly_sent)
 	pass
 	
-func add_goals_from_scenario() -> void:
-	var scenario_goals: Array[Goal] = GameState.get_scenario().get_goals()
-	for new_goal: Goal in scenario_goals:
-		var center: int = GameState.factory_space.size()/2
-		new_goal.set_goal_position(map_to_local(Vector2i(center - 2, 1)))
-		add_goal(new_goal)
+func remove_goal(old_goal: Goal) -> void:
+	var conns: Array[Dictionary] = old_goal.get_signal_connection_list("completed")
+	for conn: Dictionary in conns:
+		old_goal.disconnect("completed", conn.callable)
+	conns = old_goal.get_signal_connection_list("assembly_sent")
+	for conn: Dictionary in conns:
+		old_goal.disconnect("assembly_sent", conn.callable)
+	
+	if not old_goal in goals:
+		return
+	goals.erase(old_goal)
+	remove_child(old_goal)
+	
 	
 func make_random_goal() -> void:
 	

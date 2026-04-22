@@ -394,7 +394,55 @@ func get_value() -> int:
 			widget_types.append(widget.get_type())
 	
 	return int(widget_total * sqrt(widgets.size()) * widget_types.size() * star_multiplier)
+
+
+#TODO: this doesn't actually give a good image yet. Finish if using.
+func get_thumbnail(width: int, height: int) -> ImageTexture:
 	
+	const CEL_PX: int = 20
+	const CONNECT_C: Color = Color(0.8, 0.8, 0)
+	const WIDGET_Cs: Dictionary = {
+		1: Color(0.8, 0.4, 0.1), 
+		2: Color(0.1, 0.8, 0.2),
+		}
+	
+	
+	var x_size: int = 0
+	var y_size: int = 0
+	for widget: Widget in widgets:
+		var widget_grid_loc: Vector2i = widget.position/Consts.GRID_SIZE
+		x_size = max(x_size, widget_grid_loc.x)
+		y_size = max(y_size, widget_grid_loc.y)
+	var goal_grid: Array[Array] = []
+	goal_grid.resize(x_size)
+	
+	var thumb_wid: int = goal_grid.size() * CEL_PX
+	var thumb_hgt: int = goal_grid[0].size() * CEL_PX
+	var thumb: Image = Image.create_empty(thumb_wid, thumb_hgt, false, Image.FORMAT_RGB8)
+	
+	
+	var scale_factor: float = 1
+	if(thumb_wid >= thumb_hgt):
+		# Determine space available for actual thumbnail inside frame by
+		# the width. One CEL_PX on either side, then scaled down to the frame
+		var full_wid: int = thumb_wid + 2*CEL_PX
+		scale_factor = width/float(full_wid)
+	else:
+		var full_hgt: int = thumb_hgt + 2*CEL_PX
+		scale_factor = height/float(full_hgt)
+	
+	var new_wid: int = int(scale_factor * thumb_wid)
+	var new_hgt: int = int(scale_factor * thumb_hgt)
+	thumb.resize(new_wid, new_hgt, Image.INTERPOLATE_NEAREST)
+		
+	var dest: Vector2i = Vector2i((width - new_wid)/2, (height - new_hgt)/2)
+	var src: Rect2i = Rect2i(0, 0, new_wid, new_hgt)
+	var frame: Image = Image.create_empty(width, height, false, Image.FORMAT_RGB8)
+	
+	frame.blit_rect(thumb, src, dest)
+	return ImageTexture.create_from_image(frame)
+
+
 func _on_nudged_toward_direction(dir: Vector2, delta: Vector2):
 	var angle_between = delta.angle_to(dir)
 	if abs(angle_between) > 0.01:

@@ -72,7 +72,12 @@ func load_save_dict(save_dict: Dictionary) -> void:
 
 
 #endregion
+
+
+func get_thumbnail(width: int, height: int) -> ImageTexture:
 	
+	return plan.get_thumbnail(width, height)
+
 func calculate_value() -> void:
 	
 	base_value = plan.get_value()

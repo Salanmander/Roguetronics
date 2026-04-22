@@ -31,6 +31,7 @@ const PLACE_WALL = 5
 const PLACE_TRACK = 6
 const PLACE_CRANE = 7
 const PLACE_STAR_MAKER = 8
+const PLACE_GOAL = 9
 const DELETE = -1
 
 

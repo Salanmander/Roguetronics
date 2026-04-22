@@ -15,6 +15,7 @@ var factory_view_size: Vector2i
 var click_mode: int = Consts.NONE
 var conveyor_direction: float = 0
 var widget_type: int = 0
+var goal_index: int = 0
 
 var crashed: bool = false
 var single_layout_running: bool = false
@@ -34,10 +35,21 @@ func _ready():
 	result_screen.result_rejected.connect(_on_result_rejected)
 	
 	
-	
-	# Create buttons for available machines
+	# Create buttons for goals
 	var buttonContainer: GridContainer = $UILayer/ButtonPanel/MachineButtonContainer
+	for i in range(GameState.get_scenario().get_goals().size()):
+		var button: Button = Button.new()
+		button.action_mode = BaseButton.ACTION_MODE_BUTTON_PRESS
+		button.text = "Goal " + str(i)
+		button.pressed.connect(_on_place_goal_pressed.bind(i))
+	
+		var width: float = buttonContainer.size.x / buttonContainer.columns
+		var height: float = buttonContainer.size.y / 2
+		button.custom_minimum_size = Vector2(width, height)
+		buttonContainer.add_child(button)
+		
 
+	# Create buttons for available machines
 	for available: MachinePrototype in GameState.machines_available:
 		
 		var prototypes: Array[ButtonPrototype] = available.get_button_prototypes()
@@ -114,17 +126,6 @@ func connect_floor_signals(index: int) -> void:
 	layout.won.connect(_on_puzzle_completed)
 	layout.crash_event.connect(crash)
 
-func connect_buttons_to_floor(index: int) -> void:
-	var layout: FactoryFloor = factory_layouts[index]
-	
-	var buttons: Panel = $UILayer/ButtonPanel
-	buttons.get_node("Run").pressed.connect(layout._on_run_pressed)
-	buttons.get_node("Pause").pressed.connect(layout._on_pause_pressed)
-	buttons.get_node("Reset").pressed.connect(layout._on_reset_pressed)
-	buttons.get_node("Clear").pressed.connect(layout._on_clear_pressed)
-	buttons.get_node("NewPuzzle").pressed.connect(layout._on_new_puzzle_pressed)
-	buttons.get_node("SpeedX2").pressed.connect(layout._on_fast_pressed.bind(2))
-	buttons.get_node("SpeedX10").pressed.connect(layout._on_fast_pressed.bind(10))
 
 func update_floor_thumbnail(floor_ind: int) -> void:
 	var button_height: int = $UILayer/FloorSelectorPanel.size.y - 30
@@ -148,6 +149,7 @@ func switch_to_layout(index: int) -> void:
 func update_factory_click_mode() -> void:
 	factory_layouts[active_layout_ind].set_click_mode(click_mode)
 	factory_layouts[active_layout_ind].set_widget_type(widget_type)
+	factory_layouts[active_layout_ind].set_goal_index(goal_index)
 	factory_layouts[active_layout_ind].set_conveyor_direction(conveyor_direction)
 
 #endregion
@@ -284,6 +286,11 @@ func _on_place_track_pressed():
 
 func _on_place_crane_pressed():
 	click_mode = Consts.PLACE_CRANE
+	update_factory_click_mode()
+	
+func _on_place_goal_pressed(index: int) -> void:
+	click_mode = Consts.PLACE_GOAL
+	goal_index = index
 	update_factory_click_mode()
 	
 	
