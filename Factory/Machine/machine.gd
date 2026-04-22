@@ -36,14 +36,9 @@ func set_machine_parameters(init_position: Vector2, init_layer: int):
 	monitorable = false
 	pass
 
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-		
-	# Connecting signals
-	area_entered.connect(_on_area_entered)
-	area_exited.connect(_on_area_exited)
-	
+# Highlight line needs to be created on _init, not _ready, because we sometimes
+# modify it before it gets added to the scene tree
+func _init():
 	highlight_line = Line2D.new()
 	var highlight_points:Array[Vector2] = [Vector2(-64, -64),
 										   Vector2(-64, 64),
@@ -54,6 +49,14 @@ func _ready():
 	highlight_line.visible = false
 	
 	add_child(highlight_line)
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+		
+	# Connecting signals
+	area_entered.connect(_on_area_entered)
+	area_exited.connect(_on_area_exited)
+	
 	
 	pass # Replace with function body.
 

@@ -66,21 +66,28 @@ var crashed: bool = false
 
 static func create() -> FactoryFloor:
 	var new_floor: FactoryFloor = FactoryFloor.new()
-	new_floor.tile_set = load("res://Factory/factory_floor_tileset.tres")
 	return new_floor
 	
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
+static func create_from_save(save_dict: Dictionary) -> FactoryFloor:
+	var new_floor: FactoryFloor = FactoryFloor.new()
+	new_floor.load_from_save_dict(save_dict)
+	return new_floor
+	
+# Setup things that may change before adding to the scene tree
+func _init() -> void:
+	tile_set = load("res://Factory/factory_floor_tileset.tres")
 	
 	set_tile_textures()
 	create_outer_walls()
 			
-	# Create
 	walls = []
 	
 	assemblies = []
 	machines = []
 	current_track = null
+	
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
 	
 	# view_size should always get set, but the parent needs to be
 	# ready before that happens.
