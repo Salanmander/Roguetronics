@@ -3,3 +3,18 @@
 - More upgrades
 - Cost for tooling
 - Ability to fabricate intermediates, and retool the factory.
+	- Make intermediate goal
+		- Subclass of machine, contains a goal
+		- Create interface for defining the product you want
+	- Make button for intermediate from previous factories.
+		- Only shows on later layouts
+		- Can only be in one later layout.
+		- Creates producer with limited supply
+	- Running all layouts
+		- Different kinds of goal-complete signals
+		- Switching from one to the next
+		- All-layouts run.
+		- Single-layout run doesn't switch to the next, doesn't trigger completion of scenario
+	- What happens if you delete a previous intermediate?
+		- Button goes away
+		- Take away later producers? Or just mark them deprecated? If marked deprecated, can they be reinstated?

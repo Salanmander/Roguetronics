@@ -5,7 +5,7 @@ class_name FactoryFloor
 
 
 
-const FLOOR_LAYER = 0
+const FLOOR_LAYER = -1
 
 const CONVEYOR_TILE = 4
 const CONVEYOR_UP_VARIANT = 0
@@ -88,6 +88,7 @@ func _init() -> void:
 	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	z_index = FLOOR_LAYER
 	
 	# view_size should always get set, but the parent needs to be
 	# ready before that happens.

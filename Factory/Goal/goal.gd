@@ -44,7 +44,8 @@ func set_parameters(init_position:Vector2):
 	
 #endregion
 
-
+func _init() -> void:
+	set_parameters(Vector2(0, 0))
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -73,6 +74,8 @@ func load_save_dict(save_dict: Dictionary) -> void:
 
 #endregion
 
+func get_grid_size() -> Vector2i:
+	return plan.get_grid_size()
 
 func get_thumbnail(width: int, height: int) -> ImageTexture:
 	

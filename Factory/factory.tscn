@@ -1,12 +1,13 @@
-[gd_scene load_steps=11 format=3 uid="uid://dksdy6hagfrlo"]
+[gd_scene load_steps=12 format=3 uid="uid://dksdy6hagfrlo"]
 
 [ext_resource type="Script" path="res://Factory/factory.gd" id="1_ajpdm"]
 [ext_resource type="Texture2D" uid="uid://dpvqigf2ldir8" path="res://icon.svg" id="4_fq6om"]
 [ext_resource type="PackedScene" uid="uid://ceos3wf8l8y6l" path="res://Factory/ResultScreen/result_screen.tscn" id="7_ixyht"]
-[ext_resource type="Script" path="res://Factory/UI/dispenser_controls.gd" id="9_p24vu"]
-[ext_resource type="Script" path="res://Factory/UI/crane_controls.gd" id="10_5vdjy"]
-[ext_resource type="Script" path="res://Factory/UI/crane_program.gd" id="11_wqryl"]
-[ext_resource type="Script" path="res://Factory/UI/command_bank.gd" id="12_vgtn5"]
+[ext_resource type="PackedScene" uid="uid://cgqust4a1jv75" path="res://Factory/Machine/IntermediateProduct/intermediate_receiver.tscn" id="8_ilvlb"]
+[ext_resource type="Script" path="res://Factory/Machine/Dispenser/dispenser_controls.gd" id="9_p24vu"]
+[ext_resource type="Script" path="res://Factory/Machine/Crane/Controls/crane_controls.gd" id="10_5vdjy"]
+[ext_resource type="Script" path="res://Factory/Machine/Crane/Controls/crane_program.gd" id="11_wqryl"]
+[ext_resource type="Script" path="res://Factory/Machine/Crane/Controls/command_bank.gd" id="12_vgtn5"]
 [ext_resource type="PackedScene" uid="uid://dxem5lqhmeff1" path="res://Factory/Tutorial/tutorial_panel.tscn" id="16_i8wsv"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hjol2"]
@@ -281,6 +282,8 @@ label_settings = SubResource("LabelSettings_k65vi")
 
 [node name="FactoryLayer" type="CanvasLayer" parent="."]
 layer = -2
+
+[node name="IntermediateReceiver" parent="FactoryLayer" instance=ExtResource("8_ilvlb")]
 
 [node name="TutorialPanel" parent="." instance=ExtResource("16_i8wsv")]
 visible = false

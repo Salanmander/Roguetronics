@@ -395,6 +395,23 @@ func get_value() -> int:
 	
 	return int(widget_total * sqrt(widgets.size()) * widget_types.size() * star_multiplier)
 
+func get_grid_size() -> Vector2i:
+	
+	# Special case for an empty assembly
+	if(widgets.size() == 0):
+		return Vector2i(0, 0)
+	
+	var x_size: int = 0
+	var y_size: int = 0
+	for widget: Widget in widgets:
+		var widget_grid_loc: Vector2i = widget.position/Consts.GRID_SIZE
+		x_size = max(x_size, widget_grid_loc.x)
+		y_size = max(y_size, widget_grid_loc.y)
+	
+	# x_size and y_size are now the maximum number of steps right and down
+	# to include the whole assembly. Need to add 1 for total number of
+	# rows/columns used
+	return Vector2i(x_size+1, y_size+1)
 
 #TODO: this doesn't actually give a good image yet. Finish if using.
 func get_thumbnail(width: int, height: int) -> ImageTexture:
@@ -406,15 +423,9 @@ func get_thumbnail(width: int, height: int) -> ImageTexture:
 		2: Color(0.1, 0.8, 0.2),
 		}
 	
-	
-	var x_size: int = 0
-	var y_size: int = 0
-	for widget: Widget in widgets:
-		var widget_grid_loc: Vector2i = widget.position/Consts.GRID_SIZE
-		x_size = max(x_size, widget_grid_loc.x)
-		y_size = max(y_size, widget_grid_loc.y)
+	var bounding_grid_size = get_grid_size()
 	var goal_grid: Array[Array] = []
-	goal_grid.resize(x_size)
+	goal_grid.resize(bounding_grid_size.x)
 	
 	var thumb_wid: int = goal_grid.size() * CEL_PX
 	var thumb_hgt: int = goal_grid[0].size() * CEL_PX
