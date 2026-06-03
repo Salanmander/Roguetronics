@@ -1,6 +1,6 @@
 extends VBoxContainer
 
-var slot_packed = preload("res://Factory/UI/command_slot.tscn")
+var slot_packed = preload("res://Factory/Machine/Crane/Controls/command_slot.tscn")
 
 const num_slots = 14
 var slots: Array[CommandSlot]
