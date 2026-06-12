@@ -30,6 +30,9 @@ func copy() -> Goal:
 	return Goal.create_from_save(save_dict)
 	
 func set_plan(new_plan: Assembly) -> void:
+	if(plan):
+		plan.queue_free()
+		remove_child(plan)
 	plan = new_plan
 	plan.affected_by_machines = false
 	plan.set_monitorable(false)

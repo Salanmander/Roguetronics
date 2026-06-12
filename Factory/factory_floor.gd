@@ -281,14 +281,19 @@ func _unhandled_input(event: InputEvent):
 			# Check to see if there's a clickable thing there
 			var highlighted: Machine = null
 			for machine: Machine in machines:
-				if machine is Dispenser:
+				if( machine is Dispenser ):
 					if (event.position - machine.position).length() < 64:
-						highlighted = highlight(machine, grid_loc)
+						highlighted = highlight(machine)
 						
-				if machine is Track:
+				if( machine is Track ):
 					if machine.exists_at(grid_loc):
 						highlighted = highlight(machine, grid_loc)
-					pass
+				
+				if( machine is Depot ):
+					if( machine.contains_point(event.position - machine.position) ):
+						highlighted = highlight(machine)
+					
+				
 					
 			
 			if highlighted != null:

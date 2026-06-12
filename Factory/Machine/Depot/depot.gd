@@ -26,15 +26,19 @@ func update_background_size() -> void:
 	var grid_size: Vector2i = $Goal.get_grid_size()
 	$DepotBackground.set_grid_size(grid_size)
 	var sqr: int = Consts.GRID_SIZE
-	var bottom: int = (grid_size.y+0.5)*sqr
-	var right: int = (grid_size.x+0.5)*sqr
+	var bottom: int = max(0.5, grid_size.y-0.5)*sqr
+	var right: int = max(0.5, grid_size.x-0.5)*sqr
 	var highlight_points: Array[Vector2] = [Vector2(-sqr/2, -sqr/2),
 											Vector2(-sqr/2, bottom),
-											Vector2(bottom, right),
+											Vector2(right, bottom),
 											Vector2(right, -sqr/2),
 											]
 	highlight_line.points = PackedVector2Array(highlight_points)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+# pos is local to the Depot
+func contains_point(pos: Vector2) -> bool:
+	return $DepotBackground.region_rect.has_point(pos - $DepotBackground.position)
+
+func _on_target_assembly_changed(new_assembly: Assembly) -> void:
+	$Goal.set_plan(new_assembly)
+	update_background_size()

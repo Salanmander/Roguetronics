@@ -277,8 +277,24 @@ func add_widget_helper(new_widget: Widget):
 	new_widget.combined.connect(_on_widget_combined)
 	new_widget.layer_changed.connect(_on_widget_layer_changed)
 	
-	if(new_widget.position.x < 0):
-		var shift_amount = -new_widget.position.x
+	standardize_positions()
+	
+
+
+# Changes all widget and link positions so that the left-most widget is
+# at x of 0, and top-most is at y of 0.
+func standardize_positions() -> void:
+	if(widgets.size() == 0):
+		return
+	
+	var left_most: float = widgets[0].position.x
+	for widget: Widget in widgets:
+		if(widget.position.x < left_most):
+			left_most = widget.position.x
+	
+	
+	if(left_most != 0):
+		var shift_amount = -left_most
 		
 		# Shift assembly in the same direction that the new widget is
 		position.x -= shift_amount
@@ -291,10 +307,15 @@ func add_widget_helper(new_widget: Widget):
 			
 		for link: Line2D in links:
 			link.position += shift_vector
+	
+	
+	var top_most: float = widgets[0].position.y
+	for widget: Widget in widgets:
+		if(widget.position.y < left_most):
+			left_most = widget.position.y
 			
-			
-	if(new_widget.position.y < 0):
-		var shift_amount = -new_widget.position.y
+	if(top_most != 0):
+		var shift_amount = -top_most
 		
 		# Shift assembly in the same direction that the new widget is
 		position.y -= shift_amount
@@ -310,6 +331,9 @@ func add_widget_helper(new_widget: Widget):
 			var new2: Vector2 = link.points[1] + shift_vector
 			link.points = PackedVector2Array([new1, new2])
 	
+	
+	pass
+
 func get_widgets() -> Array[Widget]:
 	return widgets.duplicate()
 	

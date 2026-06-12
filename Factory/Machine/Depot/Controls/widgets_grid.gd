@@ -1,4 +1,5 @@
 extends TileMapLayer
+class_name WidgetsGrid
 
 
 signal assembly_changed(new_assembly: Assembly)
@@ -6,13 +7,25 @@ signal assembly_changed(new_assembly: Assembly)
 # Creates an Assembly object out of the things currently displayed in the
 # grid
 func get_assembly() -> Assembly:
-	var assembly: Assembly = Assembly.create(Vector2(Consts.GRID_SIZE/2, Consts.GRID_SIZE/2))
+	var assembly: Assembly = Assembly.create(Vector2(0, 0))
 	
-	# Add widgets. This may result in an assembly with non-standard
-	# placement if there are empty rows/colums and the top/left
 	for pos: Vector2i in get_used_cells():
-		assembly.add_widget(pos*Consts.GRID_SIZE, get_cell_source_id(pos))
-		
+		# While adding widgets, the assembly shifts its position so that
+		# there isn't any empty space at the top/left of the assembly, keeping
+		# the widgets in the same place. So to get a position local to
+		# the assembly, need to subtract the assembly position.
+		var off: Vector2 = assembly.position
+		assembly.add_widget(map_to_local(pos) - off, get_cell_source_id(pos))
+	
+	for child: Node in get_children():
+		if child is Line2D:
+			var off: Vector2 = assembly.position
+			assembly.add_link(child.points[0] - off, child.points[1] - off)
+	
+	# Move assembly so that it's at (0,0) before handing it off. We don't care
+	# about the position relative to the top-left of the grid.
+	assembly.position = Vector2(0, 0)
+	
 	return assembly
 
 
