@@ -398,6 +398,13 @@ func _unhandled_input(event: InputEvent):
 			floor_changed.emit()
 			
 			pass
+			
+		elif(click_mode == Consts.PLACE_DEPOT):
+			remove_machines(thing_position, Depot.LAYER)
+			make_depot(grid_loc)
+			floor_changed.emit()
+			
+			pass
 		elif(click_mode == Consts.PLACE_WALL):
 			make_wall(grid_loc)
 			floor_changed.emit()
@@ -512,6 +519,15 @@ func make_star_maker(grid_position: Vector2i) -> void:
 func add_star_maker(new_star_maker: StarMaker) -> void:
 	add_child(new_star_maker)
 	machines.append(new_star_maker)
+	
+func make_depot(grid_position: Vector2i) -> void:
+	var depot_position: Vector2 = map_to_local(grid_position)
+	var new_depot: Depot = Depot.create(depot_position)
+	add_depot(new_depot)
+
+func add_depot(new_depot: Depot) -> void:
+	add_child(new_depot)
+	machines.append(new_depot)
 	
 func make_dispenser(grid_position: Vector2i, dispense_type: int) -> void:
 	var dispenser_position: Vector2 = map_to_local(grid_position)

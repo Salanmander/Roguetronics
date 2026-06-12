@@ -40,7 +40,7 @@ func set_machine_parameters(init_position: Vector2, init_layer: int):
 # modify it before it gets added to the scene tree
 func _init():
 	highlight_line = Line2D.new()
-	var highlight_points:Array[Vector2] = [Vector2(-64, -64),
+	var highlight_points: Array[Vector2] = [Vector2(-64, -64),
 										   Vector2(-64, 64),
 										   Vector2(64, 64),
 										   Vector2(64, -64)]
@@ -68,7 +68,7 @@ func reset():
 	last_cycle = 0
 
 
-# Some machines override this to use the grid location, and may return false.
+# Some machines override this to use the grid location, and may return null.
 # Those are included here to be able to override with the same input/output types.
 func highlight(_grid_loc: Vector2i) -> Machine:
 	highlight_line.visible = true

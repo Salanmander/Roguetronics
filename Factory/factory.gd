@@ -3,6 +3,7 @@ class_name Factory
 
 @onready var dispenser_control: DispenserControl = $UILayer/MachineControls/DispenserControl
 @onready var crane_control: CraneControl = $UILayer/MachineControls/CraneControl
+@onready var depot_control: DepotControl = $UILayer/MachineControls/DepotControl
 @onready var money_display: Label = $UILayer/MoneyDisplay
 @onready var cycle_cost_display: Label = $UILayer/CycleCostDisplay
 @onready var base_value_display: Label = $UILayer/BaseValueDisplay
@@ -240,6 +241,7 @@ func change_projected_money(delta: int) -> void:
 func hide_all_controls():
 	dispenser_control.visible = false
 	crane_control.visible = false
+	depot_control.visible = false
 
 func show_control(UIElement: Control):
 	UIElement.visible = true
@@ -334,7 +336,10 @@ func _on_place_goal_pressed(index: int) -> void:
 	click_mode = Consts.PLACE_GOAL
 	goal_index = index
 	update_factory_click_mode()
-	
+
+func _on_place_depot_pressed() -> void:
+	click_mode = Consts.PLACE_DEPOT
+	update_factory_click_mode()
 	
 func _on_delete_pressed():
 	click_mode = Consts.DELETE
@@ -400,6 +405,11 @@ func _on_element_selected(element):
 		crane_control.connect_to(element)
 		hide_all_controls()
 		show_control(crane_control)
+		
+	elif element is Depot:
+		depot_control.connect_to(element)
+		hide_all_controls()
+		show_control(depot_control)
 		
 	
 	

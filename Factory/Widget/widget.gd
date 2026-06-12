@@ -68,11 +68,7 @@ func _ready():
 
 func set_type(widget_type: int):
 	type = widget_type
-	if type == 1:
-		tex = load("res://Factory/Widget/widget.png")
-	elif type == 2:
-		tex = load("res://Factory/Widget/widget2.png")
-	
+	tex = load(Consts.WIDGET_TEXTURE_FILES[type])
 	
 	$Sprite2D.texture = tex
 	

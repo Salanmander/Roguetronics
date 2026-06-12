@@ -12,14 +12,24 @@ const VERSION_BUILD = 4
 const SCENE_FILES: Dictionary = {
 	Consts.MAIN_MENU: "res://Menu/main_menu.tscn",
 	Consts.FACTORY: "res://Factory/factory.tscn",
-	Consts.REWARD: "res://Rewards/reward_screen.tscn"
+	Consts.REWARD: "res://Rewards/reward_screen.tscn",
 }
 
 const SCENE_FROM_CLASS: Dictionary = { 
 	"MainMenu": Consts.MAIN_MENU,
 	"Factory": Consts.FACTORY,
-	"RewardScreen": Consts.REWARD
+	"RewardScreen": Consts.REWARD,
 }
+
+#region Widget numbers
+const WIDGET_BASIC: int = 1
+const WIDGET_VERY: int = 2
+
+const WIDGET_TEXTURE_FILES: Dictionary = {
+	Consts.WIDGET_BASIC: "res://Factory/Widget/widget.png",
+	Consts.WIDGET_VERY: "res://Factory/Widget/widget2.png",
+}
+#endregion
 
 # values for click mode
 const NONE = 0
@@ -32,6 +42,7 @@ const PLACE_TRACK = 6
 const PLACE_CRANE = 7
 const PLACE_STAR_MAKER = 8
 const PLACE_GOAL = 9
+const PLACE_DEPOT = 10
 const DELETE = -1
 
 

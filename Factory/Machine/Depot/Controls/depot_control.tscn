@@ -1,0 +1,119 @@
+[gd_scene load_steps=12 format=4 uid="uid://c2usw4ybdw3oi"]
+
+[ext_resource type="Script" path="res://Factory/Machine/Depot/Controls/depot_control.gd" id="1_bktqb"]
+[ext_resource type="Script" path="res://Factory/Machine/Depot/Controls/depot_product.gd" id="1_udqtb"]
+[ext_resource type="TileSet" uid="uid://dngwcypusgtn6" path="res://Factory/factory_floor_tileset.tres" id="2_gw8s2"]
+[ext_resource type="Texture2D" uid="uid://boj4b0l32qimb" path="res://Factory/Widget/widget.png" id="3_auurj"]
+[ext_resource type="Texture2D" uid="uid://bkhsm6uotntfp" path="res://Factory/Widget/widget2.png" id="4_cf4xb"]
+[ext_resource type="Script" path="res://Factory/Machine/Depot/Controls/widget_drag.gd" id="5_3qt1l"]
+[ext_resource type="Script" path="res://Factory/Machine/Depot/Controls/widgets_grid.gd" id="5_e31b0"]
+[ext_resource type="Script" path="res://Factory/Machine/Depot/Controls/toggle.gd" id="7_ey40t"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_b1r54"]
+texture = ExtResource("3_auurj")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jo8ug"]
+texture = ExtResource("4_cf4xb")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_xostx"]
+tile_size = Vector2i(128, 128)
+sources/2 = SubResource("TileSetAtlasSource_jo8ug")
+sources/1 = SubResource("TileSetAtlasSource_b1r54")
+
+[node name="DepotControl" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = 5.0
+offset_right = -8.0
+offset_bottom = -3.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_bktqb")
+
+[node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+current_tab = 0
+
+[node name="Accept" type="VBoxContainer" parent="TabContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+metadata/_tab_index = 0
+
+[node name="Product" type="Control" parent="TabContainer/Accept"]
+custom_minimum_size = Vector2(150, 120)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_udqtb")
+
+[node name="GridLayer" type="Node2D" parent="TabContainer/Accept/Product"]
+scale = Vector2(0.3, 0.3)
+
+[node name="Grid" type="TileMapLayer" parent="TabContainer/Accept/Product/GridLayer"]
+tile_map_data = PackedByteArray("AAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAABAAEAAAAAAAAAAAADAAEAAAAAAAAAAAACAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAABAAIAAAAAAAAAAAACAAIAAAAAAAAAAAADAAIAAAAAAAAAAAA=")
+tile_set = ExtResource("2_gw8s2")
+
+[node name="Widgets" type="TileMapLayer" parent="TabContainer/Accept/Product/GridLayer"]
+tile_set = SubResource("TileSet_xostx")
+script = ExtResource("5_e31b0")
+
+[node name="PartSelectors" type="GridContainer" parent="TabContainer/Accept"]
+layout_mode = 2
+columns = 4
+
+[node name="Widget" type="Button" parent="TabContainer/Accept/PartSelectors"]
+custom_minimum_size = Vector2(0, 45)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+icon = ExtResource("3_auurj")
+icon_alignment = 1
+expand_icon = true
+script = ExtResource("5_3qt1l")
+
+[node name="VeryWidget" type="Button" parent="TabContainer/Accept/PartSelectors"]
+custom_minimum_size = Vector2(0, 45)
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("4_cf4xb")
+icon_alignment = 1
+expand_icon = true
+script = ExtResource("5_3qt1l")
+widget_type = 2
+
+[node name="Link" type="Button" parent="TabContainer/Accept/PartSelectors"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Link"
+script = ExtResource("7_ey40t")
+
+[node name="Delete" type="Button" parent="TabContainer/Accept/PartSelectors"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Del"
+script = ExtResource("7_ey40t")
+
+[node name="Dispense" type="Control" parent="TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[connection signal="toggled" from="TabContainer/Accept/PartSelectors/Link" to="TabContainer/Accept/Product" method="_on_link_toggled"]
+[connection signal="toggled" from="TabContainer/Accept/PartSelectors/Link" to="TabContainer/Accept/PartSelectors/Delete" method="other_toggled"]
+[connection signal="toggled" from="TabContainer/Accept/PartSelectors/Delete" to="TabContainer/Accept/Product" method="_on_delete_toggled"]
+[connection signal="toggled" from="TabContainer/Accept/PartSelectors/Delete" to="TabContainer/Accept/PartSelectors/Link" method="other_toggled"]

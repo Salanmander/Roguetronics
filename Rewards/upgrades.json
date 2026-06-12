@@ -31,6 +31,12 @@
 		"machine":"res://Factory/Machine/StarMaker/star_maker_prototype.gd",
 		"icon":"res://Factory/Machine/StarMaker/StarMaker.png"
 		},
+	"5":
+		{
+		"type":"new",
+		"machine":"res://Factory/Machine/Depot/depot_prototype.gd",
+		"icon":"res://Factory/Machine/Depot/Stripes.png"
+		},
 		
 	
 }

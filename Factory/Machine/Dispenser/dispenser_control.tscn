@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3 uid="uid://h0j2ndxppgd1"]
+
+[ext_resource type="Script" path="res://Factory/Machine/Dispenser/dispenser_controls.gd" id="1_qnljq"]
+
+[node name="DispenserControl" type="Control"]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 222.0
+offset_bottom = 584.0
+script = ExtResource("1_qnljq")
+
+[node name="SpawnDelay" type="SpinBox" parent="."]
+layout_mode = 0
+offset_left = 66.0
+offset_top = 98.0
+offset_right = 149.063
+offset_bottom = 129.0
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 73.0
+offset_right = 200.0
+offset_bottom = 96.0
+text = "Cycles between widgets"

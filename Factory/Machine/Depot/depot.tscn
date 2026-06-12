@@ -1,0 +1,20 @@
+[gd_scene load_steps=5 format=3 uid="uid://cgqust4a1jv75"]
+
+[ext_resource type="Script" path="res://Factory/Machine/Depot/depot.gd" id="1_a5a57"]
+[ext_resource type="Script" path="res://Factory/Goal/goal.gd" id="2_ysv8h"]
+[ext_resource type="Texture2D" uid="uid://c7ahdcllhhh2s" path="res://Factory/Machine/Depot/Stripes.png" id="3_pmgb2"]
+[ext_resource type="Script" path="res://Factory/Machine/Depot/depot_background.gd" id="4_ttfvl"]
+
+[node name="Depot" type="Area2D"]
+script = ExtResource("1_a5a57")
+
+[node name="Goal" type="Node2D" parent="."]
+script = ExtResource("2_ysv8h")
+
+[node name="DepotBackground" type="Sprite2D" parent="."]
+texture_repeat = 2
+texture = ExtResource("3_pmgb2")
+centered = false
+region_enabled = true
+region_rect = Rect2(0, 0, 389.5, 380.25)
+script = ExtResource("4_ttfvl")
