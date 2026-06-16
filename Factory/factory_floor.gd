@@ -26,6 +26,7 @@ signal first_cycle_started()
 signal assembly_sent(sent: Assembly)
 signal crash_event()
 signal won()
+signal layout_finished()
 
 
 var view_size: Vector2i
@@ -54,12 +55,13 @@ var starting_assemblies: Array[Assembly]
 
 
 var goals: Array[Goal]
+var finished_depots: Array[Depot]
 
 var running: bool = false
 var cycle_time: float = 0.7 # Number of seconds for one cycle
 var cycle: float = -1 # Current cycle count
 var last_cycle: float = 0 # Previous frame cycle count
-var crashed: bool = false
+var can_resume: bool = true
 
 
 #region constructors
@@ -173,13 +175,11 @@ func set_conveyor_direction(dir: float) -> void:
 func set_goal_index(index: int) -> void:
 	goal_index = index
 
-func set_speed(speedup: int) -> void:
-	Engine.set_time_scale(speedup)
-	Engine.physics_ticks_per_second = speedup*60
-	Engine.max_physics_steps_per_frame = speedup*8
-	running = true
-	simulation_started.emit()
-	unhighlight_all()
+func run() -> void:
+	if( can_resume ):
+		running = true
+		simulation_started.emit()
+		unhighlight_all()
 
 
 func clear_floor() -> void:
@@ -330,6 +330,7 @@ func _unhandled_input(event: InputEvent):
 			
 		
 		elif(click_mode == Consts.DELETE):
+			
 			# Delete machines
 			var something_changed: bool = false
 			var removed_machines: Array[Machine] = []
@@ -361,6 +362,9 @@ func _unhandled_input(event: InputEvent):
 			
 			if(something_changed):
 				floor_changed.emit()
+				# TODO: only get rid of interfaces if you actually delete
+				# the thing that was highlighted
+				unhighlight_all()
 			
 			
 				
@@ -532,6 +536,10 @@ func make_depot(grid_position: Vector2i) -> void:
 
 func add_depot(new_depot: Depot) -> void:
 	add_child(new_depot)
+	new_depot.completed.connect(_on_depot_satisfied.bind(new_depot))
+	unhighlight_all()
+	highlight(new_depot)
+	element_selected.emit(new_depot)
 	machines.append(new_depot)
 	
 func make_dispenser(grid_position: Vector2i, dispense_type: int) -> void:
@@ -712,13 +720,18 @@ func remove_machines(machine_position: Vector2, machine_layer: int):
 func win() -> void:
 	pause()
 	won.emit()
-	
+
+func finish_layout() -> void:
+	pause()
+	can_resume = false
+	layout_finished.emit()
+	modulate = Color(0.8, 1, 0.8, 1)
 
 # TODO: improve the crash, give visual indicator of the thing that caused
 # the crash
 func crash() -> void:
 	running = false
-	crashed = true
+	can_resume = false
 	crash_event.emit()
 	modulate = Color(1, 0.6, 0.6, 1)
 	
@@ -728,11 +741,12 @@ func pause() -> void:
 func reset_to_start_of_run():
 	delete_assemblies()
 	cycle = -1
-	crashed = false
+	can_resume = true
 	modulate = Color(1, 1, 1, 1)
 	
 	assemblies = starting_assemblies
 	starting_assemblies = []
+	finished_depots = []
 	
 	for assembly: Assembly in assemblies:
 		add_child(assembly)
@@ -868,6 +882,15 @@ func _on_assembly_delete(deleted: Assembly):
 # Should it still send the number completed?
 func _on_goal_completed(_goal: Goal):
 	win()
+	
+func _on_depot_satisfied(depot: Depot):
+	finished_depots.append(depot)
+	for machine: Machine in machines:
+		if( machine is Depot and not machine in finished_depots ):
+			return
+	
+	if(goals.size() == 0):
+		finish_layout()
 
 func _on_assembly_sent(sent: Assembly) -> void:
 	assembly_sent.emit(sent)

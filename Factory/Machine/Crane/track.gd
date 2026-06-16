@@ -170,6 +170,12 @@ func has_crane_at(loc: Vector2i) -> bool:
 	
 	return false
 	
+func get_crane_at(loc: Vector2i) -> Crane:
+	for crane: Crane in cranes:
+		if points[cranes[crane]] == loc:
+			return crane
+	return null
+	
 func delete_crane_at(loc: Vector2i) -> void:
 	var to_delete: Array[Crane] = []
 	for crane: Crane in cranes:

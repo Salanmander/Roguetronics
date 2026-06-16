@@ -52,6 +52,18 @@ theme_override_constants/separation = 15
 alignment = 1
 metadata/_tab_index = 0
 
+[node name="Required" type="HBoxContainer" parent="TabContainer/Accept"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="TabContainer/Accept/Required"]
+layout_mode = 2
+text = "# Required"
+
+[node name="Count" type="SpinBox" parent="TabContainer/Accept/Required"]
+layout_mode = 2
+value = 10.0
+
 [node name="Product" type="Control" parent="TabContainer/Accept"]
 custom_minimum_size = Vector2(150, 120)
 layout_mode = 2

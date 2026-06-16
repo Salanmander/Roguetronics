@@ -311,8 +311,8 @@ func standardize_positions() -> void:
 	
 	var top_most: float = widgets[0].position.y
 	for widget: Widget in widgets:
-		if(widget.position.y < left_most):
-			left_most = widget.position.y
+		if(widget.position.y < top_most):
+			top_most = widget.position.y
 			
 	if(top_most != 0):
 		var shift_amount = -top_most
@@ -345,7 +345,9 @@ func get_links() -> Array[Line2D]:
 	
 func check_for_overlap_with(others: Array[Assembly]):
 	for other: Assembly in others:
-		if other.position.is_equal_approx(position) and matches(other):
+		# using global_position because sometimes Goals are children of other
+		# nodes, so position values may be local to something else
+		if other.global_position.is_equal_approx(global_position) and matches(other):
 			perfect_overlap.emit(other)
 	pass
 

@@ -48,16 +48,15 @@ func _init():
 	highlight_line.closed = true
 	highlight_line.visible = false
 	
-	add_child(highlight_line)
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-		
+	
 	# Connecting signals
 	area_entered.connect(_on_area_entered)
 	area_exited.connect(_on_area_exited)
 	
-	
+	add_child(highlight_line)
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
 	pass # Replace with function body.
 
 

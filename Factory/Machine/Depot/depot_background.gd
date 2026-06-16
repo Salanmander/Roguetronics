@@ -5,7 +5,6 @@ var LAYER = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	position = Vector2(-Consts.GRID_SIZE/2, -Consts.GRID_SIZE/2)
 	pass # Replace with function body.
 
 

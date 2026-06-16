@@ -20,7 +20,8 @@ var widget_type: int = 0
 var goal_index: int = 0
 
 var crashed: bool = false
-var single_layout_running: bool = false
+var running: bool = false
+var whole_factory_running: bool = false
 
 var projected_money: int
 var reward: int
@@ -149,6 +150,7 @@ func connect_floor_signals(index: int) -> void:
 	layout.assembly_sent.connect(_on_assembly_sent)
 	layout.won.connect(_on_puzzle_completed)
 	layout.crash_event.connect(crash)
+	layout.layout_finished.connect(_on_layout_finished)
 
 
 func update_floor_thumbnail(floor_ind: int) -> void:
@@ -164,7 +166,11 @@ func switch_to_layout_of_button(button: Button) -> void:
 	switch_to_layout(ind)
 	pass
 
+# Does nothing if given an out-of-bounds layout index
 func switch_to_layout(index: int) -> void:
+	if( index >= factory_layouts.size() ):
+		return
+	factory_layouts[active_layout_ind].unhighlight_all()
 	active_layout_ind = index
 	for layout: FactoryFloor in factory_layouts:
 		layout.visible = false
@@ -353,13 +359,27 @@ func _on_add_factory_layout_pressed() -> void:
 	
 
 func _on_run_speed_pressed(speed: int) -> void:
-	if(not single_layout_running):
+	if(not running):
 		initialize_run_money()
 		
-	single_layout_running = true
+	running = true
 	hide_all_controls()
 	if not crashed:
-		factory_layouts[active_layout_ind].set_speed(speed)
+		Engine.set_time_scale(speed)
+		Engine.physics_ticks_per_second = speed*60
+		Engine.max_physics_steps_per_frame = speed*8
+		factory_layouts[active_layout_ind].run()
+
+
+func _on_run_all_pressed() -> void:
+	if(not whole_factory_running):
+		for factory in factory_layouts:
+			factory.reset_to_start_of_run()
+	
+	whole_factory_running = true
+	switch_to_layout(0)
+	_on_run_speed_pressed(1)
+
 
 
 func _on_pause_pressed() -> void:
@@ -420,6 +440,8 @@ func _on_simulation_cycle_end() -> void:
 func _on_simulation_reset() -> void:
 	money_display.text = "$" + str(GameState.money)
 	crashed = false
+	running = false
+	whole_factory_running = false
 	
 	
 
@@ -437,6 +459,14 @@ func _on_assembly_sent(sent: Assembly) -> void:
 	change_projected_money(sent.get_value())
 	
 	
+func _on_layout_finished() -> void:
+	if(whole_factory_running):
+		var next_ind: int = active_layout_ind + 1
+		switch_to_layout(next_ind)
+		factory_layouts[active_layout_ind].run()
+	pass
+	
+
 func _on_puzzle_completed():
 	result_screen.set_before(GameState.money)
 	result_screen.set_cost(during_run_costs)
