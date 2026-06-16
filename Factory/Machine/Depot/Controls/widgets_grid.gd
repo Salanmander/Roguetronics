@@ -28,6 +28,27 @@ func get_assembly() -> Assembly:
 	
 	return assembly
 
+func set_grid_from_assembly(assembly: Assembly) -> void:
+	clear()
+	
+	# Get rid of lines
+	for child: Node in get_children():
+		if child is Line2D:
+			child.queue_free()
+			remove_child(child)
+			
+	# Need to offset a lot of positions by half-a-square, since the
+	# assembly considers the center of its top-left widget to be (0,0).
+	var half_sqr: Vector2 = Vector2(Consts.GRID_SIZE/2, Consts.GRID_SIZE/2)
+			
+	for widget: Widget in assembly.get_widgets():
+		set_widget(widget.position + half_sqr, widget.get_type())
+	for link: Line2D in assembly.get_links():
+		# create a line as if someone clicked in the middle position
+		var center_pos: Vector2 = link.points[0].lerp(link.points[1], 0.5)
+		center_pos += link.position + half_sqr
+		create_link(center_pos)
+	pass
 
 func set_widget(widget_pos: Vector2, type: int) -> void:
 	var grid_loc: Vector2i = local_to_map(widget_pos)

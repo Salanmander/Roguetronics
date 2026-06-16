@@ -7,6 +7,7 @@ static var recv_packed = load("res://Factory/Machine/Depot/depot.tscn")
 
 signal completed()
 
+#region constructors
 
 static func create(pos: Vector2) -> Depot:
 	var new_depot: Depot = recv_packed.instantiate()
@@ -24,6 +25,7 @@ func _ready() -> void:
 	# Connect signals from the goal
 	$Goal.completed.connect(_on_requirement_met)
 
+#endregion
 
 func run_to(cycle: float) -> void:
 	# This runs if it's the first update of the cycle
@@ -57,10 +59,18 @@ func update_background_size() -> void:
 	$Shape.position = (grid_size-Vector2i(1,1))*sqr/2
 	$DepotBackground.region_rect = Rect2(0, 0, right, bottom)
 
-
+#region communication with other nodes
 # pos is local to the Depot
 func contains_point(pos: Vector2) -> bool:
 	return $DepotBackground.region_rect.has_point(pos - $DepotBackground.position)
+
+func get_product() -> Assembly:
+	return $Goal.get_plan()
+
+func get_required_number() -> int:
+	return $Goal.copies_needed
+
+#endregion
 
 func _on_target_assembly_changed(new_assembly: Assembly) -> void:
 	$Goal.set_plan(new_assembly)

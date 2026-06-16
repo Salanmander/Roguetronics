@@ -90,7 +90,9 @@ func calculate_value() -> void:
 	
 func get_value() -> int:
 	return base_value
-	
+
+func get_plan() -> Assembly:
+	return Assembly.create_from_save(plan.get_save_dict())
 
 func set_goal_position(new_position: Vector2):
 	plan.set_plan_position(new_position)
