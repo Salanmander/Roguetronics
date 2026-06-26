@@ -192,6 +192,15 @@ func clear_floor() -> void:
 	# factory.
 	#delete_walls()
 	reset_to_start_of_run()
+	
+func get_produced_inventory() -> Array[InventoryItem]:
+	var produced_inventory: Array[InventoryItem]
+	for machine: Machine in machines:
+		if machine is Depot:
+			var item: InventoryItem = machine.get_produced_inventory()
+			if(item):
+				produced_inventory.append(item)
+	return produced_inventory
 
 #endregion
 
@@ -211,7 +220,7 @@ func _physics_process(delta: float):
 				starting_assemblies.append(assembly.clone())
 			
 			for machine: Machine in machines:
-				if machine is Dispenser:
+				if machine is Dispenser or machine is Depot:
 					machine.do_dispense()
 				
 			cycle = 0
@@ -495,12 +504,15 @@ func make_widget(grid_position: Vector2i, init_widget_type: int) -> Assembly:
 	var widget_position: Vector2 = map_to_local(grid_position)
 	var new_assembly:Assembly = Assembly.create(widget_position)
 	new_assembly.add_widget(Vector2(0, 0), init_widget_type) 
+	add_assembly(new_assembly)
+	return new_assembly
+
+func add_assembly(new_assembly: Assembly) -> void:
 	add_child(new_assembly)
 	assemblies.append(new_assembly)
 	new_assembly.deleted.connect(_on_assembly_delete)
 	new_assembly.crashed.connect(crash)
 	
-	return new_assembly
 	
 func make_wall(grid_position: Vector2i) -> void:
 	var wall_position: Vector2 = map_to_local(grid_position)
@@ -537,6 +549,7 @@ func make_depot(grid_position: Vector2i) -> void:
 func add_depot(new_depot: Depot) -> void:
 	add_child(new_depot)
 	new_depot.completed.connect(_on_depot_satisfied.bind(new_depot))
+	new_depot.dispense.connect(_on_dispense_assembly)
 	unhighlight_all()
 	highlight(new_depot)
 	element_selected.emit(new_depot)
@@ -897,6 +910,10 @@ func _on_assembly_sent(sent: Assembly) -> void:
 	
 func _on_dispense(loc: Vector2, init_widget_type: int):
 	make_widget(local_to_map(loc), init_widget_type)
+	
+func _on_dispense_assembly(loc: Vector2, assembly: Assembly):
+	assembly.position = loc
+	add_assembly(assembly)
 
 
 	

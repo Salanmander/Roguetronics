@@ -35,7 +35,7 @@
 		{
 		"type":"new",
 		"machine":"res://Factory/Machine/Depot/depot_prototype.gd",
-		"icon":"res://Factory/Machine/Depot/Stripes.png"
+		"icon":"res://Factory/Machine/Depot/depot_accept.png"
 		},
 		
 	

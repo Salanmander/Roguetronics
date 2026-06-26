@@ -179,7 +179,17 @@ func switch_to_layout(index: int) -> void:
 	factory_layouts[index].visible = true
 	factory_layouts[index].set_process_unhandled_input(true)
 	
+	
+	# Update the inventory for the current layout
+	var available_inventory: Array[InventoryItem] = []
+	for i: int in range(active_layout_ind):
+		var layout: FactoryFloor = factory_layouts[i]
+		available_inventory.append_array(layout.get_produced_inventory())
+		
+	depot_control.set_inventory(available_inventory)
+	
 	update_factory_click_mode()
+	hide_all_controls()
 	pass
 	
 func update_factory_click_mode() -> void:
@@ -430,6 +440,8 @@ func _on_element_selected(element):
 		depot_control.connect_to(element)
 		hide_all_controls()
 		show_control(depot_control)
+		
+		
 		
 	
 	

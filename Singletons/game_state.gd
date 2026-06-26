@@ -41,6 +41,8 @@ func _ready():
 				upgrades_to_get.append(upgrade)
 			if upgrade.machine_type == "res://Factory/Machine/Combiner/combiner_prototype.gd":
 				upgrades_to_get.append(upgrade)
+			if upgrade.machine_type == "res://Factory/Machine/Depot/depot_prototype.gd":
+				upgrades_to_get.append(upgrade)
 	
 	for upgrade: Upgrade in upgrades_to_get:
 		add_machine(upgrade)

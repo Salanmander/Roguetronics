@@ -20,6 +20,8 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		event = make_input_local(event)
 		var pos: Vector2 = event.position
+		# TODO: this input isn't working. Figure out why. Might be related to
+		# grid on inactive tab still processing input?
 		if(pos.x <= custom_minimum_size.x and pos.x >= 0):
 			if(pos.y <= custom_minimum_size.y and pos.y >= 0):
 				# Requires that x and y scale be the same

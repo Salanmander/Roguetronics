@@ -439,33 +439,55 @@ func get_grid_size() -> Vector2i:
 	# rows/columns used
 	return Vector2i(x_size+1, y_size+1)
 
-#TODO: this doesn't actually give a good image yet. Finish if using.
+
 func get_thumbnail(width: int, height: int) -> ImageTexture:
 	
-	const CEL_PX: int = 20
+	const CEL_PX: int = 40
 	const CONNECT_C: Color = Color(0.8, 0.8, 0)
 	const WIDGET_Cs: Dictionary = {
 		1: Color(0.8, 0.4, 0.1), 
 		2: Color(0.1, 0.8, 0.2),
 		}
+	const LINE_C: Color = Color(1, 1, 1)
 	
 	var bounding_grid_size = get_grid_size()
-	var goal_grid: Array[Array] = []
-	goal_grid.resize(bounding_grid_size.x)
 	
-	var thumb_wid: int = goal_grid.size() * CEL_PX
-	var thumb_hgt: int = goal_grid[0].size() * CEL_PX
+	var thumb_wid: int = bounding_grid_size.x * CEL_PX
+	var thumb_hgt: int = bounding_grid_size.y * CEL_PX
 	var thumb: Image = Image.create_empty(thumb_wid, thumb_hgt, false, Image.FORMAT_RGB8)
+	
+	# This is how much you need to scale up (down if < 1) to convert from
+	# normal factory grid scale to the thumbnail being made
+	var grid_scale: float = CEL_PX / Consts.GRID_SIZE
+	
+	# Draw widgets
+	for widget: Widget in widgets:
+		var pos: Vector2 = widget.position * grid_scale
+		for x_off in range(CEL_PX):
+			for y_off in range(CEL_PX):
+				var x: int = int(pos.x) + x_off
+				var y: int = int(pos.y) + y_off
+				var from_cent: Vector2i = Vector2i(x_off - CEL_PX/2, y_off - CEL_PX/2)
+				if( from_cent.length_squared() < (CEL_PX/2)**2 ):
+					thumb.set_pixel(x, y, WIDGET_Cs[widget.get_type()])
+					
+	# Draw links
+	for link: Line2D in links:
+		var points: PackedVector2Array = link.points
+		var offset: Vector2 = Vector2(CEL_PX/2, CEL_PX/2)
+		var size: Vector2 = ( points[1] - points[0] ) * grid_scale
+		size += Vector2(1, 1) * CEL_PX/10
+		thumb.fill_rect(Rect2i(link.position * grid_scale + offset,size), LINE_C)
 	
 	
 	var scale_factor: float = 1
 	if(thumb_wid >= thumb_hgt):
 		# Determine space available for actual thumbnail inside frame by
-		# the width. One CEL_PX on either side, then scaled down to the frame
-		var full_wid: int = thumb_wid + 2*CEL_PX
+		# the width. 1/4 CEL_PX on either side, then scaled down to the frame
+		var full_wid: int = thumb_wid + 0.5*CEL_PX
 		scale_factor = width/float(full_wid)
 	else:
-		var full_hgt: int = thumb_hgt + 2*CEL_PX
+		var full_hgt: int = thumb_hgt + 0.5*CEL_PX
 		scale_factor = height/float(full_hgt)
 	
 	var new_wid: int = int(scale_factor * thumb_wid)

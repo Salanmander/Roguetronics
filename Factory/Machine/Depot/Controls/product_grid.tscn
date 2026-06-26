@@ -1,0 +1,41 @@
+[gd_scene load_steps=9 format=4 uid="uid://cooo6rsuivvhd"]
+
+[ext_resource type="Script" path="res://Factory/Machine/Depot/Controls/depot_product.gd" id="1_4wiip"]
+[ext_resource type="TileSet" uid="uid://dngwcypusgtn6" path="res://Factory/factory_floor_tileset.tres" id="2_o8dkb"]
+[ext_resource type="Texture2D" uid="uid://boj4b0l32qimb" path="res://Factory/Widget/widget.png" id="3_5iu0l"]
+[ext_resource type="Texture2D" uid="uid://bkhsm6uotntfp" path="res://Factory/Widget/widget2.png" id="4_p2l6x"]
+[ext_resource type="Script" path="res://Factory/Machine/Depot/Controls/widgets_grid.gd" id="5_3xqf6"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_b1r54"]
+texture = ExtResource("3_5iu0l")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jo8ug"]
+texture = ExtResource("4_p2l6x")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_xostx"]
+tile_size = Vector2i(128, 128)
+sources/2 = SubResource("TileSetAtlasSource_jo8ug")
+sources/1 = SubResource("TileSetAtlasSource_b1r54")
+
+[node name="Product" type="Control"]
+custom_minimum_size = Vector2(150, 120)
+layout_mode = 3
+anchors_preset = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_4wiip")
+
+[node name="GridLayer" type="Node2D" parent="."]
+scale = Vector2(0.3, 0.3)
+
+[node name="Grid" type="TileMapLayer" parent="GridLayer"]
+tile_map_data = PackedByteArray("AAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAABAAEAAAAAAAAAAAADAAEAAAAAAAAAAAACAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAABAAIAAAAAAAAAAAACAAIAAAAAAAAAAAADAAIAAAAAAAAAAAA=")
+tile_set = ExtResource("2_o8dkb")
+
+[node name="Widgets" type="TileMapLayer" parent="GridLayer"]
+tile_set = SubResource("TileSet_xostx")
+script = ExtResource("5_3xqf6")
