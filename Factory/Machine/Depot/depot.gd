@@ -85,6 +85,7 @@ func update_background_size() -> void:
 	$Shape.shape.size = Vector2(right, bottom)-Vector2(2,2)
 	$Shape.position = (grid_size-Vector2i(1,1))*sqr/2
 	$DepotBackground.region_rect = Rect2(0, 0, right, bottom)
+	$Belt.set_collision_grid_size(grid_size)
 
 func switch_to_accept() -> void:
 	$DepotBackground.texture = accept_background

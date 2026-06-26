@@ -74,6 +74,16 @@ func _ready():
 	
 	pass # Replace with function body.
 
+func set_collision_grid_size(grid_size: Vector2) -> void:
+	var rect: RectangleShape2D = $CollisionShape2D.shape
+	# Leave off a few pixels at the edges to avoid overlap. Held widgets
+	# are still pushed all the way to the edge
+	rect.size = (grid_size - Vector2(0.02, 0.02)) * Consts.GRID_SIZE 
+	var new_pos: Vector2 = grid_size - Vector2(1, 1)
+	new_pos *= Consts.GRID_SIZE/2
+	$CollisionShape2D.position = new_pos
+	
+
 #endregion
 
 func run_to(cycle: float):
