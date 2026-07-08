@@ -184,7 +184,35 @@ func switch_to_layout(index: int) -> void:
 	var available_inventory: Array[InventoryItem] = []
 	for i: int in range(active_layout_ind):
 		var layout: FactoryFloor = factory_layouts[i]
-		available_inventory.append_array(layout.get_produced_inventory())
+		var this_inventory: Array[InventoryItem] = layout.get_produced_inventory()
+		
+		# First, remove any products that the layout is using
+		var items_to_remove: Array[InventoryItem] = []
+		for item: InventoryItem in this_inventory:
+			if item.quantity < 0:
+				# Find the item in the inventory, and remove the appropriate
+				# quantity
+				for old_item: InventoryItem in available_inventory:
+					if old_item.assembly.matches(item.assembly):
+						old_item.quantity += item.quantity
+						if old_item.quantity <= 0:
+							items_to_remove.append(old_item)
+		
+		# Get rid of any items with quantities at or below 0
+		for item: InventoryItem in items_to_remove:
+			available_inventory.erase(item)
+		
+		# Now add in the things with positive quantities
+		
+		for item: InventoryItem in this_inventory:
+			if item.quantity > 0:
+				var added: bool = false
+				for old_item: InventoryItem in available_inventory:
+					if old_item.assembly.matches(item.assembly):
+						old_item.quantity += item.quantity
+						added = true
+				if( not added ):
+					available_inventory.append(item)
 		
 	depot_control.set_inventory(available_inventory)
 	

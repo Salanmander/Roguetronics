@@ -113,15 +113,29 @@ func get_product() -> Assembly:
 
 func get_required_number() -> int:
 	return $Goal.copies_needed
-	
+
+# Returns inventory item with positive quantity for produced, or negative
+# quantity for consumed
 func get_produced_inventory() -> InventoryItem:
-	if mode == DISPENSE:
-		return null
 	var produced: InventoryItem =  InventoryItem.new()
 	produced.assembly = $Goal.get_plan()
-	produced.quantity = $Goal.copies_needed
+	
+	# If the assembly is empty, don't return anything at all
+	if produced.assembly.get_widgets().size() == 0:
+		return null
+	
+	if( mode == ACCEPT ):
+		produced.quantity = $Goal.copies_needed
+	else:
+		if( limit ):
+			# use negative quantity for dispensed products
+			produced.quantity = -limit_count
+		else:
+			# a billion should be enough to consume everything...
+			produced.quantity = -1000000000
+			
 	return produced
-
+	
 #endregion
 
 func _on_target_assembly_changed(new_assembly: Assembly) -> void:

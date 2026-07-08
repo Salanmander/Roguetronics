@@ -55,6 +55,7 @@ func connect_to(depot: Depot) -> void:
 				conn.signal.disconnect(conn.callable)
 			
 			button.button_down.connect(depot._on_target_assembly_changed.bind(button.assembly))
+			button.button_down.connect(limit_count.set_max.bind(button.quantity))
 		pass
 		
 	

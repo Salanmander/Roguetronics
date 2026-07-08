@@ -192,7 +192,9 @@ func clear_floor() -> void:
 	# factory.
 	#delete_walls()
 	reset_to_start_of_run()
-	
+
+# Returns a separate inventory item for every depot, even if multiple depots
+# are dealing with the same inventory item
 func get_produced_inventory() -> Array[InventoryItem]:
 	var produced_inventory: Array[InventoryItem]
 	for machine: Machine in machines:
