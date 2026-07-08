@@ -12,21 +12,39 @@ func connect_to(depot: Depot) -> void:
 	var widgets_grid: WidgetsGrid = $TabContainer/Accept/Product/GridLayer/Widgets
 	var count_box: SpinBox = $TabContainer/Accept/Required/Count
 	var inventory_panel: GridContainer = $TabContainer/Dispense/InventoryButtons
+	var direction_buttons: GridContainer = $TabContainer/Dispense/DirectionButtons
+	var limit_toggle: CheckBox = $TabContainer/Dispense/Limiter/Toggle
+	var limit_count: SpinBox = $TabContainer/Dispense/Limiter/Limit
 	
 	
 	# Disconnect all signals
 	var conns: Array = widgets_grid.assembly_changed.get_connections()
 	conns.append_array(count_box.value_changed.get_connections())
 	conns.append_array($TabContainer.tab_changed.get_connections())
+	conns.append_array(direction_buttons.direction_changed.get_connections())
+	conns.append_array(limit_toggle.toggled.get_connections())
+	conns.append_array(limit_count.value_changed.get_connections())
 	for conn in conns:
 		conn.signal.disconnect(conn.callable)
+	# Need to reconnect this (or avoid disconnecting it)
+	limit_toggle.toggled.connect(limit_count.set_editable)
 	
-	# Set current value of controls, and connect signals for changes
+	# Set current value of accept controls, and connect signals for changes
 	widgets_grid.set_grid_from_assembly(depot.get_product())
 	count_box.set_value_no_signal(depot.get_required_number())
 	
 	widgets_grid.assembly_changed.connect(depot._on_target_assembly_changed)
 	count_box.value_changed.connect(depot._on_required_number_changed)
+	
+	# Set current value and connect signals for changing dispense count
+	limit_toggle.button_pressed = depot.limit
+	limit_count.value = depot.limit_count
+	
+	limit_toggle.toggled.connect(depot._on_dispense_limit_toggled)
+	limit_count.value_changed.connect(depot._on_limit_count_changed)
+	
+	# Connect signal for changing direction of depot
+	direction_buttons.direction_changed.connect(depot._on_dispense_direction_changed)
 	
 	# Connect buttons for items to dispense
 	for button: Node in inventory_panel.get_children():
@@ -38,6 +56,7 @@ func connect_to(depot: Depot) -> void:
 			
 			button.button_down.connect(depot._on_target_assembly_changed.bind(button.assembly))
 		pass
+		
 	
 	# Set current accept/dispense control visibility
 	if depot.mode == depot.ACCEPT:

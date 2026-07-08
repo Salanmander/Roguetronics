@@ -11,8 +11,3 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
-
-
-func set_grid_size(grid_size: Vector2i) -> void:
-	var m: int = Consts.GRID_SIZE
-	region_rect = Rect2(0, 0, max(1, grid_size.x) * m, max(1, grid_size.y) * m)

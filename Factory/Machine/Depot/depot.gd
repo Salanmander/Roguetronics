@@ -5,7 +5,8 @@ static var LAYER: int = 0
 
 static var depot_packed = load("res://Factory/Machine/Depot/depot.tscn")
 static var accept_background = load("res://Factory/Machine/Depot/depot_accept.png")
-static var dispense_background = load("res://Factory/Machine/Depot/depot_dispense.png")
+static var dispense_up_background = load("res://Factory/Machine/Depot/depot_dispense_up.png")
+static var dispense_right_background = load("res://Factory/Machine/Depot/depot_dispense_right.png")
 
 signal completed()
 signal dispense(assembly_possition: Vector2, assembly: Assembly)
@@ -13,6 +14,9 @@ signal dispense(assembly_possition: Vector2, assembly: Assembly)
 var ACCEPT: int = 1
 var DISPENSE: int = 2
 var mode: int = ACCEPT
+
+var limit_count: int = 0
+var limit: bool = false
 
 var last_spawn_cycle: int = 0
 var cycle_spacing: int = 4
@@ -84,8 +88,10 @@ func update_background_size() -> void:
 	
 	$Shape.shape.size = Vector2(right, bottom)-Vector2(2,2)
 	$Shape.position = (grid_size-Vector2i(1,1))*sqr/2
-	$DepotBackground.region_rect = Rect2(0, 0, right, bottom)
 	$Belt.set_collision_grid_size(grid_size)
+	
+	
+	$DepotBackground.region_rect = Rect2(0, 0, right, bottom)
 
 func switch_to_accept() -> void:
 	$DepotBackground.texture = accept_background
@@ -93,7 +99,7 @@ func switch_to_accept() -> void:
 	pass
 	
 func switch_to_dispense() -> void:
-	$DepotBackground.texture = dispense_background
+	_on_dispense_direction_changed(0)
 	mode = DISPENSE
 	pass
 
@@ -121,6 +127,29 @@ func get_produced_inventory() -> InventoryItem:
 func _on_target_assembly_changed(new_assembly: Assembly) -> void:
 	$Goal.set_plan(new_assembly)
 	update_background_size()
+
+# 0 is facing straight up, and then rotates to the right. Passed in in radians
+func _on_dispense_direction_changed(new_dir: float) -> void:
+	if(is_equal_approx(new_dir, 0)):
+		$DepotBackground.texture = dispense_up_background
+		$DepotBackground.flip_v = false
+	elif(is_equal_approx(new_dir, PI)):
+		$DepotBackground.texture = dispense_up_background
+		$DepotBackground.flip_v = true
+	elif(is_equal_approx(new_dir, PI/2)):
+		$DepotBackground.texture = dispense_right_background
+		$DepotBackground.flip_h = false
+	elif(is_equal_approx(new_dir, 3*PI/2)):
+		$DepotBackground.texture = dispense_right_background
+		$DepotBackground.flip_h = true
+	$Belt.set_direction(new_dir)
+
+func _on_dispense_limit_toggled(should_limit: bool) -> void:
+	limit = should_limit
+
+func _on_limit_count_changed(new_limit: int) -> void:
+	limit_count = new_limit
+	
 	
 func _on_required_number_changed(new_count: int) -> void:
 	$Goal.copies_needed = new_count
