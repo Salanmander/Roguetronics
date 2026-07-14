@@ -664,6 +664,8 @@ func clone() -> Assembly:
 	
 	for widget: Widget in widgets:
 		copy.add_widget(widget.position, widget.type)
+	for link: Line2D in links:
+		copy.add_link(link.points[0], link.points[1])
 	
 	return copy
 	

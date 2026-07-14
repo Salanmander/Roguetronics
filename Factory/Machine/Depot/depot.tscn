@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dhv705dgbgje1" path="res://Factory/Machine/Belt/belt.tscn" id="5_1p4p3"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4epi2"]
+resource_local_to_scene = true
 size = Vector2(128, 128)
 
 [node name="Depot" type="Area2D"]

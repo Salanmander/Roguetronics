@@ -11,12 +11,13 @@ static var dispense_right_background = load("res://Factory/Machine/Depot/depot_d
 signal completed()
 signal dispense(assembly_possition: Vector2, assembly: Assembly)
 
-var ACCEPT: int = 1
-var DISPENSE: int = 2
+const ACCEPT: int = 1
+const DISPENSE: int = 2
 var mode: int = ACCEPT
 
 var limit_count: int = 0
 var limit: bool = false
+var num_dispensed: int = 0
 
 var last_spawn_cycle: int = 0
 var cycle_spacing: int = 4
@@ -64,12 +65,14 @@ func run_to(cycle: float) -> void:
 	last_cycle = cycle
 	
 func do_dispense() -> void:
-	if(mode == DISPENSE):
+	if(mode == DISPENSE and ((not limit) or num_dispensed < limit_count)):
 		dispense.emit(position, $Goal.get_plan())
 		last_spawn_cycle = round(last_cycle)
+		num_dispensed += 1
 
 func reset() -> void:
 	super()
+	num_dispensed = 0
 	$Belt.reset()
 	$Goal.reset()
 
@@ -113,10 +116,13 @@ func get_product() -> Assembly:
 
 func get_required_number() -> int:
 	return $Goal.copies_needed
+	
+func awaiting_product() -> bool:
+	return ( mode == ACCEPT and $Goal.copies_made < $Goal.copies_needed )
 
 # Returns inventory item with positive quantity for produced, or negative
 # quantity for consumed
-func get_produced_inventory() -> InventoryItem:
+func get_intended_production() -> InventoryItem:
 	var produced: InventoryItem =  InventoryItem.new()
 	produced.assembly = $Goal.get_plan()
 	
@@ -134,6 +140,22 @@ func get_produced_inventory() -> InventoryItem:
 			# a billion should be enough to consume everything...
 			produced.quantity = -1000000000
 			
+	return produced
+	
+
+# Returns null if the depot is consuming inventory
+func get_produced_inventory() -> InventoryItem:
+	if( mode != ACCEPT ):
+		return null
+	var produced: InventoryItem =  InventoryItem.new()
+	produced.assembly = $Goal.get_plan()
+	
+	# If the assembly is empty, don't return anything at all
+	if produced.assembly.get_widgets().size() == 0:
+		return null
+	
+
+	produced.quantity = $Goal.copies_made
 	return produced
 	
 #endregion

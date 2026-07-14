@@ -52,10 +52,11 @@ var current_track: Track
 var track_start_square: Vector2i
 
 var starting_assemblies: Array[Assembly]
+var starting_inventory: Array[InventoryItem]
+var current_inventory: Array[InventoryItem]
 
 
 var goals: Array[Goal]
-var finished_depots: Array[Depot]
 
 var running: bool = false
 var cycle_time: float = 0.7 # Number of seconds for one cycle
@@ -192,17 +193,25 @@ func clear_floor() -> void:
 	# factory.
 	#delete_walls()
 	reset_to_start_of_run()
+	
+func set_available_inventory(inv: Array[InventoryItem]) -> void:
+	# Assign used to deal with untyped array return value of map
+	starting_inventory.assign( inv.map(InventoryItem.duplicate_item) )
+	pass
 
 # Returns a separate inventory item for every depot, even if multiple depots
 # are dealing with the same inventory item
-func get_produced_inventory() -> Array[InventoryItem]:
+func get_intended_production() -> Array[InventoryItem]:
 	var produced_inventory: Array[InventoryItem]
 	for machine: Machine in machines:
 		if machine is Depot:
-			var item: InventoryItem = machine.get_produced_inventory()
+			var item: InventoryItem = machine.get_intended_production()
 			if(item):
 				produced_inventory.append(item)
 	return produced_inventory
+
+func get_current_inventory() -> Array[InventoryItem]:
+	return current_inventory
 
 #endregion
 
@@ -216,7 +225,11 @@ func _physics_process(delta: float):
 	if running:
 		
 		# Initial frame. Do first dispense and save initial state
+		# First dispense is necessary because dispenses happen on the *last*
+		# frame of the cycle
 		if cycle == -1:
+			# Inventory is an Array[InventoryItem]
+			current_inventory.assign( starting_inventory.map(InventoryItem.duplicate_item) )
 			
 			for assembly: Assembly in assemblies:
 				starting_assemblies.append(assembly.clone())
@@ -739,6 +752,20 @@ func win() -> void:
 func finish_layout() -> void:
 	pause()
 	can_resume = false
+	
+	# Update inventory by adding all the items the depots collected
+	for machine: Machine in machines:
+		if( machine is Depot ):
+			var item: InventoryItem = machine.get_produced_inventory()
+			if( item ):
+				var added: bool = false
+				for old_item: InventoryItem in current_inventory:
+					if old_item.assembly.matches(item.assembly):
+						old_item.quantity += item.quantity
+						added = true
+				if( not added ):
+					current_inventory.append(item)
+				
 	layout_finished.emit()
 	modulate = Color(0.8, 1, 0.8, 1)
 
@@ -761,7 +788,6 @@ func reset_to_start_of_run():
 	
 	assemblies = starting_assemblies
 	starting_assemblies = []
-	finished_depots = []
 	
 	for assembly: Assembly in assemblies:
 		add_child(assembly)
@@ -899,9 +925,8 @@ func _on_goal_completed(_goal: Goal):
 	win()
 	
 func _on_depot_satisfied(depot: Depot):
-	finished_depots.append(depot)
 	for machine: Machine in machines:
-		if( machine is Depot and not machine in finished_depots ):
+		if( machine is Depot and machine.awaiting_product() ):
 			return
 	
 	if(goals.size() == 0):
@@ -912,10 +937,20 @@ func _on_assembly_sent(sent: Assembly) -> void:
 	
 func _on_dispense(loc: Vector2, init_widget_type: int):
 	make_widget(local_to_map(loc), init_widget_type)
-	
+
+# This method requires the item be in inventory, and subtracts it from the inventory
 func _on_dispense_assembly(loc: Vector2, assembly: Assembly):
-	assembly.position = loc
-	add_assembly(assembly)
+
+	var available = false
+	for item: InventoryItem in current_inventory:
+		if( item.assembly.matches(assembly) and item.quantity > 0 ):
+			available = true
+			item.quantity -= 1
+			break
+			
+	if( available ):
+		assembly.position = loc
+		add_assembly(assembly)
 
 
 	

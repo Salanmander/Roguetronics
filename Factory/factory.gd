@@ -179,42 +179,46 @@ func switch_to_layout(index: int) -> void:
 	factory_layouts[index].visible = true
 	factory_layouts[index].set_process_unhandled_input(true)
 	
-	
-	# Update the inventory for the current layout
-	var available_inventory: Array[InventoryItem] = []
-	for i: int in range(active_layout_ind):
-		var layout: FactoryFloor = factory_layouts[i]
-		var this_inventory: Array[InventoryItem] = layout.get_produced_inventory()
-		
-		# First, remove any products that the layout is using
-		var items_to_remove: Array[InventoryItem] = []
-		for item: InventoryItem in this_inventory:
-			if item.quantity < 0:
-				# Find the item in the inventory, and remove the appropriate
-				# quantity
-				for old_item: InventoryItem in available_inventory:
-					if old_item.assembly.matches(item.assembly):
-						old_item.quantity += item.quantity
-						if old_item.quantity <= 0:
-							items_to_remove.append(old_item)
-		
-		# Get rid of any items with quantities at or below 0
-		for item: InventoryItem in items_to_remove:
-			available_inventory.erase(item)
-		
-		# Now add in the things with positive quantities
-		
-		for item: InventoryItem in this_inventory:
-			if item.quantity > 0:
-				var added: bool = false
-				for old_item: InventoryItem in available_inventory:
-					if old_item.assembly.matches(item.assembly):
-						old_item.quantity += item.quantity
-						added = true
-				if( not added ):
-					available_inventory.append(item)
-		
-	depot_control.set_inventory(available_inventory)
+	# Update of inventory when whole factory is running is done in the start/
+	# switch layout methods
+	if(not whole_factory_running):
+		# Update the inventory for the current layout based on projections
+		# of what previous layouts will make/use
+		var available_inventory: Array[InventoryItem] = []
+		for i: int in range(active_layout_ind):
+			var layout: FactoryFloor = factory_layouts[i]
+			var this_inventory: Array[InventoryItem] = layout.get_intended_production()
+			
+			# First, remove any products that the layout is using
+			var items_to_remove: Array[InventoryItem] = []
+			for item: InventoryItem in this_inventory:
+				if item.quantity < 0:
+					# Find the item in the inventory, and remove the appropriate
+					# quantity
+					for old_item: InventoryItem in available_inventory:
+						if old_item.assembly.matches(item.assembly):
+							old_item.quantity += item.quantity
+							if old_item.quantity <= 0:
+								items_to_remove.append(old_item)
+			
+			# Get rid of any items with quantities at or below 0
+			for item: InventoryItem in items_to_remove:
+				available_inventory.erase(item)
+			
+			# Now add in the things with positive quantities
+			
+			for item: InventoryItem in this_inventory:
+				if item.quantity > 0:
+					var added: bool = false
+					for old_item: InventoryItem in available_inventory:
+						if old_item.assembly.matches(item.assembly):
+							old_item.quantity += item.quantity
+							added = true
+					if( not added ):
+						available_inventory.append(item)
+			
+		depot_control.set_inventory(available_inventory)
+		factory_layouts[index].set_available_inventory(available_inventory)
 	
 	update_factory_click_mode()
 	hide_all_controls()
@@ -416,6 +420,7 @@ func _on_run_all_pressed() -> void:
 	
 	whole_factory_running = true
 	switch_to_layout(0)
+	factory_layouts[0].set_available_inventory([])
 	_on_run_speed_pressed(1)
 
 
@@ -425,7 +430,14 @@ func _on_pause_pressed() -> void:
 
 
 func _on_reset_pressed() -> void:
-	factory_layouts[active_layout_ind].reset_to_start_of_run()
+	whole_factory_running = false
+	
+	# This is to put the inventory back in the projected-mode, rather than
+	# active-run-mode
+	switch_to_layout(active_layout_ind)
+	for layout: FactoryFloor in factory_layouts:
+		layout.reset_to_start_of_run()
+	
 
 
 func _on_clear_pressed() -> void:
@@ -501,8 +513,11 @@ func _on_assembly_sent(sent: Assembly) -> void:
 	
 func _on_layout_finished() -> void:
 	if(whole_factory_running):
+		var new_inv = factory_layouts[active_layout_ind].get_current_inventory()
+		
 		var next_ind: int = active_layout_ind + 1
 		switch_to_layout(next_ind)
+		factory_layouts[active_layout_ind].set_available_inventory(new_inv)
 		factory_layouts[active_layout_ind].run()
 	pass
 	
