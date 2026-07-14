@@ -29,7 +29,7 @@ static func create(init_position: Vector2, widget_type: int) -> Dispenser:
 	
 static func create_from_save(save_dict: Dictionary) -> Dispenser:
 	var new_dispenser: Dispenser = dispenser_packed.instantiate()
-	new_dispenser.load_save_dict(save_dict)
+	new_dispenser.load_from_save(save_dict)
 	return new_dispenser
 
 
@@ -103,7 +103,7 @@ func get_save_dict() -> Dictionary:
 	save_dict["delay"] = cycle_spacing
 	return save_dict
 	
-func load_save_dict(save_dict: Dictionary) -> void:
+func load_from_save(save_dict: Dictionary) -> void:
 	set_parameters(str_to_var(save_dict["pos"]), save_dict["dispenser_type"])
 	cycle_spacing = save_dict["delay"]
 

@@ -46,7 +46,7 @@ static func create(init_position: Vector2) -> Assembly:
 # see also: get_save_dict
 static func create_from_save(save_dict: Dictionary) -> Assembly:
 	var new_assembly: Assembly = Assembly.new()
-	new_assembly.load_save_dict(save_dict)
+	new_assembly.load_from_save(save_dict)
 	return new_assembly
 	
 #endregion
@@ -631,7 +631,7 @@ func get_link_save(link: Line2D) -> Dictionary:
 	return save_dict
 
 # Takes the entire save dictionary
-func load_save_dict(save_dict: Dictionary) -> void:
+func load_from_save(save_dict: Dictionary) -> void:
 	position = str_to_var(save_dict["pos"])
 	
 	var widget_save: Array = save_dict["widgets"]

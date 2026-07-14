@@ -24,6 +24,8 @@ static func create_from_save(save_dict: Dictionary) -> Machine:
 		return Crane.create_from_save(save_dict)
 	if type == "star":
 		return StarMaker.create_from_save(save_dict)
+	if type == "depot":
+		return Depot.create_from_save(save_dict)
 	
 	assert(false, "tried to load machine with invalid type")
 	return null

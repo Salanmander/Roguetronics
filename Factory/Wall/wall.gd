@@ -18,7 +18,7 @@ static func create(init_position: Vector2) -> Wall:
 	
 static func create_from_save(save_dict: Dictionary) -> Wall:
 	var new_wall: Wall = wall_packed.instantiate()
-	new_wall.load_save_dict(save_dict)
+	new_wall.load_from_save(save_dict)
 	return new_wall
 	
 
@@ -40,7 +40,7 @@ func get_save_dict() -> Dictionary:
 	save_dict["pos"] = var_to_str(position)
 	return save_dict
 	
-func load_save_dict(save_dict: Dictionary):
+func load_from_save(save_dict: Dictionary):
 	set_parameters(str_to_var(save_dict["pos"]))
 
 #endregion

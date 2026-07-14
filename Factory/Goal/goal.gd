@@ -22,7 +22,7 @@ static func create(init_position: Vector2) -> Goal:
 # See also: get_save_dict
 static func create_from_save(save_dict: Dictionary) -> Goal:
 	var new_goal: Goal = Goal.new()
-	new_goal.load_save_dict(save_dict)
+	new_goal.load_from_save(save_dict)
 	return new_goal
 	
 func copy() -> Goal:
@@ -67,7 +67,7 @@ func get_save_dict() -> Dictionary:
 	save_dict["plan"] = plan.get_save_dict()
 	return save_dict
 	
-func load_save_dict(save_dict: Dictionary) -> void:
+func load_from_save(save_dict: Dictionary) -> void:
 	copies_needed = save_dict["needed"]
 	var plan: Assembly = Assembly.create_from_save(save_dict["plan"])
 	set_plan(plan)

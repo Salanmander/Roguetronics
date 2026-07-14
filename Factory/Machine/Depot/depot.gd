@@ -30,6 +30,10 @@ static func create(pos: Vector2) -> Depot:
 	new_depot.position = pos
 	return new_depot
 
+static func create_from_save(save_dict: Dictionary) -> Depot:
+	var new_depot: Depot = depot_packed.instantiate()
+	new_depot.load_from_save(save_dict)
+	return new_depot
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -200,3 +204,39 @@ func _on_controls_tab_changed(tab_idx: int, controls: TabContainer) -> void:
 func _on_requirement_met() -> void:
 	completed.emit()
 	pass
+
+#region save and load
+
+func get_save_dict() -> Dictionary:
+	var save_dict: Dictionary = {}
+	save_dict["type"] = "depot"
+	save_dict["pos"] = var_to_str(position)
+	save_dict["limit"] = limit
+	save_dict["limit_count"] = limit_count
+	save_dict["period"] = cycle_spacing
+	save_dict["mode"] = mode
+	save_dict["goal"] = $Goal.get_save_dict()
+	save_dict["belt"] = $Belt.get_save_dict()
+	return save_dict
+	
+func load_from_save(save_dict: Dictionary) -> void:
+	position = str_to_var(save_dict["pos"])
+	
+	if(save_dict["mode"] == ACCEPT):
+		switch_to_accept()
+	else:
+		switch_to_dispense()
+		
+	limit = save_dict["limit"]
+	limit_count = save_dict["limit_count"]
+	cycle_spacing = save_dict["period"]
+	
+	
+	$Goal.load_from_save(save_dict["goal"])
+	$Belt.load_from_save(save_dict["belt"])
+	
+	if( mode == DISPENSE ):
+		_on_dispense_direction_changed($Belt.get_direction())
+
+
+#endregion

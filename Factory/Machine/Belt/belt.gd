@@ -81,6 +81,9 @@ func _ready():
 
 func set_direction(new_dir: float) -> void:
 	direction = new_dir
+	
+func get_direction() -> float:
+	return direction
 
 func set_collision_grid_size(grid_size: Vector2) -> void:
 	

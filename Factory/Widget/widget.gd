@@ -37,7 +37,7 @@ static func create(init_position: Vector2, widget_type: int) -> Widget:
 	
 static func create_from_save(save_dict: Dictionary) -> Widget:
 	var new_widget: Widget = widget_packed.instantiate()
-	new_widget.load_save_dict(save_dict)
+	new_widget.load_from_save(save_dict)
 	return new_widget
 
 func set_parameters(init_position: Vector2, widget_type: int):
@@ -215,7 +215,7 @@ func get_save_dict() -> Dictionary:
 	save_dict["type"] = type
 	return save_dict
 	
-func load_save_dict(save_dict: Dictionary) -> void:
+func load_from_save(save_dict: Dictionary) -> void:
 	position = str_to_var(save_dict["pos"])
 	set_type(save_dict["type"])
 
