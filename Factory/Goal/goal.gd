@@ -98,14 +98,17 @@ func set_goal_position(new_position: Vector2):
 	plan.set_plan_position(new_position)
 	
 	
-func add_widget(init_position:Vector2, widget_type:int):
-	plan.add_widget(init_position, widget_type)
+func add_widget(init_position:Vector2, widget_type:int, standardize_positions: bool = true):
+	plan.add_widget(init_position, widget_type, standardize_positions)
 	calculate_value()
 
 func add_widget_object(new_widget:Widget):
 	plan.add_widget_object(new_widget)
 	calculate_value()
-	
+
+func standardize_positions() -> void:
+	plan.standardize_positions()
+
 func add_link(p1: Vector2, p2: Vector2):
 	plan.add_link(p1, p2)
 	calculate_value()

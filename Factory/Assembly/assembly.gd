@@ -207,16 +207,16 @@ func run_to(_cycle: float):
 	#last_cycle = cycle
 	pass
 
-func add_widget(relative_position: Vector2, widget_type: int):
+func add_widget(relative_position: Vector2, widget_type: int, standardize_positions: bool = true):
 	var new_widget: Widget = Widget.create(relative_position, widget_type)
-	add_widget_object(new_widget)
+	add_widget_object(new_widget, standardize_positions)
 	pass
 
-func add_widget_object(new_widget: Widget):
+func add_widget_object(new_widget: Widget, standardize_positions: bool = true):
 	add_child(new_widget)
 	new_widget.record_parent(self)
 	
-	add_widget_helper(new_widget)
+	add_widget_helper(new_widget, standardize_positions)
 	pass
 	
 func add_widget_from_other(new_widget: Widget, other: Assembly):
@@ -268,7 +268,7 @@ func add_link(p1: Vector2, p2: Vector2):
 	add_child(new_line)
 	links.append(new_line)
 	
-func add_widget_helper(new_widget: Widget):
+func add_widget_helper(new_widget: Widget, standardize_positions: bool = true):
 	new_widget.monitorable = monitorable
 	widgets.append(new_widget)
 	
@@ -277,7 +277,8 @@ func add_widget_helper(new_widget: Widget):
 	new_widget.combined.connect(_on_widget_combined)
 	new_widget.layer_changed.connect(_on_widget_layer_changed)
 	
-	standardize_positions()
+	if( standardize_positions ):
+		standardize_positions()
 	
 
 

@@ -42,7 +42,7 @@ func get_goal_from_pattern(pattern: Dictionary) -> Goal:
 	for i in range(widgets.size()):
 		var loc: Array = widgets[i]
 		var loc_vector = Vector2(loc[0],loc[1])*Consts.GRID_SIZE
-		goal.add_widget(loc_vector, widget_types[i])
+		goal.add_widget(loc_vector, widget_types[i], false)
 		
 	
 	# ADD LINKS
@@ -57,7 +57,7 @@ func get_goal_from_pattern(pattern: Dictionary) -> Goal:
 		goal.add_link(loc1, loc2)
 		
 		
-	
+	goal.standardize_positions()
 	return goal
 	
 
