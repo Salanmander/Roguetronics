@@ -15,6 +15,7 @@ func connect_to(depot: Depot) -> void:
 	var direction_buttons: GridContainer = $TabContainer/Dispense/DirectionButtons
 	var limit_toggle: CheckBox = $TabContainer/Dispense/Limiter/Toggle
 	var limit_count: SpinBox = $TabContainer/Dispense/Limiter/Limit
+	var delay_box: SpinBox = $TabContainer/Dispense/DelaySettings/Delay
 	
 	
 	# Disconnect all signals
@@ -24,6 +25,7 @@ func connect_to(depot: Depot) -> void:
 	conns.append_array(direction_buttons.direction_changed.get_connections())
 	conns.append_array(limit_toggle.toggled.get_connections())
 	conns.append_array(limit_count.value_changed.get_connections())
+	conns.append_array(delay_box.value_changed.get_connections())
 	for conn in conns:
 		conn.signal.disconnect(conn.callable)
 	# Need to reconnect this (or avoid disconnecting it)
@@ -35,6 +37,12 @@ func connect_to(depot: Depot) -> void:
 	
 	widgets_grid.assembly_changed.connect(depot._on_target_assembly_changed)
 	count_box.value_changed.connect(depot._on_required_number_changed)
+	
+	# Set current value and connect signals for changing dispense rate
+	
+	delay_box.set_value(depot.get_delay())
+	
+	delay_box.value_changed.connect(depot._on_delay_UI_change)
 	
 	# Set current value and connect signals for changing dispense count
 	limit_toggle.button_pressed = depot.limit

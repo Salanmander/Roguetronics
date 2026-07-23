@@ -96,6 +96,19 @@ script = ExtResource("7_ey40t")
 layout_mode = 2
 metadata/_tab_index = 1
 
+[node name="DelaySettings" type="HBoxContainer" parent="TabContainer/Dispense"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="TabContainer/Dispense/DelaySettings"]
+layout_mode = 2
+text = "Cycles between
+dispensing"
+horizontal_alignment = 1
+
+[node name="Delay" type="SpinBox" parent="TabContainer/Dispense/DelaySettings"]
+layout_mode = 2
+
 [node name="Limiter" type="HBoxContainer" parent="TabContainer/Dispense"]
 layout_mode = 2
 size_flags_horizontal = 4

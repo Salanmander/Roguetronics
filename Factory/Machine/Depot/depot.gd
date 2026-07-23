@@ -118,6 +118,9 @@ func contains_point(pos: Vector2) -> bool:
 func get_product() -> Assembly:
 	return $Goal.get_plan()
 
+func get_delay() -> int:
+	return cycle_spacing
+
 func get_required_number() -> int:
 	return $Goal.copies_needed
 	
@@ -167,6 +170,10 @@ func get_produced_inventory() -> InventoryItem:
 func _on_target_assembly_changed(new_assembly: Assembly) -> void:
 	$Goal.set_plan(new_assembly)
 	update_background_size()
+
+
+func _on_delay_UI_change(new_spacing: int):
+	cycle_spacing = new_spacing
 
 # 0 is facing straight up, and then rotates to the right. Passed in in radians
 func _on_dispense_direction_changed(new_dir: float) -> void:
