@@ -301,6 +301,10 @@ func _unhandled_input(event: InputEvent):
 		var grid_loc: Vector2i = local_to_map(event.position)
 		var thing_position: Vector2i = map_to_local(grid_loc)
 		
+		# Don't register clicks outside the factory floor
+		if(get_cell_source_id(grid_loc) == WALL_TILE):
+			return
+		
 		if event.button_index == MOUSE_BUTTON_RIGHT:
 			# Check to see if there's a clickable thing there
 			var highlighted: Machine = null
